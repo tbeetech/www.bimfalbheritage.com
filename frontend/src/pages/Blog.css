@@ -1,3 +1,8 @@
-.blog-header {
-  margin-bottom: 12px;
+.blog-intro {
+  padding: 16px;
+  margin-bottom: 18px;
+}
+
+.blog-grid {
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
 }

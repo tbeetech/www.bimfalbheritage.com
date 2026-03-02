@@ -1,0 +1,25 @@
+.donation-layout {
+  display: grid;
+  grid-template-columns: 1.3fr 1fr;
+  gap: 18px;
+}
+
+.donation-main,
+.donation-side {
+  padding: 18px;
+}
+
+.donation-side ul {
+  margin: 0;
+  padding-left: 18px;
+}
+
+.donation-side li {
+  margin-bottom: 8px;
+}
+
+@media (max-width: 860px) {
+  .donation-layout {
+    grid-template-columns: 1fr;
+  }
+}

@@ -3,7 +3,7 @@
 }
 
 .post-hero {
-  height: 320px;
+  height: 360px;
   background-size: cover;
   background-position: center;
 }
@@ -12,9 +12,54 @@
   padding: 20px 24px 28px;
 }
 
+.post-meta {
+  color: #666;
+  text-transform: uppercase;
+  letter-spacing: 0.9px;
+  font-size: 0.72rem;
+}
+
+.cooperation-box {
+  margin: 14px 0;
+  padding: 12px;
+  border-left: 3px solid #c59d55;
+  background: #faf7ef;
+}
+
+.meta-platforms {
+  margin-bottom: 12px;
+  color: #b17030;
+  font-size: 0.8rem;
+}
+
+.share-strip {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 16px;
+}
+
+.share-strip a,
+.share-strip button {
+  border: 1px solid #d9d9d9;
+  background: #fff;
+  color: #092415;
+  padding: 6px 10px;
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.7px;
+  cursor: pointer;
+}
+
+.share-strip a:hover,
+.share-strip button:hover {
+  background: #092415;
+  color: #fff;
+}
+
 .post-content {
-  margin-top: 14px;
-  line-height: 1.7;
+  line-height: 1.8;
 }
 
 .post-content ul {
@@ -22,9 +67,8 @@
 }
 
 .video-embed.detail iframe {
+  margin-top: 14px;
   width: 100%;
-  min-height: 320px;
-  border-radius: 14px;
+  min-height: 340px;
   border: none;
-  margin-top: 12px;
 }

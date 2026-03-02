@@ -1,0 +1,30 @@
+.contact-layout {
+  display: grid;
+  grid-template-columns: 1fr 1.2fr;
+  gap: 18px;
+}
+
+.contact-info,
+.contact-form-wrap {
+  padding: 18px;
+}
+
+.contact-form {
+  display: grid;
+  gap: 10px;
+}
+
+.contact-form input,
+.contact-form textarea {
+  border: 1px solid #ededed;
+  border-radius: 3px;
+  padding: 12px 15px;
+  font-family: Montserrat, sans-serif;
+  font-size: 0.95rem;
+}
+
+@media (max-width: 880px) {
+  .contact-layout {
+    grid-template-columns: 1fr;
+  }
+}

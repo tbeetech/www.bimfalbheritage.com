@@ -43,12 +43,18 @@ const getPost = (req, res, next) => {
 const createPost = (req, res, next) => {
   try {
     const coverImage = req.file ? `/uploads/${req.file.filename}` : req.body.coverImage || '';
+    const sharePlatforms = req.body.sharePlatforms || '';
     const post = store.add({
       title: req.body.title,
+      excerpt: req.body.excerpt || '',
+      authorName: req.body.authorName || '',
       body: req.body.body,
       coverImage,
       videoUrl: req.body.videoUrl || '',
       category: req.body.category || 'Culture',
+      collaborationPartner: req.body.collaborationPartner || '',
+      collaborationType: req.body.collaborationType || '',
+      sharePlatforms,
       publishDate: req.body.publishDate || new Date().toISOString(),
     });
     res.status(201).json(post);

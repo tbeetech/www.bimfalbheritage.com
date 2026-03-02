@@ -2,42 +2,38 @@ import './About.css';
 
 const About = () => {
   return (
-    <div className="page about">
-      <div className="about-hero card">
-        <div>
-          <div className="pill">About</div>
-          <h1>Mission: keep Bimfalb culture breathing.</h1>
-          <p>
-            We are archivists, field recorders, and designers working alongside Bimfalb elders and youth.
-            Our goal is to digitize fragile stories, celebrate living artisans, and build pathways for
-            communities to share their heritage with dignity.
-          </p>
-        </div>
-        <div className="about-hero-image" role="presentation" />
-      </div>
+    <div className="page">
+      <header className="page-header">
+        <h1>About Us</h1>
+        <p>BIMFALB CULTURAL HERITAGE INITIATIVE &amp; PROMOTION</p>
+      </header>
 
-      <section className="about-grid">
-        <div className="card about-block">
-          <h3>Vision</h3>
+      <section className="about-layout">
+        <article className="card about-main">
           <p>
-            A future where every Bimfalb child can hear the river songs of their ancestors and watch the
-            crafts that carved their identity—on any device, anywhere in the world.
+            A non governmental community organization for the enhancement of culture,
+            promotion of creativity and social welfare in Nigeria and abroad.
           </p>
-        </div>
-        <div className="card about-block">
-          <h3>Heritage Preservation</h3>
           <p>
-            We work onsite to collect oral histories, digitize textiles, and capture rituals through film.
-            Everything is stored with community consent and contextual notes, then shared in multiple languages.
+            Led by Elano, Abimbola Falayi (Bimbo Abolu), a cultural ambassador and
+            community developers across multiple sectors.
           </p>
-        </div>
-        <div className="card about-block">
-          <h3>Community Exchange</h3>
           <p>
-            Fellowships for artisans, youth-led edit-a-thons, and traveling exhibitions keep culture active—not
-            frozen. Each program is co-created with local councils.
+            At BIMFALB, we are open to collaborations with individuals, groups, and
+            communities for cultural, educational and social exchange initiatives.
           </p>
-        </div>
+        </article>
+
+        <article className="card about-list">
+          <h2>Core Focus</h2>
+          <ul>
+            <li>Promote education and awareness on cultures and heritage.</li>
+            <li>Promote young, talented local musicians.</li>
+            <li>Support sustainable development through heritage programs.</li>
+            <li>Preserve historic sites and local documentation practices.</li>
+            <li>Support students and dignify senior citizens in development.</li>
+          </ul>
+        </article>
       </section>
     </div>
   );

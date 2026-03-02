@@ -25,19 +25,29 @@
   color: var(--muted);
 }
 
+.meta-inline {
+  color: #b17030;
+  font-size: 0.78rem;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
 .preview {
   margin-top: 6px;
   line-height: 1.6;
 }
 
 .read-more {
+  color: #092415;
   font-weight: 700;
-  color: var(--text);
   display: inline-flex;
   align-items: center;
   gap: 8px;
+  text-transform: uppercase;
+  letter-spacing: 0.7px;
+  font-size: 0.8rem;
 }
 
 .read-more:hover {
-  color: var(--accent-strong);
+  color: #b17030;
 }

@@ -4,13 +4,13 @@ const Hero = () => {
   return (
     <section className="hero card">
       <div className="hero-text">
-        <div className="pill">Cultural Platform · Prototype</div>
+        <div className="pill">Cultural Platform - Prototype</div>
         <h1>
           Bimfalb Heritage
           <span className="hero-accent"> stories, craft, and memory</span>
         </h1>
         <p>
-          A living archive celebrating the rhythm of Bimfalb communities—oral histories,
+          A living archive celebrating the rhythm of Bimfalb communities, oral histories,
           river songs, artisan craft, and gatherings illuminated by calabash light.
         </p>
         <div className="hero-actions">

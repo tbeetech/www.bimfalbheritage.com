@@ -9,9 +9,14 @@ const categories = ['History', 'Culture', 'Heritage', 'Events'];
 const AdminCreate = () => {
   const [form, setForm] = useState({
     title: '',
+    excerpt: '',
+    authorName: '',
     category: 'Culture',
     publishDate: dayjs().format('YYYY-MM-DD'),
     videoUrl: '',
+    collaborationPartner: '',
+    collaborationType: '',
+    sharePlatforms: '',
   });
   const [body, setBody] = useState('');
   const [coverImage, setCoverImage] = useState(null);
@@ -80,28 +85,52 @@ const AdminCreate = () => {
         <div>
           <div className="pill">Admin</div>
           <h1>Create a new cultural post</h1>
-          <p className="muted">Protected by header token. This UI is for demo and basic publishing.</p>
+          <p className="muted">Session-based admin composer with cooperation fields and cross-platform sharing metadata.</p>
         </div>
         <form className="admin-form" onSubmit={handleSubmit}>
           <label>
             Title
             <input name="title" value={form.title} onChange={handleChange} required />
           </label>
+          <label>
+            Excerpt
+            <textarea name="excerpt" value={form.excerpt} onChange={handleChange} rows={3} />
+          </label>
           <div className="two-col">
+            <label>
+              Author name
+              <input name="authorName" value={form.authorName} onChange={handleChange} />
+            </label>
             <label>
               Category
               <select name="category" value={form.category} onChange={handleChange}>
                 {categories.map((c) => <option key={c}>{c}</option>)}
               </select>
             </label>
+          </div>
+          <div className="two-col">
             <label>
               Publish date
               <input type="date" name="publishDate" value={form.publishDate} onChange={handleChange} />
             </label>
+            <label>
+              Video URL (YouTube/Vimeo)
+              <input name="videoUrl" value={form.videoUrl} onChange={handleChange} placeholder="https://www.youtube.com/watch?v=..." />
+            </label>
+          </div>
+          <div className="two-col">
+            <label>
+              Collaboration partner
+              <input name="collaborationPartner" value={form.collaborationPartner} onChange={handleChange} placeholder="Organization or media partner" />
+            </label>
+            <label>
+              Collaboration type
+              <input name="collaborationType" value={form.collaborationType} onChange={handleChange} placeholder="Sponsorship, media exchange, co-production" />
+            </label>
           </div>
           <label>
-            Video URL (YouTube/Vimeo)
-            <input name="videoUrl" value={form.videoUrl} onChange={handleChange} placeholder="https://www.youtube.com/watch?v=..." />
+            Share platforms
+            <input name="sharePlatforms" value={form.sharePlatforms} onChange={handleChange} placeholder="WhatsApp, X, Facebook, LinkedIn, Email" />
           </label>
           <label>
             Cover image

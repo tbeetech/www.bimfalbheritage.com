@@ -4,7 +4,7 @@ Bimfalb Heritage - Cultural Platform Prototype
 Single-service demo: Express serves both the JSON-backed API and the built React UI (no MongoDB required). Posts live in a local JSON file; admin session uses cookies (and the password can be remembered in `localStorage` for demo speed).
 
 Stack
-- Frontend: React (Vite), React Router, React Quill, Day.js
+- Frontend: React (Vite), React Router, Day.js
 - Backend: Node.js, Express, express-session, Multer (local uploads), dotenv, CORS, Morgan
 - Storage: `backend/src/data/posts.json` (file-based)
 - Deployment target: Render (one Web Service)
@@ -26,7 +26,7 @@ Folder structure
 |  |- package.json
 |- frontend/            # Vite React SPA
 |  |- src/components/
-|  |- src/pages/        # Home, About, Blog, Post, Admin
+|  |- src/pages/        # Home, About, Events, Donations, News, Contact, FAQ, Post, Admin
 |  |- src/services/     # Axios helper + fallback
 |  |- src/data/         # Local demo posts (fallback)
 |  |- .env.example
@@ -45,6 +45,11 @@ Quick start (single service)
 4) Seed demo posts (optional): `cd ../backend && npm run seed`.
 5) Run everything: `npm run dev` (or `npm start`) from `backend`. The API and UI share `http://localhost:5000`.
 
+Reference structure clone coverage
+- Main menu is aligned to the live reference: `Home`, `About Us`, `Events`, `Donations`, `News`, `Contact Us`, `FAQ`.
+- The homepage section order mirrors the reference flow (hero, values, team, artist CTA, goals, events, contact CTA).
+- Footer structure mirrors the reference blocks (`About Us`, `Contact Info`, `Newsletter`, `Follow Us`, footer menu links).
+
 API endpoints
 - GET `/api/posts` (page, limit)
 - GET `/api/posts/:id`
@@ -55,6 +60,13 @@ API endpoints
 - POST `/api/auth/logout`
 - GET `/api/auth/status`
 - GET `/api/health`
+
+Blog cooperation and sharing fields
+- `excerpt`
+- `authorName`
+- `collaborationPartner`
+- `collaborationType`
+- `sharePlatforms` (comma-separated list, e.g. `WhatsApp, X, Facebook, LinkedIn`)
 
 Admin auth
 - POST `/api/auth/login` with `{ password: ADMIN_PASSWORD }` to start a session (`bh_session` cookie).
@@ -90,3 +102,5 @@ Demo notes
 - Rich text editor supports headers, lists, links, quotes, bold/italic/underline.
 - Blog list paginates; if the API is offline, the UI falls back to a built-in dataset.
 - Cookie session keeps admin logged in for 4 hours by default; logout is available on the Admin page.
+- Post detail pages include one-click sharing intents for WhatsApp, X, Facebook, LinkedIn, and email, plus copy-link support.
+- Admin composer includes cooperation metadata and cross-platform publication fields.

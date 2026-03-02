@@ -1,0 +1,30 @@
+.events-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 18px;
+}
+
+.event-item {
+  overflow: hidden;
+}
+
+.event-item img {
+  width: 100%;
+  height: 190px;
+  object-fit: cover;
+}
+
+.event-item div {
+  padding: 14px;
+}
+
+.event-item h2 {
+  font-size: 1.04rem;
+}
+
+.event-meta {
+  color: #b17030;
+  text-transform: uppercase;
+  font-size: 0.74rem;
+  letter-spacing: 1px;
+}

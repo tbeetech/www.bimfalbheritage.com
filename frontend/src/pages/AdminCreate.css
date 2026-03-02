@@ -9,13 +9,15 @@
 }
 
 .admin-form input,
-.admin-form select {
+.admin-form select,
+.admin-form textarea {
   width: 100%;
   padding: 12px 14px;
-  border-radius: 12px;
+  border-radius: 3px;
   border: 1px solid var(--border);
   background: #fff;
   font-size: 1rem;
+  font-family: Montserrat, sans-serif;
 }
 
 .admin-form label {

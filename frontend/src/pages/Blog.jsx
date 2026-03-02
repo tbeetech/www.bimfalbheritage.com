@@ -20,15 +20,19 @@ const Blog = () => {
 
   return (
     <div className="page">
-      <div className="blog-header">
-        <div>
-          <div className="pill">Journal</div>
-          <h1>Bimfalb stories & field notes</h1>
-          <p className="muted">Documenting history, craft, festivals, and the everyday beauty of Bimfalb communities.</p>
-        </div>
+      <header className="page-header">
+        <h1>Blog</h1>
+        <p>News and stories from Bimfalb Heritage programs and collaborators.</p>
+      </header>
+
+      <div className="blog-intro card">
+        <p>
+          This upgraded news hub includes editorial collaboration metadata and direct
+          multi-platform sharing so each story can travel across partner channels.
+        </p>
       </div>
 
-      <div className="grid featured-grid">
+      <div className="grid blog-grid">
         {posts.map((post) => (
           <ArticleCard key={post._id || post.id} post={post} />
         ))}

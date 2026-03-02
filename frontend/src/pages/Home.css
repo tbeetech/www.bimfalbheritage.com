@@ -1,94 +1,113 @@
-.about-preview {
-  margin-top: 28px;
-  padding: 24px;
+.home-section {
+  margin-top: 34px;
+}
+
+.hero-block {
+  min-height: 520px;
+  background: linear-gradient(120deg, rgba(9, 36, 21, 0.66), rgba(0, 0, 0, 0.56)),
+    url('https://bimfalbheritage.com/wp-content/uploads/2025/04/pexels-photo-27844274-27844274.jpg') center/cover;
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
-  gap: 18px;
+  align-items: end;
+  overflow: hidden;
 }
 
-.about-image {
-  min-height: 240px;
-  border-radius: 16px;
-  background: linear-gradient(180deg, rgba(18, 11, 7, 0.45), rgba(18, 11, 7, 0.7)), url('https://images.unsplash.com/photo-1520256862855-398228c41684?auto=format&fit=crop&w=900&q=80') center/cover;
-  box-shadow: var(--shadow);
+.hero-overlay {
+  padding: 34px;
+  max-width: 640px;
+  color: #fff;
 }
 
-.about-points {
-  display: grid;
-  gap: 10px;
-  margin-top: 14px;
+.hero-overlay h1 {
+  margin-bottom: 14px;
+  font-size: clamp(1.9rem, 3vw, 2.6rem);
 }
 
-.point {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  font-weight: 700;
+.hero-overlay p {
+  margin-bottom: 18px;
 }
 
-.dot {
-  width: 10px;
-  height: 10px;
-  border-radius: 50%;
-  background: var(--leaf);
-}
-
-.featured-grid {
-  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
-  margin-top: 12px;
-}
-
-.video-section {
-  margin-top: 26px;
-  padding: 22px;
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
-  gap: 18px;
-}
-
-.video-embed iframe,
-.video-placeholder {
-  width: 100%;
-  min-height: 280px;
-  border-radius: 16px;
-  border: none;
-  background: #0f0b08;
-  color: #f4ece1;
-}
-
-.video-placeholder {
-  display: grid;
-  place-items: center;
-  letter-spacing: 0.05em;
-}
-
-.newsletter {
-  margin-top: 26px;
-  padding: 22px;
-  display: grid;
-  grid-template-columns: 1.2fr 1fr;
-  gap: 16px;
-}
-
-.newsletter-form {
+.hero-actions {
   display: flex;
   gap: 10px;
-  align-items: center;
   flex-wrap: wrap;
 }
 
-.newsletter input {
-  flex: 1;
-  min-width: 220px;
-  padding: 12px 14px;
-  border-radius: 12px;
-  border: 1px solid var(--border);
-  background: #fff;
-  font-size: 1rem;
+.value-grid,
+.goal-grid {
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
 }
 
-@media (max-width: 720px) {
-  .newsletter {
-    grid-template-columns: 1fr;
-  }
+.feature-card,
+.goal-card,
+.event-card,
+.team-card {
+  overflow: hidden;
+}
+
+.feature-card img,
+.goal-card img,
+.event-card img,
+.team-card img {
+  width: 100%;
+  height: 190px;
+  object-fit: cover;
+}
+
+.feature-body,
+.goal-body,
+.event-body,
+.team-body {
+  padding: 14px;
+}
+
+.team-grid {
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+}
+
+.artist-cta {
+  margin-top: 34px;
+  background: linear-gradient(120deg, rgba(9, 36, 21, 0.94), rgba(9, 36, 21, 0.72)),
+    url('https://bimfalbheritage.com/wp-content/uploads/2025/04/pexels-photo-6193722-6193722.jpg') center/cover;
+  color: #fff;
+  padding: 26px;
+}
+
+.artist-cta h2 {
+  margin-bottom: 6px;
+}
+
+.artist-cta p {
+  margin-bottom: 16px;
+  max-width: 720px;
+}
+
+.event-grid {
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+}
+
+.event-date {
+  display: inline-block;
+  margin-bottom: 8px;
+  font-size: 0.72rem;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  color: #b17030;
+}
+
+.news-grid {
+  grid-template-columns: repeat(auto-fit, minmax(270px, 1fr));
+}
+
+.contact-strip {
+  margin-top: 34px;
+  padding: 20px 24px;
+  text-align: center;
+}
+
+.contact-strip h2 a {
+  color: #092415;
+}
+
+.contact-strip h2 a:hover {
+  color: #b17030;
 }
