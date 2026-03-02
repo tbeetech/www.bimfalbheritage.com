@@ -1,0 +1,53 @@
+.admin {
+  padding: 22px;
+}
+
+.admin-form {
+  display: grid;
+  gap: 12px;
+  margin-top: 12px;
+}
+
+.admin-form input,
+.admin-form select {
+  width: 100%;
+  padding: 12px 14px;
+  border-radius: 12px;
+  border: 1px solid var(--border);
+  background: #fff;
+  font-size: 1rem;
+}
+
+.admin-form label {
+  display: grid;
+  gap: 6px;
+  font-weight: 700;
+  color: var(--text);
+}
+
+.two-col {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 12px;
+}
+
+.session-row {
+  display: grid;
+  gap: 8px;
+}
+
+.session-actions {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.session-dot {
+  font-weight: 700;
+  color: var(--muted);
+}
+
+.session-dot.on {
+  color: var(--leaf);
+}

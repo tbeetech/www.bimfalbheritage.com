@@ -1,0 +1,43 @@
+.article-card {
+  overflow: hidden;
+  display: grid;
+  grid-template-rows: 180px auto;
+}
+
+.article-cover {
+  background-size: cover;
+  background-position: center;
+  min-height: 180px;
+  filter: saturate(1.05);
+}
+
+.article-body {
+  padding: 16px 18px 18px;
+  display: grid;
+  gap: 4px;
+}
+
+.article-body h3 {
+  margin: 4px 0;
+}
+
+.muted {
+  color: var(--muted);
+}
+
+.preview {
+  margin-top: 6px;
+  line-height: 1.6;
+}
+
+.read-more {
+  font-weight: 700;
+  color: var(--text);
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.read-more:hover {
+  color: var(--accent-strong);
+}

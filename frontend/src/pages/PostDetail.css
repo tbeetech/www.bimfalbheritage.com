@@ -1,0 +1,30 @@
+.post-detail {
+  overflow: hidden;
+}
+
+.post-hero {
+  height: 320px;
+  background-size: cover;
+  background-position: center;
+}
+
+.post-body {
+  padding: 20px 24px 28px;
+}
+
+.post-content {
+  margin-top: 14px;
+  line-height: 1.7;
+}
+
+.post-content ul {
+  padding-left: 18px;
+}
+
+.video-embed.detail iframe {
+  width: 100%;
+  min-height: 320px;
+  border-radius: 14px;
+  border: none;
+  margin-top: 12px;
+}

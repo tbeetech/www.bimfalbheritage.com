@@ -1,0 +1,25 @@
+.about-hero {
+  padding: 28px;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 18px;
+  background: linear-gradient(135deg, rgba(63, 122, 111, 0.12), rgba(210, 154, 61, 0.2)), var(--card);
+}
+
+.about-hero-image {
+  min-height: 240px;
+  border-radius: 18px;
+  background: linear-gradient(180deg, rgba(18, 11, 7, 0.25), rgba(18, 11, 7, 0.7)), url('https://images.unsplash.com/photo-1452570053594-1b985d6ea890?auto=format&fit=crop&w=900&q=80') center/cover;
+  box-shadow: var(--shadow);
+}
+
+.about-grid {
+  margin-top: 24px;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 16px;
+}
+
+.about-block {
+  padding: 18px;
+}

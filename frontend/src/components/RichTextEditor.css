@@ -1,0 +1,35 @@
+.rte-shell {
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  overflow: hidden;
+  background: #fff;
+}
+
+.rte-toolbar {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+  padding: 8px;
+  border-bottom: 1px solid var(--border);
+  background: #f9f3ea;
+}
+
+.rte-toolbar button {
+  border: 1px solid var(--border);
+  background: #fff;
+  border-radius: 8px;
+  padding: 6px 10px;
+  cursor: pointer;
+}
+
+.rte-editor {
+  min-height: 180px;
+  padding: 12px;
+  outline: none;
+  line-height: 1.7;
+}
+
+.rte-editor:empty::before {
+  content: attr(data-placeholder);
+  color: #9f8a7a;
+}

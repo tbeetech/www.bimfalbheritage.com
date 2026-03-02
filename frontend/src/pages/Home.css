@@ -1,0 +1,94 @@
+.about-preview {
+  margin-top: 28px;
+  padding: 24px;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 18px;
+}
+
+.about-image {
+  min-height: 240px;
+  border-radius: 16px;
+  background: linear-gradient(180deg, rgba(18, 11, 7, 0.45), rgba(18, 11, 7, 0.7)), url('https://images.unsplash.com/photo-1520256862855-398228c41684?auto=format&fit=crop&w=900&q=80') center/cover;
+  box-shadow: var(--shadow);
+}
+
+.about-points {
+  display: grid;
+  gap: 10px;
+  margin-top: 14px;
+}
+
+.point {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-weight: 700;
+}
+
+.dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: var(--leaf);
+}
+
+.featured-grid {
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  margin-top: 12px;
+}
+
+.video-section {
+  margin-top: 26px;
+  padding: 22px;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 18px;
+}
+
+.video-embed iframe,
+.video-placeholder {
+  width: 100%;
+  min-height: 280px;
+  border-radius: 16px;
+  border: none;
+  background: #0f0b08;
+  color: #f4ece1;
+}
+
+.video-placeholder {
+  display: grid;
+  place-items: center;
+  letter-spacing: 0.05em;
+}
+
+.newsletter {
+  margin-top: 26px;
+  padding: 22px;
+  display: grid;
+  grid-template-columns: 1.2fr 1fr;
+  gap: 16px;
+}
+
+.newsletter-form {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.newsletter input {
+  flex: 1;
+  min-width: 220px;
+  padding: 12px 14px;
+  border-radius: 12px;
+  border: 1px solid var(--border);
+  background: #fff;
+  font-size: 1rem;
+}
+
+@media (max-width: 720px) {
+  .newsletter {
+    grid-template-columns: 1fr;
+  }
+}

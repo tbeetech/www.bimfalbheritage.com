@@ -1,0 +1,74 @@
+.footer {
+  background: #120b07;
+  color: #f4ece1;
+  padding: 48px 24px 32px;
+  margin-top: 48px;
+}
+
+.footer-inner {
+  max-width: 1180px;
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 22px;
+}
+
+.footer h4 {
+  margin: 10px 0 6px;
+}
+
+.footer h5 {
+  margin: 0 0 10px;
+  letter-spacing: 0.03em;
+  text-transform: uppercase;
+  font-size: 0.85rem;
+}
+
+.footer a {
+  display: block;
+  color: #f4ece1;
+  opacity: 0.85;
+  margin-bottom: 8px;
+}
+
+.footer a:hover {
+  opacity: 1;
+}
+
+.footer .muted {
+  color: rgba(244, 236, 225, 0.7);
+}
+
+.footer-bottom {
+  max-width: 1180px;
+  margin: 22px auto 0;
+  padding-top: 16px;
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 0.92rem;
+  color: rgba(244, 236, 225, 0.8);
+}
+
+.brand-mark.small {
+  width: 38px;
+  height: 38px;
+  border-radius: 12px;
+  background: linear-gradient(135deg, var(--accent), var(--accent-strong));
+  color: #fff;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  box-shadow: var(--shadow);
+}
+
+@media (max-width: 640px) {
+  .footer-bottom {
+    flex-direction: column;
+    gap: 8px;
+    align-items: flex-start;
+  }
+}

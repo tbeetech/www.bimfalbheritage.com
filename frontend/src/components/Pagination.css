@@ -1,0 +1,23 @@
+.pager {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  margin-top: 18px;
+}
+
+.pager-status {
+  font-weight: 700;
+  color: var(--muted);
+}
+
+@media (max-width: 520px) {
+  .pager {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .pager-status {
+    text-align: center;
+  }
+}
