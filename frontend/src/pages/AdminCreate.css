@@ -60,7 +60,22 @@
   background: #fcf8ef;
 }
 
-.event-meta h3 {
-  margin-bottom: 10px;
-  font-size: 1rem;
+.existing-images {
+  display: grid;
+  gap: 6px;
+  margin-top: 6px;
 }
+
+.existing-images-grid {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.existing-thumb {
+  width: 80px;
+  height: 80px;
+  object-fit: cover;
+  border: 1px solid var(--border);
+}
+

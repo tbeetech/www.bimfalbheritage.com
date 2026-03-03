@@ -52,10 +52,32 @@ export const getSessionStatus = async () => {
 
 export const createPost = async (payload) => {
   const formData = new FormData();
-  Object.entries(payload).forEach(([key, value]) => {
+  const { images, ...rest } = payload;
+  Object.entries(rest).forEach(([key, value]) => {
     if (value !== undefined && value !== null) formData.append(key, value);
   });
+  if (Array.isArray(images)) {
+    images.forEach((img) => { if (img) formData.append('images', img); });
+  }
   const res = await api.post('/api/posts', formData);
+  return res.data;
+};
+
+export const updatePost = async (id, payload) => {
+  const formData = new FormData();
+  const { images, ...rest } = payload;
+  Object.entries(rest).forEach(([key, value]) => {
+    if (value !== undefined && value !== null) formData.append(key, value);
+  });
+  if (Array.isArray(images)) {
+    images.forEach((img) => { if (img) formData.append('images', img); });
+  }
+  const res = await api.put(`/api/posts/${id}`, formData);
+  return res.data;
+};
+
+export const deletePost = async (id) => {
+  const res = await api.delete(`/api/posts/${id}`);
   return res.data;
 };
 

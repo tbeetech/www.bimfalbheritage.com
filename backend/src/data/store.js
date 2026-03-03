@@ -12,6 +12,7 @@ const normalizePost = (post) => ({
   authorName: post.authorName || '',
   body: post.body || '',
   coverImage: post.coverImage || '',
+  images: Array.isArray(post.images) ? post.images : (post.coverImage ? [post.coverImage] : []),
   videoUrl: post.videoUrl || '',
   category: post.category || 'Culture',
   contentType: post.contentType || 'blog',

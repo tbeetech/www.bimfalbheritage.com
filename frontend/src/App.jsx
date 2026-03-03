@@ -29,6 +29,7 @@ const App = () => {
           <Route path="/contact" element={<Contact />} />
           <Route path="/faq" element={<Faq />} />
           <Route path="/admin" element={<AdminCreate />} />
+          <Route path="/admin/edit/:id" element={<AdminCreate />} />
         </Routes>
       </Layout>
     </BrowserRouter>

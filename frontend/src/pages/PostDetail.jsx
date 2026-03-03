@@ -1,10 +1,12 @@
 import { useEffect, useMemo, useState } from 'react';
-import { useParams } from 'react-router-dom';
+import { useParams, useNavigate } from 'react-router-dom';
 import dayjs from 'dayjs';
 import {
   addComment,
+  deletePost,
   getComments,
   getPost,
+  getSessionStatus,
   reactToComment,
   reactToPost,
 } from '../services/api';
@@ -84,11 +86,13 @@ const CommentNode = ({ comment, postId, onReact, onReply }) => {
 
 const PostDetail = () => {
   const { id } = useParams();
+  const navigate = useNavigate();
   const [post, setPost] = useState(null);
   const [copyState, setCopyState] = useState('');
   const [comments, setComments] = useState([]);
   const [author, setAuthor] = useState('');
   const [commentText, setCommentText] = useState('');
+  const [isAdmin, setIsAdmin] = useState(false);
 
   const loadPost = async () => {
     const data = await getPost(id);
@@ -114,6 +118,10 @@ const PostDetail = () => {
   useEffect(() => {
     if (id) loadComments();
   }, [id]);
+
+  useEffect(() => {
+    getSessionStatus().then((res) => setIsAdmin(res.admin)).catch(() => setIsAdmin(false));
+  }, []);
 
   const shareLinks = useMemo(() => {
     if (!post || typeof window === 'undefined') return null;
@@ -179,6 +187,17 @@ const PostDetail = () => {
     }
   };
 
+  const handleDeletePost = async () => {
+    if (!post) return;
+    if (!window.confirm('Delete this post permanently?')) return;
+    try {
+      await deletePost(post._id || post.id);
+      navigate('/blog');
+    } catch {
+      alert('Failed to delete post.');
+    }
+  };
+
   if (!post) {
     return <div className="page"><p>Loading...</p></div>;
   }
@@ -186,6 +205,13 @@ const PostDetail = () => {
   const cover = post.coverImage?.startsWith('http')
     ? post.coverImage
     : `${import.meta.env.VITE_API_URL || ''}${post.coverImage || ''}`;
+
+  const postImages = Array.isArray(post.images) && post.images.length > 0
+    ? post.images
+    : (post.coverImage ? [post.coverImage] : []);
+
+  const resolveImageUrl = (img) =>
+    img?.startsWith('http') ? img : `${import.meta.env.VITE_API_URL || ''}${img || ''}`;
 
   const sharePlatforms = post.sharePlatforms || '';
   const platformList = Array.isArray(sharePlatforms)
@@ -197,13 +223,31 @@ const PostDetail = () => {
   return (
     <div className="page">
       <article className="post-detail card">
-        {post.coverImage && <div className="post-hero" style={{ backgroundImage: `url(${cover})` }} />}
+        {postImages.length > 0 && (
+          <div className={`post-images-gallery${postImages.length === 1 ? ' single' : ''}`}>
+            {postImages.map((img, i) => (
+              <img
+                key={i}
+                src={resolveImageUrl(img)}
+                alt={i === 0 ? post.title : `Image ${i + 1}`}
+                className="post-gallery-img"
+              />
+            ))}
+          </div>
+        )}
         <div className="post-body">
           <h1>{post.title}</h1>
           <p className="post-meta">
             {dayjs(post.publishDate).format('MMMM DD, YYYY')} | {post.category || 'General'} | Type: {post.contentType || 'blog'}
             {post.authorName ? ` | By ${post.authorName}` : ''}
           </p>
+
+          {isAdmin && (
+            <div className="admin-actions">
+              <a className="btn secondary" href={`/admin/edit/${post._id || post.id}`}>Edit post</a>
+              <button type="button" className="btn danger" onClick={handleDeletePost}>Delete post</button>
+            </div>
+          )}
 
           <div className="post-vote">
             <button type="button" onClick={() => handlePostReaction('up')}>Upvote {post.upvotes || 0}</button>
