@@ -16,11 +16,21 @@
 
 .contact-form input,
 .contact-form textarea {
-  border: 1px solid #ededed;
+  border: 1px solid var(--line);
   border-radius: 3px;
   padding: 12px 15px;
   font-family: Montserrat, sans-serif;
   font-size: 0.95rem;
+  background: var(--bg-soft);
+  color: var(--text);
+  transition: border-color 240ms, box-shadow 240ms, background 300ms, color 300ms;
+}
+
+.contact-form input:focus,
+.contact-form textarea:focus {
+  outline: none;
+  border-color: var(--gold);
+  box-shadow: 0 0 0 3px rgba(197, 157, 85, 0.12);
 }
 
 @media (max-width: 880px) {

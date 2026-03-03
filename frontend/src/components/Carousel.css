@@ -12,17 +12,17 @@
   grid-auto-columns: 1fr;
   grid-auto-flow: column;
   gap: 18px;
-  animation: carousel-in 380ms var(--ease-out, cubic-bezier(0.16, 1, 0.3, 1));
+  animation: carousel-in 420ms var(--ease-out, cubic-bezier(0.16, 1, 0.3, 1)) both;
 }
 
 @keyframes carousel-in {
   from {
-    opacity: 0.4;
-    transform: translateX(12px);
+    opacity: 0;
+    transform: translateX(18px) scale(0.98);
   }
   to {
     opacity: 1;
-    transform: translateX(0);
+    transform: translateX(0) scale(1);
   }
 }
 
@@ -37,11 +37,13 @@
   top: 50%;
   transform: translateY(-50%);
   z-index: 2;
-  width: 38px;
-  height: 38px;
-  background: var(--green, #092415);
+  width: 40px;
+  height: 40px;
+  background: rgba(9, 36, 21, 0.75);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
   color: #fff;
-  border: 2px solid var(--gold, #c59d55);
+  border: 1px solid rgba(197, 157, 85, 0.5);
   border-radius: 50%;
   font-size: 1.5rem;
   line-height: 1;
@@ -49,13 +51,14 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  transition: background 220ms, transform 220ms;
+  transition: background 240ms var(--ease-out), transform 240ms var(--ease-out), box-shadow 240ms var(--ease-out);
   padding: 0;
 }
 
 .carousel-arrow:hover {
   background: var(--gold-2, #b17030);
-  transform: translateY(-50%) scale(1.08);
+  transform: translateY(-50%) scale(1.12);
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.3);
 }
 
 .carousel-arrow--prev {
@@ -82,12 +85,14 @@
   background: transparent;
   cursor: pointer;
   padding: 0;
-  transition: background 220ms, transform 220ms;
+  transition: background 240ms var(--ease-out), transform 240ms var(--ease-out), width 240ms var(--ease-out);
 }
 
 .carousel-dot.active {
   background: var(--gold, #c59d55);
-  transform: scale(1.25);
+  transform: scale(1.3);
+  width: 24px;
+  border-radius: 5px;
 }
 
 /* ── Responsive adjustments ───────────────────────────────────── */
@@ -97,8 +102,8 @@
   }
 
   .carousel-arrow {
-    width: 30px;
-    height: 30px;
+    width: 32px;
+    height: 32px;
     font-size: 1.2rem;
   }
 }

@@ -1,4 +1,5 @@
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
+import { ThemeProvider } from './context/ThemeContext';
 import Layout from './components/Layout';
 import Home from './pages/Home';
 import About from './pages/About';
@@ -12,6 +13,7 @@ import AdminCreate from './pages/AdminCreate';
 
 const App = () => {
   return (
+    <ThemeProvider>
     <BrowserRouter>
       <Layout>
         <Routes>
@@ -30,6 +32,7 @@ const App = () => {
         </Routes>
       </Layout>
     </BrowserRouter>
+    </ThemeProvider>
   );
 };
 
