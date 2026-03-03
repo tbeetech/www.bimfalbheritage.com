@@ -5,6 +5,8 @@ module.exports = [
     excerpt: 'Storytellers gather beneath the iroko tree where drums and oral history meet.',
     authorName: 'Bimfalb Editorial Team',
     category: 'Heritage',
+    contentType: 'blog',
+    tags: 'heritage,storytelling,oral-history',
     coverImage: 'https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?auto=format&fit=crop&w=1200&q=80',
     body: `
       <p>The Bimfalb storytellers gathered beneath the iroko tree, translating winds into words.</p>
@@ -18,6 +20,8 @@ module.exports = [
     collaborationPartner: 'Glow FM Radio',
     collaborationType: 'Media cooperation',
     sharePlatforms: 'WhatsApp, X, Facebook, LinkedIn',
+    upvotes: 18,
+    downvotes: 2,
     publishDate: new Date('2025-10-12'),
   },
   {
@@ -26,6 +30,8 @@ module.exports = [
     excerpt: 'Artisans read the soil like a library and translate color into story.',
     authorName: 'Field Correspondent',
     category: 'Culture',
+    contentType: 'lifestyle',
+    tags: 'culture,craft,indigo',
     coverImage: 'https://images.unsplash.com/photo-1545239351-1141bd82e8a6?auto=format&fit=crop&w=1200&q=80',
     body: `
       <p>Across the Bimfalb plains, earth is pigment. Indigo dye pits and clay kilns sit side by side.</p>
@@ -34,6 +40,8 @@ module.exports = [
     collaborationPartner: 'Community Arts Collective',
     collaborationType: 'Co-production',
     sharePlatforms: 'WhatsApp, Facebook, Email',
+    upvotes: 9,
+    downvotes: 1,
     publishDate: new Date('2025-12-02'),
   },
   {
@@ -42,6 +50,8 @@ module.exports = [
     excerpt: 'Boats once ferried poems; now choirs revive the route each solstice.',
     authorName: 'Culture Desk',
     category: 'History',
+    contentType: 'vlog',
+    tags: 'history,river,choir',
     coverImage: 'https://images.unsplash.com/photo-1441974231531-c6227db76b6e?auto=format&fit=crop&w=1200&q=80',
     body: `
       <p>Boats once drifted in quiet procession, ferrying poems downstream.</p>
@@ -50,6 +60,8 @@ module.exports = [
     collaborationPartner: 'River Arts Forum',
     collaborationType: 'Editorial partnership',
     sharePlatforms: 'X, LinkedIn, Email',
+    upvotes: 12,
+    downvotes: 0,
     publishDate: new Date('2026-01-18'),
   },
   {
@@ -58,6 +70,8 @@ module.exports = [
     excerpt: 'Thousands of hand-carved calabashes guide communities through story and memory.',
     authorName: 'Events Desk',
     category: 'Events',
+    contentType: 'event',
+    tags: 'festival,events,community',
     coverImage: 'https://images.unsplash.com/photo-1502082553048-f009c37129b9?auto=format&fit=crop&w=1200&q=80',
     body: `
       <p>Each dry season, thousands of hand-carved calabashes are lit from within and suspended above village paths.</p>
@@ -66,6 +80,16 @@ module.exports = [
     collaborationPartner: 'Festival Coordination Network',
     collaborationType: 'Event partnership',
     sharePlatforms: 'WhatsApp, Facebook, Email',
+    eventMeta: {
+      title: 'Festival of Calabash Light',
+      startDate: '2026-02-20T16:00:00.000Z',
+      endDate: '2026-02-20T21:00:00.000Z',
+      location: 'Akure, Ondo State',
+      externalUrl: 'https://facebook.com/events',
+      platform: 'Facebook Events',
+    },
+    upvotes: 25,
+    downvotes: 1,
     publishDate: new Date('2026-02-05'),
   },
 ];

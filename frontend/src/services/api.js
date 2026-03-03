@@ -5,13 +5,14 @@ const baseURL = import.meta.env.VITE_API_URL || (typeof window !== 'undefined' ?
 
 const api = axios.create({ baseURL, withCredentials: true });
 
-export const getPosts = async (page = 1, limit = 6) => {
+export const getPosts = async (page = 1, limit = 6, contentType = '') => {
   try {
-    const res = await api.get('/api/posts', { params: { page, limit } });
+    const res = await api.get('/api/posts', { params: { page, limit, contentType } });
     return res.data;
   } catch (err) {
     console.warn('API unavailable, using fallback data', err?.message);
-    return { data: fallbackPosts, pagination: { total: fallbackPosts.length, pages: 1, page: 1, limit } };
+    const filtered = contentType ? fallbackPosts.filter((post) => post.contentType === contentType) : fallbackPosts;
+    return { data: filtered, pagination: { total: filtered.length, pages: 1, page: 1, limit } };
   }
 };
 
@@ -43,5 +44,29 @@ export const createPost = async (payload) => {
     if (value !== undefined && value !== null) formData.append(key, value);
   });
   const res = await api.post('/api/posts', formData);
+  return res.data;
+};
+
+export const reactToPost = async (id, type = 'up') => {
+  const res = await api.post(`/api/posts/${id}/reactions`, { type });
+  return res.data;
+};
+
+export const getComments = async (id) => {
+  try {
+    const res = await api.get(`/api/posts/${id}/comments`);
+    return res.data;
+  } catch {
+    return fallbackPosts.find((post) => post.id === id)?.comments || [];
+  }
+};
+
+export const addComment = async (id, payload) => {
+  const res = await api.post(`/api/posts/${id}/comments`, payload);
+  return res.data;
+};
+
+export const reactToComment = async (id, commentId, type = 'up') => {
+  const res = await api.post(`/api/posts/${id}/comments/${commentId}/reactions`, { type });
   return res.data;
 };

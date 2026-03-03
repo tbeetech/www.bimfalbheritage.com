@@ -5,12 +5,16 @@
     "excerpt": "Storytellers gather beneath the iroko tree where drums and oral history meet.",
     "authorName": "Bimfalb Editorial Team",
     "category": "Heritage",
+    "contentType": "blog",
+    "tags": "heritage,storytelling,oral-history",
     "coverImage": "https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?auto=format&fit=crop&w=1200&q=80",
     "body": "\n      <p>The Bimfalb storytellers gathered beneath the iroko tree, translating winds into words.</p>\n      <p>Through drum patterns and call-and-response, history travelled across generations, reminding us that archives can also be sung.</p>\n      <ul>\n        <li>Lineage chants recorded on woven leather scrolls</li>\n        <li>Evening fireside circles open to all ages</li>\n        <li>Seasonal rituals that pair story with harvest</li>\n      </ul>",
     "videoUrl": "https://www.youtube.com/watch?v=ysz5S6PUM-U",
     "collaborationPartner": "Glow FM Radio",
     "collaborationType": "Media cooperation",
     "sharePlatforms": "WhatsApp, X, Facebook, LinkedIn",
+    "upvotes": 18,
+    "downvotes": 2,
     "publishDate": "2025-10-12T00:00:00.000Z"
   },
   {
@@ -19,12 +23,16 @@
     "excerpt": "Artisans read the soil like a library and translate color into story.",
     "authorName": "Field Correspondent",
     "category": "Culture",
+    "contentType": "lifestyle",
+    "tags": "culture,craft,indigo",
     "coverImage": "https://images.unsplash.com/photo-1545239351-1141bd82e8a6?auto=format&fit=crop&w=1200&q=80",
     "body": "\n      <p>Across the Bimfalb plains, earth is pigment. Indigo dye pits and clay kilns sit side by side.</p>\n      <p>Artisans read the soil the way librarians read shelves - searching for the exact hue that tells a story.</p>",
     "videoUrl": "",
     "collaborationPartner": "Community Arts Collective",
     "collaborationType": "Co-production",
     "sharePlatforms": "WhatsApp, Facebook, Email",
+    "upvotes": 9,
+    "downvotes": 1,
     "publishDate": "2025-12-02T00:00:00.000Z"
   },
   {
@@ -33,12 +41,16 @@
     "excerpt": "Boats once ferried poems; now choirs revive the route each solstice.",
     "authorName": "Culture Desk",
     "category": "History",
+    "contentType": "vlog",
+    "tags": "history,river,choir",
     "coverImage": "https://images.unsplash.com/photo-1441974231531-c6227db76b6e?auto=format&fit=crop&w=1200&q=80",
     "body": "\n      <p>Boats once drifted in quiet procession, ferrying poems downstream.</p>\n      <p>Today, community choirs revive that route each solstice, turning waterways into living stages.</p>",
     "videoUrl": "https://vimeo.com/1084537",
     "collaborationPartner": "River Arts Forum",
     "collaborationType": "Editorial partnership",
     "sharePlatforms": "X, LinkedIn, Email",
+    "upvotes": 12,
+    "downvotes": 0,
     "publishDate": "2026-01-18T00:00:00.000Z"
   },
   {
@@ -47,12 +59,24 @@
     "excerpt": "Thousands of hand-carved calabashes guide communities through story and memory.",
     "authorName": "Events Desk",
     "category": "Events",
+    "contentType": "event",
+    "tags": "festival,events,community",
     "coverImage": "https://images.unsplash.com/photo-1502082553048-f009c37129b9?auto=format&fit=crop&w=1200&q=80",
     "body": "\n      <p>Each dry season, thousands of hand-carved calabashes are lit from within and suspended above village paths.</p>\n      <p>The glow honors ancestors and guides young ones through stories of becoming.</p>",
     "videoUrl": "",
     "collaborationPartner": "Festival Coordination Network",
     "collaborationType": "Event partnership",
     "sharePlatforms": "WhatsApp, Facebook, Email",
+    "eventMeta": {
+      "title": "Festival of Calabash Light",
+      "startDate": "2026-02-20T16:00:00.000Z",
+      "endDate": "2026-02-20T21:00:00.000Z",
+      "location": "Akure, Ondo State",
+      "externalUrl": "https://facebook.com/events",
+      "platform": "Facebook Events"
+    },
+    "upvotes": 25,
+    "downvotes": 1,
     "publishDate": "2026-02-05T00:00:00.000Z"
   }
 ]

@@ -14,9 +14,12 @@ const ArticleCard = ({ post }) => {
     <article className="article-card card">
       {post.coverImage && <div className="article-cover" style={{ backgroundImage: `url(${cover})` }} />}
       <div className="article-body">
-        <span className="tag">{post.category || 'General'}</span>
+        <span className="tag">{post.contentType || post.category || 'General'}</span>
         <h3>{post.title}</h3>
         <p className="muted">{dayjs(post.publishDate).format('MMM DD, YYYY')}</p>
+        {typeof post.upvotes === 'number' && typeof post.downvotes === 'number' && (
+          <p className="meta-inline">Score {post.upvotes - post.downvotes}</p>
+        )}
         {post.collaborationPartner && (
           <p className="meta-inline">In cooperation with {post.collaborationPartner}</p>
         )}

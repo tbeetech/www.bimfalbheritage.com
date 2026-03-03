@@ -4,19 +4,29 @@ import Pagination from '../components/Pagination';
 import { getPosts } from '../services/api';
 import './Blog.css';
 
+const feedTabs = [
+  { label: 'All', value: '' },
+  { label: 'Blog', value: 'blog' },
+  { label: 'Vlog', value: 'vlog' },
+  { label: 'News', value: 'news' },
+  { label: 'Lifestyle', value: 'lifestyle' },
+  { label: 'Events', value: 'event' },
+];
+
 const Blog = () => {
   const [posts, setPosts] = useState([]);
   const [pagination, setPagination] = useState();
+  const [activeTab, setActiveTab] = useState('');
 
-  const load = async (page = 1) => {
-    const res = await getPosts(page, 6);
+  const load = async (page = 1, contentType = activeTab) => {
+    const res = await getPosts(page, 6, contentType);
     setPosts(res.data || []);
     setPagination(res.pagination);
   };
 
   useEffect(() => {
-    load();
-  }, []);
+    load(1, activeTab);
+  }, [activeTab]);
 
   return (
     <div className="page">
@@ -31,6 +41,18 @@ const Blog = () => {
           multi-platform sharing so each story can travel across partner channels.
         </p>
       </div>
+      <div className="feed-tabs">
+        {feedTabs.map((tab) => (
+          <button
+            key={tab.label}
+            type="button"
+            className={tab.value === activeTab ? 'active' : ''}
+            onClick={() => setActiveTab(tab.value)}
+          >
+            {tab.label}
+          </button>
+        ))}
+      </div>
 
       <div className="grid blog-grid">
         {posts.map((post) => (
@@ -38,7 +60,7 @@ const Blog = () => {
         ))}
       </div>
 
-      <Pagination pagination={pagination} onChange={load} />
+      <Pagination pagination={pagination} onChange={(page) => load(page, activeTab)} />
     </div>
   );
 };

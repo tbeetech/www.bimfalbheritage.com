@@ -1,7 +1,13 @@
 import { useEffect, useMemo, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import dayjs from 'dayjs';
-import { getPost } from '../services/api';
+import {
+  addComment,
+  getComments,
+  getPost,
+  reactToComment,
+  reactToPost,
+} from '../services/api';
 import './PostDetail.css';
 
 const toEmbedUrl = (url) => {
@@ -12,17 +18,101 @@ const toEmbedUrl = (url) => {
   return url;
 };
 
+const buildCommentTree = (comments) => {
+  const byId = new Map();
+  comments.forEach((comment) => byId.set(comment.id, { ...comment, replies: [] }));
+  const root = [];
+  byId.forEach((comment) => {
+    if (comment.parentId && byId.has(comment.parentId)) {
+      byId.get(comment.parentId).replies.push(comment);
+    } else {
+      root.push(comment);
+    }
+  });
+  return root;
+};
+
+const CommentNode = ({ comment, postId, onReact, onReply }) => {
+  const [showReply, setShowReply] = useState(false);
+  const [replyAuthor, setReplyAuthor] = useState('');
+  const [replyText, setReplyText] = useState('');
+
+  return (
+    <div className="comment-node">
+      <div className="comment-head">
+        <strong>{comment.author}</strong>
+        <span>{dayjs(comment.createdAt).format('MMM D, YYYY h:mm A')}</span>
+      </div>
+      <p>{comment.text}</p>
+      <div className="comment-actions">
+        <button type="button" onClick={() => onReact(postId, comment.id, 'up')}>Upvote {comment.upvotes || 0}</button>
+        <button type="button" onClick={() => onReact(postId, comment.id, 'down')}>Downvote {comment.downvotes || 0}</button>
+        <button type="button" onClick={() => setShowReply((prev) => !prev)}>Reply</button>
+      </div>
+
+      {showReply && (
+        <form
+          className="reply-form"
+          onSubmit={(event) => {
+            event.preventDefault();
+            onReply(postId, comment.id, replyAuthor, replyText);
+            setReplyText('');
+          }}
+        >
+          <input value={replyAuthor} onChange={(event) => setReplyAuthor(event.target.value)} placeholder="Name" />
+          <textarea value={replyText} onChange={(event) => setReplyText(event.target.value)} placeholder="Reply..." rows={2} />
+          <button type="submit">Post Reply</button>
+        </form>
+      )}
+
+      {comment.replies?.length > 0 && (
+        <div className="comment-replies">
+          {comment.replies.map((reply) => (
+            <CommentNode
+              key={reply.id}
+              comment={reply}
+              postId={postId}
+              onReact={onReact}
+              onReply={onReply}
+            />
+          ))}
+        </div>
+      )}
+    </div>
+  );
+};
+
 const PostDetail = () => {
   const { id } = useParams();
   const [post, setPost] = useState(null);
   const [copyState, setCopyState] = useState('');
+  const [comments, setComments] = useState([]);
+  const [author, setAuthor] = useState('');
+  const [commentText, setCommentText] = useState('');
+
+  const loadPost = async () => {
+    const data = await getPost(id);
+    setPost(data);
+  };
+
+  const loadComments = async () => {
+    try {
+      const data = await getComments(id);
+      setComments(data);
+    } catch {
+      setComments(post?.comments || []);
+    }
+  };
 
   useEffect(() => {
     const load = async () => {
-      const data = await getPost(id);
-      setPost(data);
+      await loadPost();
     };
     load();
+  }, [id]);
+
+  useEffect(() => {
+    if (id) loadComments();
   }, [id]);
 
   const shareLinks = useMemo(() => {
@@ -38,6 +128,57 @@ const PostDetail = () => {
     };
   }, [post]);
 
+  const handlePostReaction = async (type) => {
+    if (!post) return;
+    try {
+      const next = await reactToPost(post._id || post.id, type);
+      setPost((prev) => ({ ...prev, ...next }));
+    } catch {
+      setPost((prev) => ({
+        ...prev,
+        upvotes: type === 'up' ? (prev.upvotes || 0) + 1 : prev.upvotes || 0,
+        downvotes: type === 'down' ? (prev.downvotes || 0) + 1 : prev.downvotes || 0,
+      }));
+    }
+  };
+
+  const handleCommentReaction = async (postId, commentId, type) => {
+    try {
+      await reactToComment(postId, commentId, type);
+      await loadComments();
+    } catch {
+      setComments((prev) => prev.map((comment) => {
+        if (comment.id !== commentId) return comment;
+        return {
+          ...comment,
+          upvotes: type === 'up' ? (comment.upvotes || 0) + 1 : comment.upvotes || 0,
+          downvotes: type === 'down' ? (comment.downvotes || 0) + 1 : comment.downvotes || 0,
+        };
+      }));
+    }
+  };
+
+  const handleAddComment = async (postId, parentId, nextAuthor, nextText) => {
+    if (!nextText.trim()) return;
+    try {
+      await addComment(postId, { author: nextAuthor || 'Guest', text: nextText, parentId });
+      await loadComments();
+    } catch {
+      setComments((prev) => [
+        ...prev,
+        {
+          id: `local-${Date.now()}`,
+          parentId: parentId || null,
+          author: nextAuthor || 'Guest',
+          text: nextText,
+          createdAt: new Date().toISOString(),
+          upvotes: 0,
+          downvotes: 0,
+        },
+      ]);
+    }
+  };
+
   if (!post) {
     return <div className="page"><p>Loading...</p></div>;
   }
@@ -51,6 +192,8 @@ const PostDetail = () => {
     ? sharePlatforms
     : sharePlatforms.split(',').map((s) => s.trim()).filter(Boolean);
 
+  const commentTree = buildCommentTree(comments);
+
   return (
     <div className="page">
       <article className="post-detail card">
@@ -58,9 +201,15 @@ const PostDetail = () => {
         <div className="post-body">
           <h1>{post.title}</h1>
           <p className="post-meta">
-            {dayjs(post.publishDate).format('MMMM DD, YYYY')} | {post.category || 'General'}
+            {dayjs(post.publishDate).format('MMMM DD, YYYY')} | {post.category || 'General'} | Type: {post.contentType || 'blog'}
             {post.authorName ? ` | By ${post.authorName}` : ''}
           </p>
+
+          <div className="post-vote">
+            <button type="button" onClick={() => handlePostReaction('up')}>Upvote {post.upvotes || 0}</button>
+            <button type="button" onClick={() => handlePostReaction('down')}>Downvote {post.downvotes || 0}</button>
+            <span>Score {(post.upvotes || 0) - (post.downvotes || 0)}</span>
+          </div>
 
           {(post.collaborationPartner || post.collaborationType) && (
             <div className="cooperation-box">
@@ -69,6 +218,24 @@ const PostDetail = () => {
                 {post.collaborationPartner || 'Partner not specified'}
                 {post.collaborationType ? ` (${post.collaborationType})` : ''}
               </p>
+            </div>
+          )}
+
+          {post.contentType === 'event' && (
+            <div className="event-box">
+              <h3>{post.eventMeta?.title || post.title}</h3>
+              <p>{post.eventMeta?.location}</p>
+              {post.eventMeta?.startDate && (
+                <p>
+                  {dayjs(post.eventMeta.startDate).format('MMM D, YYYY h:mm A')}
+                  {post.eventMeta?.endDate ? ` - ${dayjs(post.eventMeta.endDate).format('MMM D, YYYY h:mm A')}` : ''}
+                </p>
+              )}
+              {post.eventMeta?.externalUrl && (
+                <a href={post.eventMeta.externalUrl} target="_blank" rel="noreferrer">
+                  Open {post.eventMeta?.platform || 'Event link'}
+                </a>
+              )}
             </div>
           )}
 
@@ -112,6 +279,35 @@ const PostDetail = () => {
               />
             </div>
           )}
+
+          <section className="comments-panel">
+            <h2>Interactive Responses</h2>
+            <form
+              className="comment-form"
+              onSubmit={async (event) => {
+                event.preventDefault();
+                await handleAddComment(post._id || post.id, null, author, commentText);
+                setCommentText('');
+              }}
+            >
+              <input value={author} onChange={(event) => setAuthor(event.target.value)} placeholder="Name (optional)" />
+              <textarea value={commentText} onChange={(event) => setCommentText(event.target.value)} placeholder="Add your response..." rows={3} required />
+              <button type="submit">Post Response</button>
+            </form>
+
+            <div className="comment-list">
+              {commentTree.length === 0 && <p className="muted">No responses yet.</p>}
+              {commentTree.map((comment) => (
+                <CommentNode
+                  key={comment.id}
+                  comment={comment}
+                  postId={post._id || post.id}
+                  onReact={handleCommentReaction}
+                  onReply={handleAddComment}
+                />
+              ))}
+            </div>
+          </section>
         </div>
       </article>
     </div>

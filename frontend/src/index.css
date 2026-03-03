@@ -12,6 +12,7 @@
   --line: #e7e7e7;
   --white: #ffffff;
   --shadow: 0 16px 30px rgba(0, 0, 0, 0.08);
+  --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 *,
@@ -27,6 +28,11 @@ body {
   font-family: Montserrat, sans-serif;
   font-size: 14px;
   line-height: 1.8;
+  overflow-x: hidden;
+}
+
+html {
+  scroll-behavior: smooth;
 }
 
 a {
@@ -53,6 +59,7 @@ p {
   max-width: 1180px;
   margin: 0 auto;
   padding: 42px 20px 80px;
+  animation: page-enter 560ms var(--ease-out);
 }
 
 .page-header {
@@ -74,6 +81,7 @@ p {
   border: 1px solid var(--line);
   border-radius: 6px;
   box-shadow: var(--shadow);
+  transition: transform 260ms var(--ease-out), box-shadow 260ms var(--ease-out), border-color 260ms var(--ease-out);
 }
 
 .muted {
@@ -115,10 +123,13 @@ p {
   background: var(--green);
   color: #fff;
   cursor: pointer;
+  transition: transform 220ms var(--ease-out), background-color 220ms var(--ease-out), box-shadow 220ms var(--ease-out);
 }
 
 .btn:hover {
   background: var(--gold-2);
+  transform: translateY(-2px);
+  box-shadow: 0 14px 22px rgba(0, 0, 0, 0.18);
 }
 
 .btn.secondary {
@@ -142,6 +153,32 @@ p {
 .grid {
   display: grid;
   gap: 18px;
+}
+
+.grid > * {
+  animation: reveal-up 560ms var(--ease-out);
+}
+
+@keyframes page-enter {
+  0% {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes reveal-up {
+  0% {
+    opacity: 0;
+    transform: translateY(16px) scale(0.99);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
 }
 
 @media (max-width: 820px) {

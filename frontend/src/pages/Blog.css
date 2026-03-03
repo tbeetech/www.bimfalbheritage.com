@@ -3,6 +3,31 @@
   margin-bottom: 18px;
 }
 
+.feed-tabs {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin-bottom: 14px;
+}
+
+.feed-tabs button {
+  border: 1px solid #d5d5d5;
+  background: #fff;
+  color: #2c2c2c;
+  padding: 8px 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.7px;
+  font-size: 0.74rem;
+  cursor: pointer;
+}
+
+.feed-tabs button.active,
+.feed-tabs button:hover {
+  background: #092415;
+  color: #fff;
+  border-color: #092415;
+}
+
 .blog-grid {
   grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
 }

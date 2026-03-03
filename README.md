@@ -52,10 +52,15 @@ Reference structure clone coverage
 
 API endpoints
 - GET `/api/posts` (page, limit)
+- GET `/api/posts?contentType=blog|vlog|news|lifestyle|event` (feed filter)
 - GET `/api/posts/:id`
 - POST `/api/posts` (admin-only, multipart; field name `coverImage`)
 - PUT `/api/posts/:id` (admin-only)
 - DELETE `/api/posts/:id` (admin-only)
+- POST `/api/posts/:id/reactions` with `{ "type": "up" | "down" }`
+- GET `/api/posts/:id/comments`
+- POST `/api/posts/:id/comments` with `{ "author": "...", "text": "...", "parentId": null | "<comment-id>" }`
+- POST `/api/posts/:id/comments/:commentId/reactions` with `{ "type": "up" | "down" }`
 - POST `/api/auth/login` (sets cookie session)
 - POST `/api/auth/logout`
 - GET `/api/auth/status`
@@ -67,6 +72,15 @@ Blog cooperation and sharing fields
 - `collaborationPartner`
 - `collaborationType`
 - `sharePlatforms` (comma-separated list, e.g. `WhatsApp, X, Facebook, LinkedIn`)
+- `contentType` (`blog`, `vlog`, `news`, `lifestyle`, `event`)
+- `tags` (comma-separated)
+- Event setup fields for event posts:
+  - `eventTitle`
+  - `eventStartDate`
+  - `eventEndDate`
+  - `eventLocation`
+  - `eventExternalUrl`
+  - `eventPlatform`
 
 Admin auth
 - POST `/api/auth/login` with `{ password: ADMIN_PASSWORD }` to start a session (`bh_session` cookie).
@@ -104,3 +118,4 @@ Demo notes
 - Cookie session keeps admin logged in for 4 hours by default; logout is available on the Admin page.
 - Post detail pages include one-click sharing intents for WhatsApp, X, Facebook, LinkedIn, and email, plus copy-link support.
 - Admin composer includes cooperation metadata and cross-platform publication fields.
+- Post detail now supports Reddit-style interactions: upvote/downvote, comment posting, nested replies, and comment voting.

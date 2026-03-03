@@ -4,7 +4,8 @@ import RichTextEditor from '../components/RichTextEditor';
 import { createPost, login, getSessionStatus, logout } from '../services/api';
 import './AdminCreate.css';
 
-const categories = ['History', 'Culture', 'Heritage', 'Events'];
+const categories = ['History', 'Culture', 'Heritage', 'Events', 'Lifestyle'];
+const contentTypes = ['blog', 'vlog', 'news', 'lifestyle', 'event'];
 
 const AdminCreate = () => {
   const [form, setForm] = useState({
@@ -12,11 +13,19 @@ const AdminCreate = () => {
     excerpt: '',
     authorName: '',
     category: 'Culture',
+    contentType: 'blog',
+    tags: '',
     publishDate: dayjs().format('YYYY-MM-DD'),
     videoUrl: '',
     collaborationPartner: '',
     collaborationType: '',
     sharePlatforms: '',
+    eventTitle: '',
+    eventStartDate: '',
+    eventEndDate: '',
+    eventLocation: '',
+    eventExternalUrl: '',
+    eventPlatform: 'Facebook Events',
   });
   const [body, setBody] = useState('');
   const [coverImage, setCoverImage] = useState(null);
@@ -56,6 +65,14 @@ const AdminCreate = () => {
         coverImage,
       });
       setStatus('Post created!');
+      setForm((prev) => ({
+        ...prev,
+        title: '',
+        excerpt: '',
+        tags: '',
+      }));
+      setBody('');
+      setCoverImage(null);
     } catch (err) {
       setStatus('Failed to create post. Check session or server.');
     }
@@ -107,6 +124,12 @@ const AdminCreate = () => {
                 {categories.map((c) => <option key={c}>{c}</option>)}
               </select>
             </label>
+            <label>
+              Content type
+              <select name="contentType" value={form.contentType} onChange={handleChange}>
+                {contentTypes.map((c) => <option key={c} value={c}>{c}</option>)}
+              </select>
+            </label>
           </div>
           <div className="two-col">
             <label>
@@ -132,6 +155,45 @@ const AdminCreate = () => {
             Share platforms
             <input name="sharePlatforms" value={form.sharePlatforms} onChange={handleChange} placeholder="WhatsApp, X, Facebook, LinkedIn, Email" />
           </label>
+          <label>
+            Tags
+            <input name="tags" value={form.tags} onChange={handleChange} placeholder="culture, event, lifestyle" />
+          </label>
+          {form.contentType === 'event' && (
+            <div className="event-meta card">
+              <h3>Event Setup (Facebook-style event launch)</h3>
+              <div className="two-col">
+                <label>
+                  Event title
+                  <input name="eventTitle" value={form.eventTitle} onChange={handleChange} required={form.contentType === 'event'} />
+                </label>
+                <label>
+                  Event platform
+                  <input name="eventPlatform" value={form.eventPlatform} onChange={handleChange} />
+                </label>
+              </div>
+              <div className="two-col">
+                <label>
+                  Event start
+                  <input type="datetime-local" name="eventStartDate" value={form.eventStartDate} onChange={handleChange} />
+                </label>
+                <label>
+                  Event end
+                  <input type="datetime-local" name="eventEndDate" value={form.eventEndDate} onChange={handleChange} />
+                </label>
+              </div>
+              <div className="two-col">
+                <label>
+                  Event location
+                  <input name="eventLocation" value={form.eventLocation} onChange={handleChange} />
+                </label>
+                <label>
+                  External event link
+                  <input name="eventExternalUrl" value={form.eventExternalUrl} onChange={handleChange} placeholder="https://facebook.com/events/..." />
+                </label>
+              </div>
+            </div>
+          )}
           <label>
             Cover image
             <input type="file" accept="image/*" onChange={(e) => setCoverImage(e.target.files[0])} />

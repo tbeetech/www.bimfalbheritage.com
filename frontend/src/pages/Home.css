@@ -9,12 +9,14 @@
   display: grid;
   align-items: end;
   overflow: hidden;
+  position: relative;
 }
 
 .hero-overlay {
   padding: 34px;
   max-width: 640px;
   color: #fff;
+  animation: hero-fade 700ms var(--ease-out);
 }
 
 .hero-overlay h1 {
@@ -42,6 +44,15 @@
 .event-card,
 .team-card {
   overflow: hidden;
+  transform-style: preserve-3d;
+}
+
+.feature-card:hover,
+.goal-card:hover,
+.event-card:hover,
+.team-card:hover {
+  transform: translateY(-6px);
+  border-color: #c7b494;
 }
 
 .feature-card img,
@@ -110,4 +121,15 @@
 
 .contact-strip h2 a:hover {
   color: #b17030;
+}
+
+@keyframes hero-fade {
+  0% {
+    opacity: 0;
+    transform: translateY(24px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
