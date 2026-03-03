@@ -15,6 +15,28 @@
   --white: #ffffff;
   --shadow: 0 16px 30px rgba(0, 0, 0, 0.08);
   --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+  --card: rgba(255, 255, 255, 0.7);
+  --glass-border: rgba(255, 255, 255, 0.4);
+  --glass-shadow: 0 8px 32px rgba(31, 38, 135, 0.1);
+}
+
+[data-theme='dark'] {
+  --bg: #0d1117;
+  --bg-soft: #161b22;
+  --text: #e6e1d8;
+  --muted: #9d9488;
+  --green: #0d341f;
+  --green-2: #155230;
+  --gold: #d4aa66;
+  --gold-2: #c98a3a;
+  --terracotta: #c06040;
+  --ochre: #e08830;
+  --line: #2a2420;
+  --white: #1e2228;
+  --shadow: 0 16px 30px rgba(0, 0, 0, 0.4);
+  --card: rgba(20, 26, 18, 0.75);
+  --glass-border: rgba(197, 157, 85, 0.18);
+  --glass-shadow: 0 8px 32px rgba(0, 0, 0, 0.35);
 }
 
 *,
@@ -31,6 +53,7 @@ body {
   font-size: 14px;
   line-height: 1.8;
   overflow-x: hidden;
+  transition: background 300ms ease, color 300ms ease;
 }
 
 html {
@@ -61,7 +84,7 @@ p {
   max-width: 1180px;
   margin: 0 auto;
   padding: 42px 20px 80px;
-  animation: page-enter 560ms var(--ease-out);
+  animation: page-enter 700ms var(--ease-out) both;
 }
 
 .page-header {
@@ -78,12 +101,19 @@ p {
   margin-bottom: 8px;
 }
 
+/* ── Glass card ──────────────────────────────────────────────────── */
 .card {
-  background: var(--white);
-  border: 1px solid var(--line);
-  border-radius: 4px;
-  box-shadow: var(--shadow);
-  transition: transform 260ms var(--ease-out), box-shadow 260ms var(--ease-out), border-color 260ms var(--ease-out);
+  background: var(--card);
+  border: 1px solid var(--glass-border);
+  border-radius: 12px;
+  box-shadow: var(--glass-shadow);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  transition: transform 320ms var(--ease-out), box-shadow 320ms var(--ease-out), border-color 320ms var(--ease-out);
+}
+
+.card:hover {
+  box-shadow: 0 20px 48px rgba(0, 0, 0, 0.18);
 }
 
 .section-title {
@@ -133,6 +163,12 @@ p {
   font-size: 0.68rem;
 }
 
+[data-theme='dark'] .tag {
+  background: rgba(177, 112, 48, 0.15);
+  color: var(--gold);
+  border-color: rgba(197, 157, 85, 0.25);
+}
+
 .btn {
   display: inline-flex;
   align-items: center;
@@ -146,22 +182,41 @@ p {
   background: var(--green);
   color: #fff;
   cursor: pointer;
-  transition: transform 220ms var(--ease-out), background-color 220ms var(--ease-out), box-shadow 220ms var(--ease-out);
+  transition: transform 260ms var(--ease-out), background-color 260ms var(--ease-out), box-shadow 260ms var(--ease-out);
+  border-radius: 4px;
+  position: relative;
+  overflow: hidden;
+}
+
+.btn::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.12), transparent 60%);
+  opacity: 0;
+  transition: opacity 260ms;
+}
+
+.btn:hover::before {
+  opacity: 1;
 }
 
 .btn:hover {
   background: var(--gold-2);
-  transform: translateY(-2px);
-  box-shadow: 0 14px 22px rgba(0, 0, 0, 0.18);
+  transform: translateY(-3px);
+  box-shadow: 0 14px 28px rgba(0, 0, 0, 0.22);
 }
 
 .btn.secondary {
-  background: #fff;
-  color: var(--text);
-  border-color: #d8d8d8;
+  background: rgba(255, 255, 255, 0.15);
+  color: #fff;
+  border-color: rgba(255, 255, 255, 0.5);
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
 }
 
 .btn.secondary:hover {
+  background: rgba(255, 255, 255, 0.25);
   color: #fff;
 }
 
@@ -171,13 +226,50 @@ p {
 }
 
 .grid > * {
-  animation: reveal-up 560ms var(--ease-out);
+  animation: reveal-up 560ms var(--ease-out) both;
+}
+
+/* ── Staggered grid children ──────────────────────────────────── */
+@media (prefers-reduced-motion: no-preference) {
+  .grid > *:nth-child(1) { animation-delay: 0ms; }
+  .grid > *:nth-child(2) { animation-delay: 60ms; }
+  .grid > *:nth-child(3) { animation-delay: 120ms; }
+  .grid > *:nth-child(4) { animation-delay: 180ms; }
+  .grid > *:nth-child(5) { animation-delay: 240ms; }
+  .grid > *:nth-child(6) { animation-delay: 300ms; }
+}
+
+/* ── Respect reduced-motion preference ───────────────────────── */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+/* ── Floating particle animation utility ──────────────────────── */
+@keyframes float {
+  0%, 100% { transform: translateY(0); }
+  50%       { transform: translateY(-10px); }
+}
+
+@keyframes pulse-glow {
+  0%, 100% { box-shadow: 0 0 8px rgba(197, 157, 85, 0.3); }
+  50%       { box-shadow: 0 0 24px rgba(197, 157, 85, 0.7); }
+}
+
+@keyframes shimmer {
+  0%   { background-position: -200% center; }
+  100% { background-position: 200% center; }
 }
 
 @keyframes page-enter {
   0% {
     opacity: 0;
-    transform: translateY(10px);
+    transform: translateY(14px);
   }
   100% {
     opacity: 1;
@@ -188,11 +280,33 @@ p {
 @keyframes reveal-up {
   0% {
     opacity: 0;
-    transform: translateY(16px) scale(0.99);
+    transform: translateY(22px) scale(0.98);
   }
   100% {
     opacity: 1;
     transform: translateY(0) scale(1);
+  }
+}
+
+@keyframes slide-in-left {
+  0% {
+    opacity: 0;
+    transform: translateX(-30px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes scale-in {
+  0% {
+    opacity: 0;
+    transform: scale(0.92);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1);
   }
 }
 
