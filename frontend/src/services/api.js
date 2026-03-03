@@ -5,6 +5,18 @@ const baseURL = import.meta.env.VITE_API_URL || (typeof window !== 'undefined' ?
 
 const api = axios.create({ baseURL, withCredentials: true });
 
+// Include stored admin password as x-admin-token header so token-based auth
+// works as a fallback when the session cookie is unavailable (e.g. cross-origin).
+api.interceptors.request.use((config) => {
+  if (typeof window !== 'undefined') {
+    const storedPassword = localStorage.getItem('bh_admin_password');
+    if (storedPassword) {
+      config.headers['x-admin-token'] = storedPassword;
+    }
+  }
+  return config;
+});
+
 export const getPosts = async (page = 1, limit = 6, contentType = '') => {
   try {
     const res = await api.get('/api/posts', { params: { page, limit, contentType } });

@@ -21,7 +21,7 @@ const Navbar = () => {
       <div className="nav-shell">
         <div className="nav">
           <Link to="/" className="nav-brand">
-            <img src="https://bimfalbheritage.com/wp-content/uploads/2025/04/logo.png" alt="Bimfalb Heritage" />
+            <img src="https://i.pinimg.com/736x/74/a6/7a/74a67a0e89577fe7e9d15af54eeb7143.jpg" alt="Bimfalb Heritage" />
             <div>
               <strong>Bimfalb Heritage</strong>
               <small>...promoting cultural heritage</small>
