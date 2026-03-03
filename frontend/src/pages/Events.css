@@ -23,7 +23,7 @@
 }
 
 .event-meta {
-  color: #b17030;
+  color: var(--gold-2);
   text-transform: uppercase;
   font-size: 0.74rem;
   letter-spacing: 1px;

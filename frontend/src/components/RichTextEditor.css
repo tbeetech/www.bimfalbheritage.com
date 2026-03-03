@@ -2,7 +2,7 @@
   border: 1px solid var(--border);
   border-radius: 14px;
   overflow: hidden;
-  background: #fff;
+  background: var(--bg-soft);
 }
 
 .rte-toolbar {
@@ -11,12 +11,13 @@
   flex-wrap: wrap;
   padding: 8px;
   border-bottom: 1px solid var(--border);
-  background: #f9f3ea;
+  background: var(--bg);
 }
 
 .rte-toolbar button {
   border: 1px solid var(--border);
-  background: #fff;
+  background: var(--bg-soft);
+  color: var(--text);
   border-radius: 8px;
   padding: 6px 10px;
   cursor: pointer;
@@ -31,5 +32,5 @@
 
 .rte-editor:empty::before {
   content: attr(data-placeholder);
-  color: #9f8a7a;
+  color: var(--muted);
 }
