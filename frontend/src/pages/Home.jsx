@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import ArticleCard from '../components/ArticleCard';
+import Carousel from '../components/Carousel';
 import { eventCards, goalCards, teamCards, valueCards } from '../data/siteContent';
 import { getPosts } from '../services/api';
 import './Home.css';
@@ -10,7 +11,7 @@ const Home = () => {
 
   useEffect(() => {
     const load = async () => {
-      const res = await getPosts(1, 3);
+      const res = await getPosts(1, 6);
       setPosts(res.data || []);
     };
     load();
@@ -20,6 +21,7 @@ const Home = () => {
     <div className="page">
       <section className="hero-block card">
         <div className="hero-overlay">
+          <div className="hero-badge">&#10022; Bimfalb Heritage &#10022;</div>
           <h1>Bimfalb cultural heritage promotion and initiative</h1>
           <p>
             Promoting education and awareness about different cultures and heritage.
@@ -33,38 +35,40 @@ const Home = () => {
       </section>
 
       <section className="home-section">
-        <div className="section-title">
+        <div className="section-title african-divider">
           <h2>We promote Cultural Heritage and Values</h2>
           <p className="muted">Cultural heritage is the foundation upon which we build our future.</p>
         </div>
-        <div className="grid value-grid">
-          {valueCards.map((item) => (
-            <article className="feature-card card" key={item.title}>
+        <Carousel
+          items={valueCards}
+          renderItem={(item) => (
+            <article className="feature-card card">
               <img src={item.image} alt={item.title} />
               <div className="feature-body">
                 <h3>{item.title}</h3>
                 <p>{item.text}</p>
               </div>
             </article>
-          ))}
-        </div>
+          )}
+        />
       </section>
 
       <section className="home-section">
-        <div className="section-title">
+        <div className="section-title african-divider">
           <h2>Our Dedicated Team</h2>
         </div>
-        <div className="grid team-grid">
-          {teamCards.map((item) => (
-            <article className="team-card card" key={`${item.name}-${item.image}`}>
+        <Carousel
+          items={teamCards}
+          renderItem={(item) => (
+            <article className="team-card card">
               <img src={item.image} alt={item.name} />
               <div className="team-body">
                 <h3>{item.name}</h3>
                 <p>{item.role}</p>
               </div>
             </article>
-          ))}
-        </div>
+          )}
+        />
       </section>
 
       <section className="artist-cta card">
@@ -77,29 +81,31 @@ const Home = () => {
       </section>
 
       <section className="home-section">
-        <div className="section-title">
+        <div className="section-title african-divider">
           <h2>Clearly Defined Goals</h2>
         </div>
-        <div className="grid goal-grid">
-          {goalCards.map((item) => (
-            <article className="goal-card card" key={item.title}>
+        <Carousel
+          items={goalCards}
+          renderItem={(item) => (
+            <article className="goal-card card">
               <img src={item.image} alt={item.title} />
               <div className="goal-body">
                 <h3>{item.title}</h3>
                 <p>{item.text}</p>
               </div>
             </article>
-          ))}
-        </div>
+          )}
+        />
       </section>
 
       <section className="home-section">
-        <div className="section-title">
+        <div className="section-title african-divider">
           <h2>Recent Events</h2>
         </div>
-        <div className="grid event-grid">
-          {eventCards.slice(0, 3).map((item) => (
-            <article className="event-card card" key={item.title}>
+        <Carousel
+          items={eventCards}
+          renderItem={(item) => (
+            <article className="event-card card">
               <img src={item.image} alt={item.title} />
               <div className="event-body">
                 <span className="event-date">{item.date}</span>
@@ -107,20 +113,23 @@ const Home = () => {
                 <p>{item.text}</p>
               </div>
             </article>
-          ))}
-        </div>
+          )}
+        />
       </section>
 
-      <section className="home-section">
-        <div className="section-title">
-          <h2>Latest News</h2>
-        </div>
-        <div className="grid news-grid">
-          {posts.map((post) => (
-            <ArticleCard key={post._id || post.id} post={post} />
-          ))}
-        </div>
-      </section>
+      {posts.length > 0 && (
+        <section className="home-section">
+          <div className="section-title african-divider">
+            <h2>Latest News</h2>
+          </div>
+          <Carousel
+            items={posts}
+            renderItem={(post) => (
+              <ArticleCard post={post} />
+            )}
+          />
+        </section>
+      )}
 
       <section className="contact-strip card">
         <h2><Link to="/contact">Contact Us today</Link></h2>

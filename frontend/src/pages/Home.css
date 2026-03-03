@@ -1,44 +1,72 @@
 .home-section {
-  margin-top: 34px;
+  margin-top: 40px;
 }
 
+/* ── Hero ──────────────────────────────────────────────────────── */
 .hero-block {
-  min-height: 520px;
-  background: linear-gradient(120deg, rgba(9, 36, 21, 0.66), rgba(0, 0, 0, 0.56)),
+  min-height: 540px;
+  background: linear-gradient(120deg, rgba(9, 36, 21, 0.72), rgba(0, 0, 0, 0.52)),
     url('https://bimfalbheritage.com/wp-content/uploads/2025/04/pexels-photo-27844274-27844274.jpg') center/cover;
   display: grid;
   align-items: end;
   overflow: hidden;
   position: relative;
+  border-bottom: 4px solid var(--gold);
+}
+
+.hero-badge {
+  display: inline-block;
+  font-family: 'Marcellus SC', serif;
+  font-size: 0.75rem;
+  letter-spacing: 3px;
+  color: var(--gold);
+  text-transform: uppercase;
+  margin-bottom: 12px;
 }
 
 .hero-overlay {
-  padding: 34px;
-  max-width: 640px;
+  padding: 38px;
+  max-width: 660px;
   color: #fff;
   animation: hero-fade 700ms var(--ease-out);
 }
 
 .hero-overlay h1 {
   margin-bottom: 14px;
-  font-size: clamp(1.9rem, 3vw, 2.6rem);
+  font-size: clamp(1.9rem, 3vw, 2.7rem);
+  text-shadow: 0 2px 8px rgba(0, 0, 0, 0.4);
 }
 
 .hero-overlay p {
-  margin-bottom: 18px;
+  margin-bottom: 22px;
+  opacity: 0.92;
 }
 
 .hero-actions {
   display: flex;
-  gap: 10px;
+  gap: 12px;
   flex-wrap: wrap;
 }
 
-.value-grid,
-.goal-grid {
-  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+/* ── African-inspired section divider ─────────────────────────── */
+.african-divider {
+  padding-bottom: 14px;
+  border-bottom: 3px solid transparent;
+  border-image: repeating-linear-gradient(
+      90deg,
+      var(--gold) 0px,
+      var(--gold) 8px,
+      transparent 8px,
+      transparent 14px,
+      var(--green) 14px,
+      var(--green) 22px,
+      transparent 22px,
+      transparent 28px
+    )
+    1;
 }
 
+/* ── Card shared styles ────────────────────────────────────────── */
 .feature-card,
 .goal-card,
 .event-card,
@@ -52,7 +80,8 @@
 .event-card:hover,
 .team-card:hover {
   transform: translateY(-6px);
-  border-color: #c7b494;
+  border-color: var(--gold);
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.12);
 }
 
 .feature-card img,
@@ -60,67 +89,80 @@
 .event-card img,
 .team-card img {
   width: 100%;
-  height: 190px;
+  height: 200px;
   object-fit: cover;
+}
+
+.team-card img {
+  height: 220px;
+  object-fit: cover;
+  object-position: top;
 }
 
 .feature-body,
 .goal-body,
 .event-body,
 .team-body {
-  padding: 14px;
+  padding: 16px;
 }
 
-.team-grid {
-  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+.feature-body h3,
+.goal-body h3,
+.team-body h3 {
+  color: var(--green);
 }
 
+.event-body h3 {
+  color: var(--green);
+}
+
+/* ── Artist CTA ────────────────────────────────────────────────── */
 .artist-cta {
-  margin-top: 34px;
-  background: linear-gradient(120deg, rgba(9, 36, 21, 0.94), rgba(9, 36, 21, 0.72)),
+  margin-top: 40px;
+  background: linear-gradient(120deg, rgba(9, 36, 21, 0.95), rgba(9, 36, 21, 0.75)),
     url('https://bimfalbheritage.com/wp-content/uploads/2025/04/pexels-photo-6193722-6193722.jpg') center/cover;
   color: #fff;
-  padding: 26px;
+  padding: 30px 34px;
+  border-left: 6px solid var(--gold);
 }
 
 .artist-cta h2 {
-  margin-bottom: 6px;
+  margin-bottom: 8px;
 }
 
 .artist-cta p {
-  margin-bottom: 16px;
+  margin-bottom: 20px;
   max-width: 720px;
+  opacity: 0.92;
 }
 
-.event-grid {
-  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
-}
-
+/* ── Event date pill ───────────────────────────────────────────── */
 .event-date {
   display: inline-block;
   margin-bottom: 8px;
   font-size: 0.72rem;
   letter-spacing: 1px;
   text-transform: uppercase;
-  color: #b17030;
+  color: var(--gold-2);
+  background: #fdf4e7;
+  padding: 2px 8px;
+  border-radius: 2px;
 }
 
-.news-grid {
-  grid-template-columns: repeat(auto-fit, minmax(270px, 1fr));
-}
-
+/* ── Contact strip ─────────────────────────────────────────────── */
 .contact-strip {
-  margin-top: 34px;
-  padding: 20px 24px;
+  margin-top: 40px;
+  padding: 22px 26px;
   text-align: center;
+  border-top: 3px solid var(--gold);
 }
 
 .contact-strip h2 a {
-  color: #092415;
+  color: var(--green);
 }
 
 .contact-strip h2 a:hover {
-  color: #b17030;
+  color: var(--gold-2);
 }
 
 @keyframes hero-fade {
