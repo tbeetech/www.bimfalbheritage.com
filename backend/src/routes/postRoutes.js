@@ -17,11 +17,11 @@ const router = express.Router();
 
 router.route('/')
   .get(getPosts)
-  .post(adminGuard, upload.single('coverImage'), createPost);
+  .post(adminGuard, upload.array('images', 3), createPost);
 
 router.route('/:id')
   .get(getPost)
-  .put(adminGuard, upload.single('coverImage'), updatePost)
+  .put(adminGuard, upload.array('images', 3), updatePost)
   .delete(adminGuard, deletePost);
 
 router.post('/:id/reactions', reactToPost);

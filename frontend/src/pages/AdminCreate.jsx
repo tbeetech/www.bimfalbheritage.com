@@ -1,13 +1,18 @@
 import { useEffect, useState } from 'react';
+import { useNavigate, useParams } from 'react-router-dom';
 import dayjs from 'dayjs';
 import RichTextEditor from '../components/RichTextEditor';
-import { createPost, login, getSessionStatus, logout } from '../services/api';
+import { createPost, updatePost, getPost, login, getSessionStatus, logout } from '../services/api';
 import './AdminCreate.css';
 
 const categories = ['History', 'Culture', 'Heritage', 'Events', 'Lifestyle'];
 const contentTypes = ['blog', 'vlog', 'news', 'lifestyle', 'event'];
 
 const AdminCreate = () => {
+  const { id: editId } = useParams();
+  const navigate = useNavigate();
+  const isEditing = Boolean(editId);
+
   const [form, setForm] = useState({
     title: '',
     excerpt: '',
@@ -28,7 +33,8 @@ const AdminCreate = () => {
     eventPlatform: 'Facebook Events',
   });
   const [body, setBody] = useState('');
-  const [coverImage, setCoverImage] = useState(null);
+  const [images, setImages] = useState([]);
+  const [existingImages, setExistingImages] = useState([]);
   const [password, setPassword] = useState(() => localStorage.getItem('bh_admin_password') || '');
   const [status, setStatus] = useState('');
   const [session, setSession] = useState(false);
@@ -45,9 +51,48 @@ const AdminCreate = () => {
     check();
   }, []);
 
+  useEffect(() => {
+    if (!isEditing) return;
+    const load = async () => {
+      try {
+        const post = await getPost(editId);
+        if (!post) return;
+        setForm({
+          title: post.title || '',
+          excerpt: post.excerpt || '',
+          authorName: post.authorName || '',
+          category: post.category || 'Culture',
+          contentType: post.contentType || 'blog',
+          tags: post.tags || '',
+          publishDate: post.publishDate ? dayjs(post.publishDate).format('YYYY-MM-DD') : dayjs().format('YYYY-MM-DD'),
+          videoUrl: post.videoUrl || '',
+          collaborationPartner: post.collaborationPartner || '',
+          collaborationType: post.collaborationType || '',
+          sharePlatforms: post.sharePlatforms || '',
+          eventTitle: post.eventMeta?.title || '',
+          eventStartDate: post.eventMeta?.startDate || '',
+          eventEndDate: post.eventMeta?.endDate || '',
+          eventLocation: post.eventMeta?.location || '',
+          eventExternalUrl: post.eventMeta?.externalUrl || '',
+          eventPlatform: post.eventMeta?.platform || 'Facebook Events',
+        });
+        setBody(post.body || '');
+        setExistingImages(Array.isArray(post.images) && post.images.length > 0 ? post.images : (post.coverImage ? [post.coverImage] : []));
+      } catch {
+        setStatus('Failed to load post for editing.');
+      }
+    };
+    load();
+  }, [editId, isEditing]);
+
   const handleChange = (e) => {
     const { name, value } = e.target;
     setForm((prev) => ({ ...prev, [name]: value }));
+  };
+
+  const handleImagesChange = (e) => {
+    const files = Array.from(e.target.files).slice(0, 3);
+    setImages(files);
   };
 
   const handleSubmit = async (e) => {
@@ -59,22 +104,17 @@ const AdminCreate = () => {
         setSession(true);
         localStorage.setItem('bh_admin_password', password);
       }
-      await createPost({
-        ...form,
-        body,
-        coverImage,
-      });
-      setStatus('Post created!');
-      setForm((prev) => ({
-        ...prev,
-        title: '',
-        excerpt: '',
-        tags: '',
-      }));
-      setBody('');
-      setCoverImage(null);
+      let post;
+      if (isEditing) {
+        post = await updatePost(editId, { ...form, body, images });
+        setStatus('Post updated!');
+      } else {
+        post = await createPost({ ...form, body, images });
+        setStatus('Post created!');
+      }
+      navigate(`/blog/${post._id || post.id}`);
     } catch (err) {
-      setStatus('Failed to create post. Check session or server.');
+      setStatus(isEditing ? 'Failed to update post.' : 'Failed to create post. Check session or server.');
     }
   };
 
@@ -101,7 +141,7 @@ const AdminCreate = () => {
       <div className="admin card">
         <div>
           <div className="pill">Admin</div>
-          <h1>Create a new cultural post</h1>
+          <h1>{isEditing ? 'Edit post' : 'Create a new cultural post'}</h1>
           <p className="muted">Session-based admin composer with cooperation fields and cross-platform sharing metadata.</p>
         </div>
         <form className="admin-form" onSubmit={handleSubmit}>
@@ -194,9 +234,27 @@ const AdminCreate = () => {
               </div>
             </div>
           )}
-          <label>
-            Cover image
-            <input type="file" accept="image/*" onChange={(e) => setCoverImage(e.target.files[0])} />
+          <label htmlFor="post-images">
+            Images (up to 3)
+            <input id="post-images" type="file" accept="image/*" multiple onChange={handleImagesChange} />
+            {images.length > 0 && (
+              <span className="muted">{images.length} image{images.length > 1 ? 's' : ''} selected</span>
+            )}
+            {isEditing && existingImages.length > 0 && images.length === 0 && (
+              <div className="existing-images">
+                <span className="muted">Current images (upload new ones to replace):</span>
+                <div className="existing-images-grid">
+                  {existingImages.map((img, i) => (
+                    <img
+                      key={i}
+                      src={img?.startsWith('http') ? img : `${import.meta.env.VITE_API_URL || ''}${img}`}
+                      alt={`Current image ${i + 1}`}
+                      className="existing-thumb"
+                    />
+                  ))}
+                </div>
+              </div>
+            )}
           </label>
           <label>
             Article body
@@ -219,7 +277,7 @@ const AdminCreate = () => {
               <span className={`session-dot ${session ? 'on' : 'off'}`}>{session ? 'Session active' : 'Session off'}</span>
             </div>
           </div>
-          <button className="btn" type="submit">Publish post</button>
+          <button className="btn" type="submit">{isEditing ? 'Update post' : 'Publish post'}</button>
           {status && <p className="muted">{status}</p>}
         </form>
       </div>

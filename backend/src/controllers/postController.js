@@ -49,13 +49,18 @@ const getPost = (req, res, next) => {
 
 const createPost = (req, res, next) => {
   try {
-    const coverImage = req.file ? `/uploads/${req.file.filename}` : req.body.coverImage || '';
+    const uploadedImages = Array.isArray(req.files) && req.files.length > 0
+      ? req.files.map((f) => `/uploads/${f.filename}`)
+      : [];
+    const images = uploadedImages.length > 0 ? uploadedImages : (req.body.coverImage ? [req.body.coverImage] : []);
+    const coverImage = images[0] || '';
     const post = store.add({
       title: req.body.title,
       excerpt: req.body.excerpt || '',
       authorName: req.body.authorName || '',
       body: req.body.body,
       coverImage,
+      images,
       videoUrl: req.body.videoUrl || '',
       category: req.body.category || 'Culture',
       contentType: req.body.contentType || 'blog',
@@ -82,8 +87,10 @@ const createPost = (req, res, next) => {
 const updatePost = (req, res, next) => {
   try {
     const updates = { ...req.body };
-    if (req.file) {
-      updates.coverImage = `/uploads/${req.file.filename}`;
+    if (Array.isArray(req.files) && req.files.length > 0) {
+      const uploadedImages = req.files.map((f) => `/uploads/${f.filename}`);
+      updates.images = uploadedImages;
+      updates.coverImage = uploadedImages[0];
     }
     const post = store.update(req.params.id, updates);
     if (!post) {
