@@ -28,8 +28,7 @@ const App = () => {
           <Route path="/blog/:id" element={<PostDetail />} />
           <Route path="/contact" element={<Contact />} />
           <Route path="/faq" element={<Faq />} />
-          <Route path="/admin" element={<Admin />} />
-          <Route path="/admin/edit/:id" element={<Admin />} />
+          <Route path="/admin/*" element={<Admin />} />
         </Routes>
       </Layout>
     </BrowserRouter>
