@@ -15,17 +15,15 @@ if (!admin.apps.length) {
       firebaseAvailable = true;
     } catch (e) {
       console.warn(
-        '[firebase] Service account key invalid – falling back to local JSON store. (' + e.message + ')'
+        '[firebase] Service account key invalid – image uploads will use local disk. (' + e.message + ')'
       );
     }
   } else {
     console.warn(
-      '[firebase] FIREBASE_SERVICE_ACCOUNT_KEY not set – falling back to local JSON store.'
+      '[firebase] FIREBASE_SERVICE_ACCOUNT_KEY not set – image uploads will use local disk.'
     );
   }
 }
-
-const db = firebaseAvailable ? admin.firestore() : null;
 
 let bucket = null;
 if (firebaseAvailable) {
@@ -36,4 +34,4 @@ if (firebaseAvailable) {
   }
 }
 
-module.exports = { admin, db, bucket, firebaseAvailable };
+module.exports = { admin, bucket, firebaseAvailable };

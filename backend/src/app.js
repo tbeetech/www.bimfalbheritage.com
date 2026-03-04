@@ -3,9 +3,12 @@ const cors = require('cors');
 const morgan = require('morgan');
 const path = require('path');
 const session = require('express-session');
+const connectDB = require('./config/db');
 const postRoutes = require('./routes/postRoutes');
 const authRoutes = require('./routes/authRoutes');
 const { notFound, errorHandler } = require('./middleware/errorHandler');
+
+connectDB();
 
 const app = express();
 
