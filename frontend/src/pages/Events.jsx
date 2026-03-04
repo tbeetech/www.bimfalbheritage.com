@@ -12,10 +12,12 @@ const Events = () => {
       <section className="events-grid">
         {eventCards.map((item) => (
           <article key={item.title} className="card event-item">
-            <img src={item.image} alt={item.title} />
-            <div>
+            <div className="event-item-img-wrap">
+              <img src={item.image} alt={item.title} />
+            </div>
+            <div className="event-item-body">
+              <p className="event-meta">📅 {item.date}</p>
               <h2>{item.title}</h2>
-              <p className="event-meta">{item.date}</p>
               <p>{item.text}</p>
             </div>
           </article>
