@@ -9,7 +9,7 @@ import Blog from './pages/Blog';
 import PostDetail from './pages/PostDetail';
 import Contact from './pages/Contact';
 import Faq from './pages/Faq';
-import AdminCreate from './pages/AdminCreate';
+import Admin from './pages/Admin';
 
 const App = () => {
   return (
@@ -28,8 +28,7 @@ const App = () => {
           <Route path="/blog/:id" element={<PostDetail />} />
           <Route path="/contact" element={<Contact />} />
           <Route path="/faq" element={<Faq />} />
-          <Route path="/admin" element={<AdminCreate />} />
-          <Route path="/admin/edit/:id" element={<AdminCreate />} />
+          <Route path="/admin/*" element={<Admin />} />
         </Routes>
       </Layout>
     </BrowserRouter>
