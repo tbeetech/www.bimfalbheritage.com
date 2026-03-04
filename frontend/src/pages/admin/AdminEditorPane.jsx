@@ -2,16 +2,15 @@ import { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import dayjs from 'dayjs';
 import RichTextEditor from '../../components/RichTextEditor';
-import { createPost, updatePost, getPost, login, getSessionStatus, logout } from '../../services/api';
-import '../AdminCreate.css';
+import { createPost, updatePost, getPost, login, logout } from '../../services/api';
 
 const categories = ['History', 'Culture', 'Heritage', 'Events', 'Lifestyle'];
 const contentTypes = ['blog', 'vlog', 'news', 'lifestyle', 'event'];
 
-const AdminEditorPane = () => {
+const AdminEditorPane = ({ session, onSessionChange }) => {
   const { id: editId } = useParams();
   const navigate = useNavigate();
-  const isEditing = Boolean(editId);
+  const isEditing = Boolean(editId) && editId !== 'new';
 
   const [form, setForm] = useState({
     title: '',
@@ -37,19 +36,8 @@ const AdminEditorPane = () => {
   const [existingImages, setExistingImages] = useState([]);
   const [password, setPassword] = useState(() => localStorage.getItem('bh_admin_password') || '');
   const [status, setStatus] = useState('');
-  const [session, setSession] = useState(false);
-
-  useEffect(() => {
-    const check = async () => {
-      try {
-        const res = await getSessionStatus();
-        setSession(res.admin);
-      } catch {
-        setSession(false);
-      }
-    };
-    check();
-  }, []);
+  const [statusOk, setStatusOk] = useState(true);
+  const [saving, setSaving] = useState(false);
 
   useEffect(() => {
     if (!isEditing) return;
@@ -77,9 +65,16 @@ const AdminEditorPane = () => {
           eventPlatform: post.eventMeta?.platform || 'Facebook Events',
         });
         setBody(post.body || '');
-        setExistingImages(Array.isArray(post.images) && post.images.length > 0 ? post.images : (post.coverImage ? [post.coverImage] : []));
+        setExistingImages(
+          Array.isArray(post.images) && post.images.length > 0
+            ? post.images
+            : post.coverImage
+            ? [post.coverImage]
+            : []
+        );
       } catch {
         setStatus('Failed to load post for editing.');
+        setStatusOk(false);
       }
     };
     load();
@@ -91,196 +86,355 @@ const AdminEditorPane = () => {
   };
 
   const handleImagesChange = (e) => {
-    const files = Array.from(e.target.files).slice(0, 3);
-    setImages(files);
+    setImages(Array.from(e.target.files).slice(0, 3));
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setStatus('Saving...');
+    setSaving(true);
+    setStatus('');
     try {
       if (!session) {
         await login(password);
-        setSession(true);
+        onSessionChange?.(true);
         localStorage.setItem('bh_admin_password', password);
       }
       let post;
       if (isEditing) {
         post = await updatePost(editId, { ...form, body, images });
         setStatus('Post updated!');
+        setStatusOk(true);
       } else {
         post = await createPost({ ...form, body, images });
         setStatus('Post created!');
+        setStatusOk(true);
       }
       navigate(`/blog/${post._id || post.id}`);
     } catch {
       setStatus(isEditing ? 'Failed to update post.' : 'Failed to create post. Check session or server.');
+      setStatusOk(false);
+    } finally {
+      setSaving(false);
     }
   };
 
   const handleLogin = async () => {
     try {
       await login(password);
-      setSession(true);
+      onSessionChange?.(true);
       localStorage.setItem('bh_admin_password', password);
       setStatus('Session active');
+      setStatusOk(true);
     } catch {
-      setSession(false);
+      onSessionChange?.(false);
       setStatus('Login failed');
+      setStatusOk(false);
     }
   };
 
   const handleLogout = async () => {
     await logout();
-    setSession(false);
+    onSessionChange?.(false);
     setStatus('Logged out');
+    setStatusOk(true);
   };
 
   return (
-    <div className="page">
-      <div className="admin card">
-        <div>
-          <div className="pill">Admin</div>
-          <h1>{isEditing ? 'Edit post' : 'Create a new cultural post'}</h1>
-          <p className="muted">Session-based admin composer with cooperation fields and cross-platform sharing metadata.</p>
-        </div>
-        <form className="admin-form" onSubmit={handleSubmit}>
-          <label>
-            Title
-            <input name="title" value={form.title} onChange={handleChange} required />
-          </label>
-          <label>
-            Excerpt
-            <textarea name="excerpt" value={form.excerpt} onChange={handleChange} rows={3} />
-          </label>
-          <div className="two-col">
-            <label>
-              Author name
-              <input name="authorName" value={form.authorName} onChange={handleChange} />
-            </label>
-            <label>
-              Category
-              <select name="category" value={form.category} onChange={handleChange}>
-                {categories.map((c) => <option key={c}>{c}</option>)}
-              </select>
-            </label>
-            <label>
-              Content type
-              <select name="contentType" value={form.contentType} onChange={handleChange}>
-                {contentTypes.map((c) => <option key={c} value={c}>{c}</option>)}
-              </select>
-            </label>
+    <div>
+      <div className="admin-section-hdr">
+        <div className="pill">Content Editor</div>
+        <h1>{isEditing ? 'Edit Post' : 'Create New Post'}</h1>
+        <p>Compose cultural content with rich media, collaboration metadata, and event details.</p>
+      </div>
+
+      <form onSubmit={handleSubmit}>
+        <div className="admin-form-wrap">
+
+          {/* ── Post details ── */}
+          <div className="admin-form-section">
+            <div className="admin-form-section-title">Post Details</div>
+            <div className="admin-field">
+              <label htmlFor="ef-title">Title</label>
+              <input
+                id="ef-title"
+                name="title"
+                value={form.title}
+                onChange={handleChange}
+                required
+                placeholder="Enter post title"
+              />
+            </div>
+            <div className="admin-field">
+              <label htmlFor="ef-excerpt">Excerpt</label>
+              <textarea
+                id="ef-excerpt"
+                name="excerpt"
+                value={form.excerpt}
+                onChange={handleChange}
+                rows={3}
+                placeholder="Short summary shown in post cards"
+              />
+            </div>
+            <div className="admin-form-grid">
+              <div className="admin-field">
+                <label htmlFor="ef-author">Author</label>
+                <input
+                  id="ef-author"
+                  name="authorName"
+                  value={form.authorName}
+                  onChange={handleChange}
+                  placeholder="Author name"
+                />
+              </div>
+              <div className="admin-field">
+                <label htmlFor="ef-category">Category</label>
+                <select id="ef-category" name="category" value={form.category} onChange={handleChange}>
+                  {categories.map((c) => <option key={c}>{c}</option>)}
+                </select>
+              </div>
+              <div className="admin-field">
+                <label htmlFor="ef-type">Content Type</label>
+                <select id="ef-type" name="contentType" value={form.contentType} onChange={handleChange}>
+                  {contentTypes.map((c) => <option key={c} value={c}>{c}</option>)}
+                </select>
+              </div>
+              <div className="admin-field">
+                <label htmlFor="ef-date">Publish Date</label>
+                <input
+                  id="ef-date"
+                  type="date"
+                  name="publishDate"
+                  value={form.publishDate}
+                  onChange={handleChange}
+                />
+              </div>
+            </div>
           </div>
-          <div className="two-col">
-            <label>
-              Publish date
-              <input type="date" name="publishDate" value={form.publishDate} onChange={handleChange} />
-            </label>
-            <label>
-              Video URL (YouTube/Vimeo)
-              <input name="videoUrl" value={form.videoUrl} onChange={handleChange} placeholder="https://www.youtube.com/watch?v=..." />
-            </label>
+
+          {/* ── Media ── */}
+          <div className="admin-form-section">
+            <div className="admin-form-section-title">Media</div>
+            <div className="admin-form-grid">
+              <div className="admin-field">
+                <label htmlFor="ef-video">Video URL</label>
+                <input
+                  id="ef-video"
+                  name="videoUrl"
+                  value={form.videoUrl}
+                  onChange={handleChange}
+                  placeholder="https://youtube.com/watch?v=..."
+                />
+              </div>
+            </div>
+            <div>
+              <div style={{ fontSize: '0.74rem', fontWeight: 700, color: 'var(--muted)', textTransform: 'uppercase', letterSpacing: '0.5px', marginBottom: '8px' }}>
+                Images (up to 3)
+              </div>
+              <div className="admin-image-zone">
+                <input
+                  id="ef-images"
+                  type="file"
+                  accept="image/*"
+                  multiple
+                  onChange={handleImagesChange}
+                  aria-label="Upload images"
+                />
+                <div className="admin-image-zone-label">
+                  {images.length > 0
+                    ? `${images.length} image${images.length > 1 ? 's' : ''} selected`
+                    : 'Click or drag images here (up to 3)'}
+                </div>
+              </div>
+              {isEditing && existingImages.length > 0 && images.length === 0 && (
+                <div style={{ marginTop: '10px' }}>
+                  <div style={{ fontSize: '0.74rem', color: 'var(--muted)', marginBottom: '6px' }}>
+                    Current images (upload new ones to replace):
+                  </div>
+                  <div className="admin-image-thumbs">
+                    {existingImages.map((img, i) => (
+                      <img
+                        key={i}
+                        src={img?.startsWith('http') ? img : `${import.meta.env.VITE_API_URL || ''}${img}`}
+                        alt={`Current image ${i + 1}`}
+                        className="admin-thumb"
+                      />
+                    ))}
+                  </div>
+                </div>
+              )}
+            </div>
           </div>
-          <div className="two-col">
-            <label>
-              Collaboration partner
-              <input name="collaborationPartner" value={form.collaborationPartner} onChange={handleChange} placeholder="Organization or media partner" />
-            </label>
-            <label>
-              Collaboration type
-              <input name="collaborationType" value={form.collaborationType} onChange={handleChange} placeholder="Sponsorship, media exchange, co-production" />
-            </label>
+
+          {/* ── Article body ── */}
+          <div className="admin-form-section">
+            <div className="admin-form-section-title">Article Body</div>
+            <RichTextEditor value={body} onChange={setBody} placeholder="Compose with bold, lists, quotes…" />
           </div>
-          <label>
-            Share platforms
-            <input name="sharePlatforms" value={form.sharePlatforms} onChange={handleChange} placeholder="WhatsApp, X, Facebook, LinkedIn, Email" />
-          </label>
-          <label>
-            Tags
-            <input name="tags" value={form.tags} onChange={handleChange} placeholder="culture, event, lifestyle" />
-          </label>
+
+          {/* ── Metadata ── */}
+          <div className="admin-form-section">
+            <div className="admin-form-section-title">Metadata &amp; Distribution</div>
+            <div className="admin-form-grid">
+              <div className="admin-field">
+                <label htmlFor="ef-partner">Collaboration Partner</label>
+                <input
+                  id="ef-partner"
+                  name="collaborationPartner"
+                  value={form.collaborationPartner}
+                  onChange={handleChange}
+                  placeholder="Organization or media partner"
+                />
+              </div>
+              <div className="admin-field">
+                <label htmlFor="ef-collab-type">Collaboration Type</label>
+                <input
+                  id="ef-collab-type"
+                  name="collaborationType"
+                  value={form.collaborationType}
+                  onChange={handleChange}
+                  placeholder="Sponsorship, co-production…"
+                />
+              </div>
+              <div className="admin-field">
+                <label htmlFor="ef-platforms">Share Platforms</label>
+                <input
+                  id="ef-platforms"
+                  name="sharePlatforms"
+                  value={form.sharePlatforms}
+                  onChange={handleChange}
+                  placeholder="WhatsApp, X, Facebook, LinkedIn"
+                />
+              </div>
+              <div className="admin-field">
+                <label htmlFor="ef-tags">Tags</label>
+                <input
+                  id="ef-tags"
+                  name="tags"
+                  value={form.tags}
+                  onChange={handleChange}
+                  placeholder="culture, event, lifestyle"
+                />
+              </div>
+            </div>
+          </div>
+
+          {/* ── Event meta (conditional) ── */}
           {form.contentType === 'event' && (
-            <div className="event-meta card">
-              <h3>Event Setup (Facebook-style event launch)</h3>
-              <div className="two-col">
-                <label>
-                  Event title
-                  <input name="eventTitle" value={form.eventTitle} onChange={handleChange} required={form.contentType === 'event'} />
-                </label>
-                <label>
-                  Event platform
-                  <input name="eventPlatform" value={form.eventPlatform} onChange={handleChange} />
-                </label>
-              </div>
-              <div className="two-col">
-                <label>
-                  Event start
-                  <input type="datetime-local" name="eventStartDate" value={form.eventStartDate} onChange={handleChange} />
-                </label>
-                <label>
-                  Event end
-                  <input type="datetime-local" name="eventEndDate" value={form.eventEndDate} onChange={handleChange} />
-                </label>
-              </div>
-              <div className="two-col">
-                <label>
-                  Event location
-                  <input name="eventLocation" value={form.eventLocation} onChange={handleChange} />
-                </label>
-                <label>
-                  External event link
-                  <input name="eventExternalUrl" value={form.eventExternalUrl} onChange={handleChange} placeholder="https://facebook.com/events/..." />
-                </label>
+            <div className="admin-form-section">
+              <div className="admin-form-section-title">Event Details</div>
+              <div className="admin-event-panel">
+                <p className="admin-event-panel-title">🗓 Facebook-style Event Setup</p>
+                <div className="admin-form-grid">
+                  <div className="admin-field">
+                    <label htmlFor="ef-etitle">Event Title</label>
+                    <input
+                      id="ef-etitle"
+                      name="eventTitle"
+                      value={form.eventTitle}
+                      onChange={handleChange}
+                      required={form.contentType === 'event'}
+                    />
+                  </div>
+                  <div className="admin-field">
+                    <label htmlFor="ef-eplatform">Platform</label>
+                    <input
+                      id="ef-eplatform"
+                      name="eventPlatform"
+                      value={form.eventPlatform}
+                      onChange={handleChange}
+                    />
+                  </div>
+                  <div className="admin-field">
+                    <label htmlFor="ef-estart">Event Start</label>
+                    <input
+                      id="ef-estart"
+                      type="datetime-local"
+                      name="eventStartDate"
+                      value={form.eventStartDate}
+                      onChange={handleChange}
+                    />
+                  </div>
+                  <div className="admin-field">
+                    <label htmlFor="ef-eend">Event End</label>
+                    <input
+                      id="ef-eend"
+                      type="datetime-local"
+                      name="eventEndDate"
+                      value={form.eventEndDate}
+                      onChange={handleChange}
+                    />
+                  </div>
+                  <div className="admin-field">
+                    <label htmlFor="ef-eloc">Location</label>
+                    <input
+                      id="ef-eloc"
+                      name="eventLocation"
+                      value={form.eventLocation}
+                      onChange={handleChange}
+                    />
+                  </div>
+                  <div className="admin-field">
+                    <label htmlFor="ef-eurl">External Link</label>
+                    <input
+                      id="ef-eurl"
+                      name="eventExternalUrl"
+                      value={form.eventExternalUrl}
+                      onChange={handleChange}
+                      placeholder="https://facebook.com/events/…"
+                    />
+                  </div>
+                </div>
               </div>
             </div>
           )}
-          <label htmlFor="post-images">
-            Images (up to 3)
-            <input id="post-images" type="file" accept="image/*" multiple onChange={handleImagesChange} />
-            {images.length > 0 && (
-              <span className="muted">{images.length} image{images.length > 1 ? 's' : ''} selected</span>
-            )}
-            {isEditing && existingImages.length > 0 && images.length === 0 && (
-              <div className="existing-images">
-                <span className="muted">Current images (upload new ones to replace):</span>
-                <div className="existing-images-grid">
-                  {existingImages.map((img, i) => (
-                    <img
-                      key={i}
-                      src={img?.startsWith('http') ? img : `${import.meta.env.VITE_API_URL || ''}${img}`}
-                      alt={`Current image ${i + 1}`}
-                      className="existing-thumb"
-                    />
-                  ))}
-                </div>
+
+          {/* ── Session / auth ── */}
+          <div className="admin-form-section">
+            <div className="admin-form-section-title">Authentication</div>
+            <div className="admin-login-panel">
+              <div className="admin-field">
+                <label htmlFor="ef-password">Admin Password</label>
+                <input
+                  id="ef-password"
+                  name="adminPassword"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  type="password"
+                  required
+                  placeholder="Enter admin password"
+                />
               </div>
-            )}
-          </label>
-          <label>
-            Article body
-            <RichTextEditor value={body} onChange={setBody} placeholder="Compose with bold, lists, quotes..." />
-          </label>
-          <div className="session-row">
-            <label>
-              Admin password
-              <input
-                name="adminPassword"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                type="password"
-                required
-              />
-            </label>
-            <div className="session-actions">
-              <button className="btn secondary" type="button" onClick={handleLogin}>Save session</button>
-              <button className="btn secondary" type="button" onClick={handleLogout}>Logout</button>
-              <span className={`session-dot ${session ? 'on' : 'off'}`}>{session ? 'Session active' : 'Session off'}</span>
+              <div className="admin-login-actions">
+                <button className="btn secondary" type="button" onClick={handleLogin}>
+                  Save Session
+                </button>
+                <button className="btn secondary" type="button" onClick={handleLogout}>
+                  Sign Out
+                </button>
+                <span className={`admin-session-tag${session ? ' active' : ''}`}>
+                  <span className="admin-dot" />
+                  {session ? 'Session active' : 'Not logged in'}
+                </span>
+              </div>
             </div>
           </div>
-          <button className="btn" type="submit">{isEditing ? 'Update post' : 'Publish post'}</button>
-          {status && <p className="muted">{status}</p>}
-        </form>
-      </div>
+
+          {/* ── Submit ── */}
+          <div className="admin-form-section">
+            <div className="admin-form-footer">
+              <button className="btn" type="submit" disabled={saving}>
+                {saving ? 'Saving…' : isEditing ? 'Update Post' : 'Publish Post'}
+              </button>
+              {status && (
+                <span className={`admin-status-msg ${statusOk ? 'ok' : 'err'}`}>
+                  {status}
+                </span>
+              )}
+            </div>
+          </div>
+
+        </div>
+      </form>
     </div>
   );
 };

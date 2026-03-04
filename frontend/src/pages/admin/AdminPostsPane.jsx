@@ -1,37 +1,18 @@
 import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
-import { getPosts, deletePost, getSessionStatus } from '../../services/api';
+import { getPosts, deletePost } from '../../services/api';
 
-const AdminPostsPane = () => {
+const AdminPostsPane = ({ session }) => {
   const [posts, setPosts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [status, setStatus] = useState('');
-  const [session, setSession] = useState(false);
+  const [filter, setFilter] = useState('');
 
   useEffect(() => {
-    const check = async () => {
-      try {
-        const res = await getSessionStatus();
-        setSession(res.admin);
-      } catch {
-        setSession(false);
-      }
-    };
-    check();
-  }, []);
-
-  useEffect(() => {
-    const load = async () => {
-      try {
-        const res = await getPosts(1, 50);
-        setPosts(res.data || []);
-      } catch {
-        setStatus('Failed to load posts.');
-      } finally {
-        setLoading(false);
-      }
-    };
-    load();
+    getPosts(1, 100)
+      .then((res) => setPosts(res.data || []))
+      .catch(() => setStatus('Failed to load posts.'))
+      .finally(() => setLoading(false));
   }, []);
 
   const handleDelete = async (id) => {
@@ -45,49 +26,114 @@ const AdminPostsPane = () => {
     }
   };
 
+  const filtered = filter ? posts.filter((p) => p.contentType === filter) : posts;
+
   return (
-    <div className="page">
-      <div className="admin card">
-        <div>
-          <div className="pill">Admin</div>
-          <h1>Manage Posts</h1>
-          <p className="muted">Edit or delete existing cultural posts.</p>
+    <div>
+      <div className="admin-section-hdr">
+        <div className="pill">Content</div>
+        <h1>All Posts</h1>
+        <p>Manage and edit all cultural content.</p>
+      </div>
+
+      {!session && (
+        <div className="admin-alert warning">
+          No active session — some actions may be blocked.
         </div>
-        <div style={{ marginBottom: '12px', display: 'flex', gap: '8px' }}>
-          <Link to="/admin" className="btn secondary">← Dashboard</Link>
-          <Link to="/admin/edit/new" className="btn">+ New post</Link>
+      )}
+
+      {status && (
+        <div className={`admin-alert ${status.toLowerCase().includes('failed') ? 'error' : 'success'}`}>
+          {status}
         </div>
-        {!session && (
-          <p className="muted" style={{ color: 'var(--terracotta, #a0522d)' }}>
-            No active session — some actions may be blocked.
-          </p>
-        )}
-        {status && <p className="muted">{status}</p>}
+      )}
+
+      <div className="admin-table-wrap">
+        <div className="admin-table-hdr">
+          <div>
+            <div className="admin-table-hdr-title">Posts ({filtered.length})</div>
+          </div>
+          <div className="admin-filter-bar">
+            <select
+              className="admin-filter-select"
+              value={filter}
+              onChange={(e) => setFilter(e.target.value)}
+            >
+              <option value="">All types</option>
+              <option value="blog">Blog</option>
+              <option value="event">Event</option>
+              <option value="news">News</option>
+              <option value="vlog">Vlog</option>
+              <option value="lifestyle">Lifestyle</option>
+            </select>
+            <Link
+              to="/admin/edit/new"
+              className="btn"
+              style={{ padding: '6px 14px', fontSize: '0.76rem' }}
+            >
+              + New Post
+            </Link>
+          </div>
+        </div>
+
         {loading ? (
-          <p className="muted">Loading posts…</p>
-        ) : posts.length === 0 ? (
-          <p className="muted">No posts found.</p>
+          <div style={{ padding: '40px', textAlign: 'center', color: 'var(--muted)', fontSize: '0.88rem' }}>
+            Loading posts…
+          </div>
+        ) : filtered.length === 0 ? (
+          <div style={{ padding: '40px', textAlign: 'center', color: 'var(--muted)', fontSize: '0.88rem' }}>
+            No posts found.
+          </div>
         ) : (
-          <table style={{ width: '100%', borderCollapse: 'collapse', marginTop: '12px' }}>
+          <table className="admin-table">
             <thead>
-              <tr style={{ textAlign: 'left', borderBottom: '2px solid var(--border)' }}>
-                <th style={{ padding: '8px 6px' }}>Title</th>
-                <th style={{ padding: '8px 6px' }}>Type</th>
-                <th style={{ padding: '8px 6px' }}>Date</th>
-                <th style={{ padding: '8px 6px' }}>Actions</th>
+              <tr>
+                <th>Title</th>
+                <th>Type</th>
+                <th>Author</th>
+                <th>Date</th>
+                <th>Actions</th>
               </tr>
             </thead>
             <tbody>
-              {posts.map((post) => {
+              {filtered.map((post) => {
                 const pid = post._id || post.id;
                 return (
-                  <tr key={pid} style={{ borderBottom: '1px solid var(--border)' }}>
-                    <td style={{ padding: '8px 6px' }}>{post.title}</td>
-                    <td style={{ padding: '8px 6px' }}>{post.contentType || '—'}</td>
-                    <td style={{ padding: '8px 6px' }}>{post.publishDate ? post.publishDate.slice(0, 10) : '—'}</td>
-                    <td style={{ padding: '8px 6px', display: 'flex', gap: '6px' }}>
-                      <Link to={`/admin/edit/${pid}`} className="btn secondary" style={{ padding: '4px 10px', fontSize: '0.85rem' }}>Edit</Link>
-                      <button className="btn secondary" style={{ padding: '4px 10px', fontSize: '0.85rem', color: 'var(--terracotta, #a0522d)' }} onClick={() => handleDelete(pid)}>Delete</button>
+                  <tr key={pid}>
+                    <td
+                      style={{
+                        maxWidth: '260px',
+                        overflow: 'hidden',
+                        textOverflow: 'ellipsis',
+                        whiteSpace: 'nowrap',
+                      }}
+                    >
+                      {post.title}
+                    </td>
+                    <td>
+                      <span className={`admin-type-badge ${post.contentType || 'blog'}`}>
+                        {post.contentType || 'blog'}
+                      </span>
+                    </td>
+                    <td style={{ color: 'var(--muted)', fontSize: '0.8rem' }}>
+                      {post.authorName || '—'}
+                    </td>
+                    <td style={{ color: 'var(--muted)', fontSize: '0.8rem' }}>
+                      {post.publishDate ? post.publishDate.slice(0, 10) : '—'}
+                    </td>
+                    <td>
+                      <div className="admin-row-actions">
+                        <Link to={`/admin/edit/${pid}`} className="admin-btn-edit">
+                          Edit
+                        </Link>
+                        <button
+                          className="admin-btn-delete"
+                          type="button"
+                          onClick={() => handleDelete(pid)}
+                        >
+                          Delete
+                        </button>
+                      </div>
                     </td>
                   </tr>
                 );
