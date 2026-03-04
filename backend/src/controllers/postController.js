@@ -14,13 +14,13 @@ const paginate = (items, page = 1, limit = 6) => {
   };
 };
 
-const getPosts = (req, res, next) => {
+const getPosts = async (req, res, next) => {
   try {
     const page = Number(req.query.page) || 1;
     const limit = Number(req.query.limit) || 6;
     const contentType = req.query.contentType || '';
 
-    let posts = [...store.getAll()].sort(
+    let posts = (await store.getAll()).sort(
       (a, b) => new Date(b.publishDate) - new Date(a.publishDate)
     );
 
@@ -34,9 +34,9 @@ const getPosts = (req, res, next) => {
   }
 };
 
-const getPost = (req, res, next) => {
+const getPost = async (req, res, next) => {
   try {
-    const post = store.getById(req.params.id);
+    const post = await store.getById(req.params.id);
     if (!post) {
       res.status(404);
       throw new Error('Post not found');
@@ -47,14 +47,14 @@ const getPost = (req, res, next) => {
   }
 };
 
-const createPost = (req, res, next) => {
+const createPost = async (req, res, next) => {
   try {
     const uploadedImages = Array.isArray(req.files) && req.files.length > 0
-      ? req.files.map((f) => `/uploads/${f.filename}`)
+      ? req.files.map((f) => f.firebaseUrl || `/uploads/${f.filename}`)
       : [];
     const images = uploadedImages.length > 0 ? uploadedImages : (req.body.coverImage ? [req.body.coverImage] : []);
     const coverImage = images[0] || '';
-    const post = store.add({
+    const post = await store.add({
       title: req.body.title,
       excerpt: req.body.excerpt || '',
       authorName: req.body.authorName || '',
@@ -84,15 +84,15 @@ const createPost = (req, res, next) => {
   }
 };
 
-const updatePost = (req, res, next) => {
+const updatePost = async (req, res, next) => {
   try {
     const updates = { ...req.body };
     if (Array.isArray(req.files) && req.files.length > 0) {
-      const uploadedImages = req.files.map((f) => `/uploads/${f.filename}`);
+      const uploadedImages = req.files.map((f) => f.firebaseUrl || `/uploads/${f.filename}`);
       updates.images = uploadedImages;
       updates.coverImage = uploadedImages[0];
     }
-    const post = store.update(req.params.id, updates);
+    const post = await store.update(req.params.id, updates);
     if (!post) {
       res.status(404);
       throw new Error('Post not found');
@@ -103,9 +103,9 @@ const updatePost = (req, res, next) => {
   }
 };
 
-const deletePost = (req, res, next) => {
+const deletePost = async (req, res, next) => {
   try {
-    const post = store.remove(req.params.id);
+    const post = await store.remove(req.params.id);
     if (!post) {
       res.status(404);
       throw new Error('Post not found');
@@ -116,10 +116,10 @@ const deletePost = (req, res, next) => {
   }
 };
 
-const reactToPost = (req, res, next) => {
+const reactToPost = async (req, res, next) => {
   try {
     const type = req.body.type === 'down' ? 'down' : 'up';
-    const reaction = store.reactToPost(req.params.id, type);
+    const reaction = await store.reactToPost(req.params.id, type);
     if (!reaction) {
       res.status(404);
       throw new Error('Post not found');
@@ -130,9 +130,9 @@ const reactToPost = (req, res, next) => {
   }
 };
 
-const getComments = (req, res, next) => {
+const getComments = async (req, res, next) => {
   try {
-    const comments = store.getComments(req.params.id);
+    const comments = await store.getComments(req.params.id);
     if (!comments) {
       res.status(404);
       throw new Error('Post not found');
@@ -143,13 +143,13 @@ const getComments = (req, res, next) => {
   }
 };
 
-const addComment = (req, res, next) => {
+const addComment = async (req, res, next) => {
   try {
     if (!req.body.text || req.body.text.trim().length < 2) {
       res.status(400);
       throw new Error('Comment text is required');
     }
-    const comment = store.addComment(req.params.id, {
+    const comment = await store.addComment(req.params.id, {
       author: req.body.author,
       text: req.body.text.trim(),
       parentId: req.body.parentId || null,
@@ -164,10 +164,10 @@ const addComment = (req, res, next) => {
   }
 };
 
-const reactToComment = (req, res, next) => {
+const reactToComment = async (req, res, next) => {
   try {
     const type = req.body.type === 'down' ? 'down' : 'up';
-    const comment = store.reactToComment(req.params.id, req.params.commentId, type);
+    const comment = await store.reactToComment(req.params.id, req.params.commentId, type);
     if (!comment) {
       res.status(404);
       throw new Error('Post or comment not found');

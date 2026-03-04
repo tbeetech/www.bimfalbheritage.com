@@ -1,6 +1,7 @@
 const multer = require('multer');
 const path = require('path');
 const fs = require('fs');
+const { bucket } = require('../config/firebase');
 
 const uploadDir = path.join(__dirname, '..', '..', 'uploads');
 if (!fs.existsSync(uploadDir)) {
@@ -33,4 +34,42 @@ const upload = multer({
   limits: { fileSize: 5 * 1024 * 1024 },
 });
 
+// Middleware that uploads each file to Firebase Storage and attaches the
+// public URL as `file.firebaseUrl`.  Falls back gracefully when the storage
+// bucket env var is not set (e.g. local dev without Firebase).
+const firebaseUploadMiddleware = async (req, _res, next) => {
+  if (!Array.isArray(req.files) || req.files.length === 0) return next();
+
+  const storageBucket = process.env.FIREBASE_STORAGE_BUCKET;
+  if (!storageBucket) {
+    // No bucket configured – keep the local disk file path as-is
+    return next();
+  }
+
+  try {
+    await Promise.all(
+      req.files.map(async (file) => {
+        const destination = `uploads/${file.filename}`;
+        await bucket.upload(file.path, {
+          destination,
+          metadata: { contentType: file.mimetype },
+        });
+        const fileRef = bucket.file(destination);
+        await fileRef.makePublic();
+        file.firebaseUrl = `https://storage.googleapis.com/${storageBucket}/${destination}`;
+        // Clean up local temp file
+        fs.unlink(file.path, (err) => {
+          if (err) console.error('Failed to delete temp file:', file.path, err);
+        });
+      })
+    );
+  } catch (err) {
+    // Log but don't crash – fall back to local URL
+    console.error('Firebase Storage upload failed:', err.message);
+  }
+
+  return next();
+};
+
 module.exports = upload;
+module.exports.firebaseUpload = firebaseUploadMiddleware;

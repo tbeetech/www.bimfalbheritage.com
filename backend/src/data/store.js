@@ -1,9 +1,7 @@
-const fs = require('fs');
-const path = require('path');
+const { db } = require('../config/firebase');
 const { randomUUID } = require('crypto');
-const seedPosts = require('../seed/data/posts');
 
-const DATA_FILE = path.join(__dirname, 'posts.json');
+const COLLECTION = 'posts';
 
 const normalizePost = (post) => ({
   _id: post._id || randomUUID(),
@@ -41,80 +39,86 @@ const normalizePost = (post) => ({
       downvotes: Number(comment.downvotes || 0),
     }))
     : [],
-  publishDate: post.publishDate || new Date().toISOString(),
+  publishDate: post.publishDate instanceof Date
+    ? post.publishDate.toISOString()
+    : (post.publishDate || new Date().toISOString()),
 });
 
-const ensureDataFile = () => {
-  if (!fs.existsSync(DATA_FILE)) {
-    fs.mkdirSync(path.dirname(DATA_FILE), { recursive: true });
-    fs.writeFileSync(DATA_FILE, JSON.stringify(seedPosts.map(normalizePost), null, 2));
-  }
+const docToPost = (doc) => normalizePost({ _id: doc.id, ...doc.data() });
+
+const getAll = async () => {
+  const snapshot = await db.collection(COLLECTION).get();
+  return snapshot.docs.map(docToPost);
 };
 
-const load = () => {
-  ensureDataFile();
-  const raw = fs.readFileSync(DATA_FILE, 'utf-8');
-  return JSON.parse(raw).map(normalizePost);
+const getById = async (id) => {
+  const doc = await db.collection(COLLECTION).doc(id).get();
+  if (!doc.exists) return null;
+  return docToPost(doc);
 };
 
-let cache = load();
-
-const persist = () => {
-  fs.writeFileSync(DATA_FILE, JSON.stringify(cache, null, 2));
-};
-
-const getAll = () => cache;
-
-const getById = (id) => cache.find((p) => p._id === id);
-
-const add = (payload) => {
+const add = async (payload) => {
+  const id = randomUUID();
   const item = normalizePost({
-    _id: randomUUID(),
+    _id: id,
     publishDate: payload.publishDate || new Date().toISOString(),
     ...payload,
   });
-  cache = [item, ...cache];
-  persist();
+  await db.collection(COLLECTION).doc(id).set(item);
   return item;
 };
 
-const update = (id, payload) => {
-  const idx = cache.findIndex((p) => p._id === id);
-  if (idx === -1) return null;
-  cache[idx] = normalizePost({ ...cache[idx], ...payload });
-  persist();
-  return cache[idx];
+const update = async (id, payload) => {
+  const ref = db.collection(COLLECTION).doc(id);
+  const doc = await ref.get();
+  if (!doc.exists) return null;
+  const updated = normalizePost({ ...doc.data(), _id: id, ...payload });
+  await ref.set(updated);
+  return updated;
 };
 
-const remove = (id) => {
-  const exists = getById(id);
-  cache = cache.filter((p) => p._id !== id);
-  persist();
-  return exists;
+const remove = async (id) => {
+  const ref = db.collection(COLLECTION).doc(id);
+  const doc = await ref.get();
+  if (!doc.exists) return null;
+  const item = docToPost(doc);
+  await ref.delete();
+  return item;
 };
 
-const reactToPost = (id, type) => {
-  const idx = cache.findIndex((p) => p._id === id);
-  if (idx === -1) return null;
-  if (type === 'up') cache[idx].upvotes += 1;
-  if (type === 'down') cache[idx].downvotes += 1;
-  persist();
-  return {
-    upvotes: cache[idx].upvotes,
-    downvotes: cache[idx].downvotes,
-    score: cache[idx].upvotes - cache[idx].downvotes,
-  };
+const reactToPost = async (id, type) => {
+  const ref = db.collection(COLLECTION).doc(id);
+  const doc = await ref.get();
+  if (!doc.exists) return null;
+  const data = doc.data();
+  const upvotes = Number(data.upvotes || 0) + (type === 'up' ? 1 : 0);
+  const downvotes = Number(data.downvotes || 0) + (type === 'down' ? 1 : 0);
+  await ref.update({ upvotes, downvotes });
+  return { upvotes, downvotes, score: upvotes - downvotes };
 };
 
-const getComments = (id) => {
-  const post = getById(id);
-  if (!post) return null;
-  return post.comments.sort((a, b) => new Date(a.createdAt) - new Date(b.createdAt));
+const getComments = async (id) => {
+  const doc = await db.collection(COLLECTION).doc(id).get();
+  if (!doc.exists) return null;
+  const comments = Array.isArray(doc.data().comments) ? doc.data().comments : [];
+  return comments
+    .map((c) => ({
+      id: c.id || randomUUID(),
+      parentId: c.parentId || null,
+      author: c.author || 'Guest',
+      text: c.text || '',
+      createdAt: c.createdAt || new Date().toISOString(),
+      upvotes: Number(c.upvotes || 0),
+      downvotes: Number(c.downvotes || 0),
+    }))
+    .sort((a, b) => new Date(a.createdAt) - new Date(b.createdAt));
 };
 
-const addComment = (id, payload) => {
-  const idx = cache.findIndex((p) => p._id === id);
-  if (idx === -1) return null;
+const addComment = async (id, payload) => {
+  const ref = db.collection(COLLECTION).doc(id);
+  const doc = await ref.get();
+  if (!doc.exists) return null;
+  const comments = Array.isArray(doc.data().comments) ? doc.data().comments : [];
   const comment = {
     id: randomUUID(),
     parentId: payload.parentId || null,
@@ -124,20 +128,22 @@ const addComment = (id, payload) => {
     upvotes: 0,
     downvotes: 0,
   };
-  cache[idx].comments.push(comment);
-  persist();
+  comments.push(comment);
+  await ref.update({ comments });
   return comment;
 };
 
-const reactToComment = (postId, commentId, type) => {
-  const postIdx = cache.findIndex((p) => p._id === postId);
-  if (postIdx === -1) return null;
-  const commentIdx = cache[postIdx].comments.findIndex((c) => c.id === commentId);
-  if (commentIdx === -1) return null;
-  if (type === 'up') cache[postIdx].comments[commentIdx].upvotes += 1;
-  if (type === 'down') cache[postIdx].comments[commentIdx].downvotes += 1;
-  persist();
-  return cache[postIdx].comments[commentIdx];
+const reactToComment = async (postId, commentId, type) => {
+  const ref = db.collection(COLLECTION).doc(postId);
+  const doc = await ref.get();
+  if (!doc.exists) return null;
+  const comments = Array.isArray(doc.data().comments) ? [...doc.data().comments] : [];
+  const idx = comments.findIndex((c) => c.id === commentId);
+  if (idx === -1) return null;
+  if (type === 'up') comments[idx] = { ...comments[idx], upvotes: Number(comments[idx].upvotes || 0) + 1 };
+  if (type === 'down') comments[idx] = { ...comments[idx], downvotes: Number(comments[idx].downvotes || 0) + 1 };
+  await ref.update({ comments });
+  return comments[idx];
 };
 
 module.exports = {
