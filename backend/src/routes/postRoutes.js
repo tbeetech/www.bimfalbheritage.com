@@ -12,17 +12,17 @@ const {
 } = require('../controllers/postController');
 const { adminGuard } = require('../middleware/authMiddleware');
 const upload = require('../utils/upload');
-const { firebaseUpload } = upload;
+const { compressImages, firebaseUpload } = upload;
 
 const router = express.Router();
 
 router.route('/')
   .get(getPosts)
-  .post(adminGuard, upload.array('images', 3), firebaseUpload, createPost);
+  .post(adminGuard, upload.array('images', 3), compressImages, firebaseUpload, createPost);
 
 router.route('/:id')
   .get(getPost)
-  .put(adminGuard, upload.array('images', 3), firebaseUpload, updatePost)
+  .put(adminGuard, upload.array('images', 3), compressImages, firebaseUpload, updatePost)
   .delete(adminGuard, deletePost);
 
 router.post('/:id/reactions', reactToPost);
