@@ -1,33 +1,49 @@
 .blog-intro {
-  padding: 16px;
-  margin-bottom: 18px;
+  padding: 18px 22px;
+  margin-bottom: 22px;
+  border-left: 4px solid var(--gold);
+  font-size: 0.93rem;
+  line-height: 1.8;
+  color: var(--text-secondary);
 }
 
+/* ── Filter tabs ─────────────────────────────────────────────────── */
 .feed-tabs {
   display: flex;
   gap: 8px;
   flex-wrap: wrap;
-  margin-bottom: 14px;
+  margin-bottom: 20px;
 }
 
 .feed-tabs button {
-  border: 1px solid var(--line);
+  border: 1.5px solid var(--line);
   background: var(--bg-soft);
-  color: var(--text);
-  padding: 8px 12px;
+  color: var(--muted);
+  padding: 8px 16px;
   text-transform: uppercase;
-  letter-spacing: 0.7px;
-  font-size: 0.74rem;
+  letter-spacing: 0.8px;
+  font-size: 0.72rem;
   cursor: pointer;
+  border-radius: 30px;
+  font-family: 'Marcellus SC', serif;
+  transition: background var(--transition), color var(--transition), border-color var(--transition), transform var(--transition), box-shadow var(--transition);
+  font-weight: 600;
 }
 
-.feed-tabs button.active,
 .feed-tabs button:hover {
-  background: var(--green);
-  color: #fff;
-  border-color: var(--green);
+  border-color: rgba(197, 157, 85, 0.5);
+  color: var(--gold-2);
+  transform: translateY(-2px);
 }
 
+.feed-tabs button.active {
+  background: linear-gradient(135deg, var(--green-light) 0%, var(--green) 100%);
+  color: #fff;
+  border-color: transparent;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.2);
+}
+
+/* ── Blog grid ───────────────────────────────────────────────────── */
 .blog-grid {
-  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
 }

@@ -1,5 +1,31 @@
+import { useState } from 'react';
 import { faqItems } from '../data/siteContent';
 import './Faq.css';
+
+const FaqItem = ({ item }) => {
+  const [open, setOpen] = useState(false);
+
+  return (
+    <article
+      className={`card faq-item${open ? ' open' : ''}`}
+      onClick={() => setOpen((v) => !v)}
+    >
+      <div className="faq-question">
+        <span>{item.q}</span>
+        <span className="faq-chevron" aria-hidden="true">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="18" height="18" fill="currentColor">
+            <path d="M7.41 8.59L12 13.17l4.59-4.58L18 10l-6 6-6-6z"/>
+          </svg>
+        </span>
+      </div>
+      <div className="faq-answer">
+        <div className="faq-answer-inner">
+          <p>{item.a}</p>
+        </div>
+      </div>
+    </article>
+  );
+};
 
 const Faq = () => {
   return (
@@ -11,10 +37,7 @@ const Faq = () => {
 
       <section className="faq-list">
         {faqItems.map((item) => (
-          <details className="card faq-item" key={item.q}>
-            <summary>{item.q}</summary>
-            <p>{item.a}</p>
-          </details>
+          <FaqItem key={item.q} item={item} />
         ))}
       </section>
     </div>
