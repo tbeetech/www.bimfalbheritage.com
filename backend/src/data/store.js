@@ -1,6 +1,29 @@
-const { db } = require('../config/firebase');
+const path = require('path');
+const fs = require('fs');
+const { db, firebaseAvailable } = require('../config/firebase');
 const { randomUUID } = require('crypto');
 
+// ---------------------------------------------------------------------------
+// Local JSON file fallback (used when Firebase credentials are not available)
+// ---------------------------------------------------------------------------
+const LOCAL_FILE = path.join(__dirname, 'posts.json');
+
+const readLocal = async () => {
+  try {
+    const raw = await fs.promises.readFile(LOCAL_FILE, 'utf8');
+    return JSON.parse(raw);
+  } catch {
+    return [];
+  }
+};
+
+const writeLocal = async (posts) => {
+  await fs.promises.writeFile(LOCAL_FILE, JSON.stringify(posts, null, 2), 'utf8');
+};
+
+// ---------------------------------------------------------------------------
+// Firestore collection name
+// ---------------------------------------------------------------------------
 const COLLECTION = 'posts';
 
 const normalizePost = (post) => ({
@@ -47,11 +70,18 @@ const normalizePost = (post) => ({
 const docToPost = (doc) => normalizePost({ _id: doc.id, ...doc.data() });
 
 const getAll = async () => {
+  if (!firebaseAvailable) {
+    return readLocal();
+  }
   const snapshot = await db.collection(COLLECTION).get();
   return snapshot.docs.map(docToPost);
 };
 
 const getById = async (id) => {
+  if (!firebaseAvailable) {
+    const posts = await readLocal();
+    return posts.find((p) => p._id === id) || null;
+  }
   const doc = await db.collection(COLLECTION).doc(id).get();
   if (!doc.exists) return null;
   return docToPost(doc);
@@ -64,11 +94,26 @@ const add = async (payload) => {
     publishDate: payload.publishDate || new Date().toISOString(),
     ...payload,
   });
+  if (!firebaseAvailable) {
+    const posts = await readLocal();
+    posts.unshift(item);
+    await writeLocal(posts);
+    return item;
+  }
   await db.collection(COLLECTION).doc(id).set(item);
   return item;
 };
 
 const update = async (id, payload) => {
+  if (!firebaseAvailable) {
+    const posts = await readLocal();
+    const idx = posts.findIndex((p) => p._id === id);
+    if (idx === -1) return null;
+    const updated = normalizePost({ ...posts[idx], _id: id, ...payload });
+    posts[idx] = updated;
+    await writeLocal(posts);
+    return updated;
+  }
   const ref = db.collection(COLLECTION).doc(id);
   const doc = await ref.get();
   if (!doc.exists) return null;
@@ -78,6 +123,14 @@ const update = async (id, payload) => {
 };
 
 const remove = async (id) => {
+  if (!firebaseAvailable) {
+    const posts = await readLocal();
+    const idx = posts.findIndex((p) => p._id === id);
+    if (idx === -1) return null;
+    const [item] = posts.splice(idx, 1);
+    await writeLocal(posts);
+    return item;
+  }
   const ref = db.collection(COLLECTION).doc(id);
   const doc = await ref.get();
   if (!doc.exists) return null;
@@ -87,6 +140,16 @@ const remove = async (id) => {
 };
 
 const reactToPost = async (id, type) => {
+  if (!firebaseAvailable) {
+    const posts = await readLocal();
+    const idx = posts.findIndex((p) => p._id === id);
+    if (idx === -1) return null;
+    if (type === 'up') posts[idx].upvotes = Number(posts[idx].upvotes || 0) + 1;
+    if (type === 'down') posts[idx].downvotes = Number(posts[idx].downvotes || 0) + 1;
+    await writeLocal(posts);
+    const { upvotes, downvotes } = posts[idx];
+    return { upvotes, downvotes, score: upvotes - downvotes };
+  }
   const ref = db.collection(COLLECTION).doc(id);
   const doc = await ref.get();
   if (!doc.exists) return null;
@@ -98,6 +161,23 @@ const reactToPost = async (id, type) => {
 };
 
 const getComments = async (id) => {
+  if (!firebaseAvailable) {
+    const posts = await readLocal();
+    const post = posts.find((p) => p._id === id);
+    if (!post) return null;
+    const comments = Array.isArray(post.comments) ? post.comments : [];
+    return comments
+      .map((c) => ({
+        id: c.id || randomUUID(),
+        parentId: c.parentId || null,
+        author: c.author || 'Guest',
+        text: c.text || '',
+        createdAt: c.createdAt || new Date().toISOString(),
+        upvotes: Number(c.upvotes || 0),
+        downvotes: Number(c.downvotes || 0),
+      }))
+      .sort((a, b) => new Date(a.createdAt) - new Date(b.createdAt));
+  }
   const doc = await db.collection(COLLECTION).doc(id).get();
   if (!doc.exists) return null;
   const comments = Array.isArray(doc.data().comments) ? doc.data().comments : [];
@@ -115,10 +195,6 @@ const getComments = async (id) => {
 };
 
 const addComment = async (id, payload) => {
-  const ref = db.collection(COLLECTION).doc(id);
-  const doc = await ref.get();
-  if (!doc.exists) return null;
-  const comments = Array.isArray(doc.data().comments) ? doc.data().comments : [];
   const comment = {
     id: randomUUID(),
     parentId: payload.parentId || null,
@@ -128,12 +204,38 @@ const addComment = async (id, payload) => {
     upvotes: 0,
     downvotes: 0,
   };
+  if (!firebaseAvailable) {
+    const posts = await readLocal();
+    const idx = posts.findIndex((p) => p._id === id);
+    if (idx === -1) return null;
+    if (!Array.isArray(posts[idx].comments)) posts[idx].comments = [];
+    posts[idx].comments.push(comment);
+    await writeLocal(posts);
+    return comment;
+  }
+  const ref = db.collection(COLLECTION).doc(id);
+  const doc = await ref.get();
+  if (!doc.exists) return null;
+  const comments = Array.isArray(doc.data().comments) ? doc.data().comments : [];
   comments.push(comment);
   await ref.update({ comments });
   return comment;
 };
 
 const reactToComment = async (postId, commentId, type) => {
+  if (!firebaseAvailable) {
+    const posts = await readLocal();
+    const pIdx = posts.findIndex((p) => p._id === postId);
+    if (pIdx === -1) return null;
+    const comments = Array.isArray(posts[pIdx].comments) ? posts[pIdx].comments : [];
+    const cIdx = comments.findIndex((c) => c.id === commentId);
+    if (cIdx === -1) return null;
+    if (type === 'up') comments[cIdx].upvotes = Number(comments[cIdx].upvotes || 0) + 1;
+    if (type === 'down') comments[cIdx].downvotes = Number(comments[cIdx].downvotes || 0) + 1;
+    posts[pIdx].comments = comments;
+    await writeLocal(posts);
+    return comments[cIdx];
+  }
   const ref = db.collection(COLLECTION).doc(postId);
   const doc = await ref.get();
   if (!doc.exists) return null;

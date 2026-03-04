@@ -1,7 +1,7 @@
 const multer = require('multer');
 const path = require('path');
 const fs = require('fs');
-const { bucket } = require('../config/firebase');
+const { bucket, firebaseAvailable } = require('../config/firebase');
 
 const uploadDir = path.join(__dirname, '..', '..', 'uploads');
 if (!fs.existsSync(uploadDir)) {
@@ -41,8 +41,8 @@ const firebaseUploadMiddleware = async (req, _res, next) => {
   if (!Array.isArray(req.files) || req.files.length === 0) return next();
 
   const storageBucket = process.env.FIREBASE_STORAGE_BUCKET;
-  if (!storageBucket) {
-    // No bucket configured – keep the local disk file path as-is
+  if (!firebaseAvailable || !storageBucket) {
+    // Firebase unavailable or no bucket configured – keep local disk file path
     return next();
   }
 
