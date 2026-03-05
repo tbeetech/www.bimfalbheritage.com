@@ -622,6 +622,27 @@
   background: var(--line);
 }
 
+/* ── Collapsible metadata toggle ────────────────────────────── */
+.admin-form-section-toggle {
+  all: unset;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  gap: 8px;
+}
+
+.admin-form-section-toggle .admin-form-section-title {
+  flex: 1;
+}
+
+.admin-toggle-icon {
+  font-size: 0.6rem;
+  color: var(--muted);
+  flex-shrink: 0;
+}
+
 .admin-form-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));

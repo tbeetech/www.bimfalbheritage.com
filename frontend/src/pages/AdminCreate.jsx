@@ -1,6 +1,5 @@
 import { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import dayjs from 'dayjs';
 import RichTextEditor from '../components/RichTextEditor';
 import { createPost, updatePost, getPost, login, getSessionStatus, logout } from '../services/api';
 import './AdminCreate.css';
@@ -16,11 +15,9 @@ const AdminCreate = () => {
   const [form, setForm] = useState({
     title: '',
     excerpt: '',
-    authorName: '',
     category: 'Culture',
     contentType: 'blog',
     tags: '',
-    publishDate: dayjs().format('YYYY-MM-DD'),
     videoUrl: '',
     collaborationPartner: '',
     collaborationType: '',
@@ -32,6 +29,7 @@ const AdminCreate = () => {
     eventExternalUrl: '',
     eventPlatform: 'Facebook Events',
   });
+  const [metaOpen, setMetaOpen] = useState(false);
   const [body, setBody] = useState('');
   const [images, setImages] = useState([]);
   const [existingImages, setExistingImages] = useState([]);
@@ -60,11 +58,9 @@ const AdminCreate = () => {
         setForm({
           title: post.title || '',
           excerpt: post.excerpt || '',
-          authorName: post.authorName || '',
           category: post.category || 'Culture',
           contentType: post.contentType || 'blog',
           tags: post.tags || '',
-          publishDate: post.publishDate ? dayjs(post.publishDate).format('YYYY-MM-DD') : dayjs().format('YYYY-MM-DD'),
           videoUrl: post.videoUrl || '',
           collaborationPartner: post.collaborationPartner || '',
           collaborationType: post.collaborationType || '',
@@ -155,10 +151,6 @@ const AdminCreate = () => {
           </label>
           <div className="two-col">
             <label>
-              Author name
-              <input name="authorName" value={form.authorName} onChange={handleChange} />
-            </label>
-            <label>
               Category
               <select name="category" value={form.category} onChange={handleChange}>
                 {categories.map((c) => <option key={c}>{c}</option>)}
@@ -173,32 +165,33 @@ const AdminCreate = () => {
           </div>
           <div className="two-col">
             <label>
-              Publish date
-              <input type="date" name="publishDate" value={form.publishDate} onChange={handleChange} />
-            </label>
-            <label>
               Video URL (YouTube/Vimeo)
               <input name="videoUrl" value={form.videoUrl} onChange={handleChange} placeholder="https://www.youtube.com/watch?v=..." />
             </label>
           </div>
-          <div className="two-col">
-            <label>
-              Collaboration partner
-              <input name="collaborationPartner" value={form.collaborationPartner} onChange={handleChange} placeholder="Organization or media partner" />
-            </label>
-            <label>
-              Collaboration type
-              <input name="collaborationType" value={form.collaborationType} onChange={handleChange} placeholder="Sponsorship, media exchange, co-production" />
-            </label>
-          </div>
-          <label>
-            Share platforms
-            <input name="sharePlatforms" value={form.sharePlatforms} onChange={handleChange} placeholder="WhatsApp, X, Facebook, LinkedIn, Email" />
-          </label>
-          <label>
-            Tags
-            <input name="tags" value={form.tags} onChange={handleChange} placeholder="culture, event, lifestyle" />
-          </label>
+          <details open={metaOpen} onToggle={(e) => setMetaOpen(e.currentTarget.open)}>
+            <summary className="meta-summary">Metadata &amp; Distribution</summary>
+            <div className="meta-details">
+              <div className="two-col">
+                <label>
+                  Collaboration partner
+                  <input name="collaborationPartner" value={form.collaborationPartner} onChange={handleChange} placeholder="Organization or media partner" />
+                </label>
+                <label>
+                  Collaboration type
+                  <input name="collaborationType" value={form.collaborationType} onChange={handleChange} placeholder="Sponsorship, media exchange, co-production" />
+                </label>
+              </div>
+              <label>
+                Share platforms
+                <input name="sharePlatforms" value={form.sharePlatforms} onChange={handleChange} placeholder="WhatsApp, X, Facebook, LinkedIn, Email" />
+              </label>
+              <label>
+                Tags
+                <input name="tags" value={form.tags} onChange={handleChange} placeholder="culture, event, lifestyle" />
+              </label>
+            </div>
+          </details>
           {form.contentType === 'event' && (
             <div className="event-meta card">
               <h3>Event Setup (Facebook-style event launch)</h3>
