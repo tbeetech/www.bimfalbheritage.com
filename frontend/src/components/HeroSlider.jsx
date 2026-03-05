@@ -31,7 +31,7 @@ const HeroSlider = () => {
   }, []);
 
   const handleNav = (dir) => {
-    goTo(current + dir);
+    setCurrent((prev) => (prev + dir + SLIDES.length) % SLIDES.length);
     startTimer();
   };
 
@@ -90,15 +90,13 @@ const HeroSlider = () => {
       </button>
 
       {/* Dot indicators */}
-      <div className="hero-slider-dots" role="tablist" aria-label="Slide indicators">
+      <div className="hero-slider-dots" aria-label="Slide indicators">
         {SLIDES.map((slide, i) => (
           <button
             key={slide.id}
             type="button"
-            role="tab"
-            aria-selected={i === current}
             aria-label={`Go to slide ${i + 1}`}
-            aria-controls={`hero-slide-${i}`}
+            aria-current={i === current ? 'true' : undefined}
             className={`hero-slider-dot${i === current ? ' active' : ''}`}
             onClick={() => { goTo(i); startTimer(); }}
           />
