@@ -1,3 +1,4 @@
+const mongoose = require('mongoose');
 const store = require('../data/store');
 
 const paginate = (items, page = 1, limit = 6) => {
@@ -15,11 +16,16 @@ const paginate = (items, page = 1, limit = 6) => {
 };
 
 const getPosts = async (req, res, next) => {
-  try {
-    const page = Number(req.query.page) || 1;
-    const limit = Number(req.query.limit) || 6;
-    const contentType = req.query.contentType || '';
+  const page = Number(req.query.page) || 1;
+  const limit = Number(req.query.limit) || 6;
+  const contentType = req.query.contentType || '';
 
+  // Fast-fail when DB is not ready — avoids the 10 s Mongoose buffer timeout
+  if (mongoose.connection.readyState !== 1) {
+    return res.json(paginate([], page, limit));
+  }
+
+  try {
     let posts = (await store.getAll()).sort(
       (a, b) => new Date(b.publishDate) - new Date(a.publishDate)
     );
@@ -30,6 +36,10 @@ const getPosts = async (req, res, next) => {
 
     res.json(paginate(posts, page, limit));
   } catch (err) {
+    // Return empty results when the database is unavailable rather than a 500
+    if (err instanceof mongoose.Error) {
+      return res.json(paginate([], page, limit));
+    }
     next(err);
   }
 };

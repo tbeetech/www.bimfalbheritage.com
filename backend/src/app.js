@@ -4,14 +4,11 @@ const morgan = require('morgan');
 const path = require('path');
 const session = require('express-session');
 const cookieParser = require('cookie-parser');
-const connectDB = require('./config/db');
 const postRoutes = require('./routes/postRoutes');
 const authRoutes = require('./routes/authRoutes');
 const userRoutes = require('./routes/userRoutes');
 const { notFound, errorHandler } = require('./middleware/errorHandler');
 const { csrfProtection } = require('./middleware/csrf');
-
-connectDB();
 
 const app = express();
 
