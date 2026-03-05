@@ -189,17 +189,15 @@ const PostDetail = () => {
       navigate('/login');
       return;
     }
+    const wasLiked = liked;
     try {
       const result = await likePost(post._id || post.id);
       setLiked(result.liked);
       setLikeCount(result.likes);
     } catch {
-      // optimistic – use functional updater to avoid stale closure
-      setLiked((prev) => {
-        const nowLiked = !prev;
-        setLikeCount((c) => nowLiked ? c + 1 : c - 1);
-        return nowLiked;
-      });
+      // optimistic – toggle liked and adjust like count based on the value at click time
+      setLiked((prev) => !prev);
+      setLikeCount((c) => (wasLiked ? c - 1 : c + 1));
     }
   };
 
