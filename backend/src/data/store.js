@@ -49,6 +49,7 @@ const getComments = async (id) => {
     .map((c) => ({
       id: c.id || randomUUID(),
       parentId: c.parentId || null,
+      userId: c.userId || null,
       author: c.author || 'Guest',
       text: c.text || '',
       createdAt: c.createdAt || new Date().toISOString(),
@@ -62,6 +63,7 @@ const addComment = async (id, payload) => {
   const comment = {
     id: randomUUID(),
     parentId: payload.parentId || null,
+    userId: payload.userId || null,
     author: payload.author || 'Guest',
     text: payload.text || '',
     createdAt: new Date().toISOString(),
@@ -91,6 +93,47 @@ const reactToComment = async (postId, commentId, type) => {
   return comment || null;
 };
 
+const incrementView = async (id) => {
+  const post = await Post.findByIdAndUpdate(id, { $inc: { views: 1 } }, { new: true }).lean();
+  if (!post) return null;
+  return { views: post.views };
+};
+
+const toggleLike = async (id, userId) => {
+  const post = await Post.findById(id).lean();
+  if (!post) return null;
+
+  const likes = Array.isArray(post.likes) ? post.likes : [];
+  const alreadyLiked = likes.includes(userId);
+
+  const update = alreadyLiked
+    ? { $pull: { likes: userId } }
+    : { $addToSet: { likes: userId } };
+
+  const updated = await Post.findByIdAndUpdate(id, update, { new: true }).lean();
+  if (!updated) return null;
+  return { likes: updated.likes.length, liked: !alreadyLiked };
+};
+
+const incrementShare = async (id) => {
+  const post = await Post.findByIdAndUpdate(id, { $inc: { shares: 1 } }, { new: true }).lean();
+  if (!post) return null;
+  return { shares: post.shares };
+};
+
+const deleteComment = async (postId, commentId, userId) => {
+  // Fetch the post to verify comment ownership
+  const post = await Post.findById(postId).lean();
+  if (!post) return null;
+  const comment = post.comments.find((c) => c.id === commentId);
+  if (!comment) return null;
+  // Only the comment author (by userId) or any admin can delete
+  if (comment.userId && comment.userId !== userId) return false;
+
+  await Post.findByIdAndUpdate(postId, { $pull: { comments: { id: commentId } } });
+  return true;
+};
+
 module.exports = {
   getAll,
   getById,
@@ -101,4 +144,8 @@ module.exports = {
   getComments,
   addComment,
   reactToComment,
+  incrementView,
+  toggleLike,
+  incrementShare,
+  deleteComment,
 };

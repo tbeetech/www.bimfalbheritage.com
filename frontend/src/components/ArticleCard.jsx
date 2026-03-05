@@ -18,7 +18,11 @@ const ArticleCard = ({ post }) => {
         <h3>{post.title}</h3>
         <p className="muted">{dayjs(post.publishDate).format('MMM DD, YYYY')}</p>
         {typeof post.upvotes === 'number' && typeof post.downvotes === 'number' && (
-          <p className="meta-inline">Score {post.upvotes - post.downvotes}</p>
+          <p className="meta-inline article-meta-stats">
+            <span>▲ {post.upvotes - post.downvotes}</span>
+            {typeof post.views === 'number' && <span>👁 {post.views}</span>}
+            {Array.isArray(post.likes) && <span>❤️ {post.likes.length}</span>}
+          </p>
         )}
         {post.collaborationPartner && (
           <p className="meta-inline">In cooperation with {post.collaborationPartner}</p>

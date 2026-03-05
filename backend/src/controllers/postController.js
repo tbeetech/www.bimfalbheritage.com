@@ -149,8 +149,12 @@ const addComment = async (req, res, next) => {
       res.status(400);
       throw new Error('Comment text is required');
     }
+    // Use authenticated user info if available
+    const author = req.user ? req.user.name : (req.body.author || 'Guest');
+    const userId = req.user ? req.user.id : null;
     const comment = await store.addComment(req.params.id, {
-      author: req.body.author,
+      author,
+      userId,
       text: req.body.text.trim(),
       parentId: req.body.parentId || null,
     });
@@ -178,6 +182,69 @@ const reactToComment = async (req, res, next) => {
   }
 };
 
+const incrementView = async (req, res, next) => {
+  try {
+    const result = await store.incrementView(req.params.id);
+    if (!result) {
+      res.status(404);
+      throw new Error('Post not found');
+    }
+    res.json(result);
+  } catch (err) {
+    next(err);
+  }
+};
+
+const toggleLike = async (req, res, next) => {
+  try {
+    const userId = req.user?.id;
+    if (!userId) {
+      return res.status(401).json({ message: 'Authentication required to like posts' });
+    }
+    const result = await store.toggleLike(req.params.id, userId);
+    if (!result) {
+      res.status(404);
+      throw new Error('Post not found');
+    }
+    return res.json(result);
+  } catch (err) {
+    return next(err);
+  }
+};
+
+const incrementShare = async (req, res, next) => {
+  try {
+    const result = await store.incrementShare(req.params.id);
+    if (!result) {
+      res.status(404);
+      throw new Error('Post not found');
+    }
+    res.json(result);
+  } catch (err) {
+    next(err);
+  }
+};
+
+const deleteOwnComment = async (req, res, next) => {
+  try {
+    const userId = req.user?.id;
+    if (!userId) {
+      return res.status(401).json({ message: 'Authentication required' });
+    }
+    const result = await store.deleteComment(req.params.id, req.params.commentId, userId);
+    if (result === null) {
+      res.status(404);
+      throw new Error('Post or comment not found');
+    }
+    if (result === false) {
+      return res.status(403).json({ message: 'You can only delete your own comments' });
+    }
+    return res.json({ message: 'Comment deleted' });
+  } catch (err) {
+    return next(err);
+  }
+};
+
 module.exports = {
   getPosts,
   getPost,
@@ -188,4 +255,8 @@ module.exports = {
   getComments,
   addComment,
   reactToComment,
+  incrementView,
+  toggleLike,
+  incrementShare,
+  deleteOwnComment,
 };

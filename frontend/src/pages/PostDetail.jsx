@@ -4,12 +4,17 @@ import dayjs from 'dayjs';
 import {
   addComment,
   deletePost,
+  deleteComment,
   getComments,
   getPost,
   getSessionStatus,
+  likePost,
   reactToComment,
   reactToPost,
+  sharePost,
+  trackView,
 } from '../services/api';
+import { useAuth } from '../context/AuthContext';
 import './PostDetail.css';
 
 const toEmbedUrl = (url) => {
@@ -34,22 +39,36 @@ const buildCommentTree = (comments) => {
   return root;
 };
 
-const CommentNode = ({ comment, postId, onReact, onReply }) => {
+const CommentNode = ({ comment, postId, onReact, onReply, onDelete, currentUserId }) => {
   const [showReply, setShowReply] = useState(false);
-  const [replyAuthor, setReplyAuthor] = useState('');
   const [replyText, setReplyText] = useState('');
+  const canDelete = currentUserId && (currentUserId === comment.userId);
 
   return (
     <div className="comment-node">
       <div className="comment-head">
+        <span className="comment-avatar">
+          {comment.author?.trim() ? comment.author.trim()[0].toUpperCase() : '?'}
+        </span>
         <strong>{comment.author}</strong>
         <span>{dayjs(comment.createdAt).format('MMM D, YYYY h:mm A')}</span>
+        {canDelete && (
+          <button type="button" className="comment-delete-btn" onClick={() => onDelete(postId, comment.id)} aria-label="Delete comment">
+            ✕
+          </button>
+        )}
       </div>
       <p>{comment.text}</p>
       <div className="comment-actions">
-        <button type="button" onClick={() => onReact(postId, comment.id, 'up')}>Upvote {comment.upvotes || 0}</button>
-        <button type="button" onClick={() => onReact(postId, comment.id, 'down')}>Downvote {comment.downvotes || 0}</button>
-        <button type="button" onClick={() => setShowReply((prev) => !prev)}>Reply</button>
+        <button type="button" onClick={() => onReact(postId, comment.id, 'up')}>
+          ▲ {comment.upvotes || 0}
+        </button>
+        <button type="button" onClick={() => onReact(postId, comment.id, 'down')}>
+          ▼ {comment.downvotes || 0}
+        </button>
+        <button type="button" onClick={() => setShowReply((prev) => !prev)}>
+          {showReply ? 'Cancel' : 'Reply'}
+        </button>
       </div>
 
       {showReply && (
@@ -57,12 +76,12 @@ const CommentNode = ({ comment, postId, onReact, onReply }) => {
           className="reply-form"
           onSubmit={(event) => {
             event.preventDefault();
-            onReply(postId, comment.id, replyAuthor, replyText);
+            onReply(postId, comment.id, replyText);
             setReplyText('');
+            setShowReply(false);
           }}
         >
-          <input value={replyAuthor} onChange={(event) => setReplyAuthor(event.target.value)} placeholder="Name" />
-          <textarea value={replyText} onChange={(event) => setReplyText(event.target.value)} placeholder="Reply..." rows={2} />
+          <textarea value={replyText} onChange={(event) => setReplyText(event.target.value)} placeholder="Write a reply…" rows={2} required />
           <button type="submit">Post Reply</button>
         </form>
       )}
@@ -76,6 +95,8 @@ const CommentNode = ({ comment, postId, onReact, onReply }) => {
               postId={postId}
               onReact={onReact}
               onReply={onReply}
+              onDelete={onDelete}
+              currentUserId={currentUserId}
             />
           ))}
         </div>
@@ -87,16 +108,24 @@ const CommentNode = ({ comment, postId, onReact, onReply }) => {
 const PostDetail = () => {
   const { id } = useParams();
   const navigate = useNavigate();
+  const { user } = useAuth();
   const [post, setPost] = useState(null);
   const [copyState, setCopyState] = useState('');
   const [comments, setComments] = useState([]);
-  const [author, setAuthor] = useState('');
   const [commentText, setCommentText] = useState('');
   const [isAdmin, setIsAdmin] = useState(false);
+  const [liked, setLiked] = useState(false);
+  const [likeCount, setLikeCount] = useState(0);
 
   const loadPost = async () => {
     const data = await getPost(id);
     setPost(data);
+    if (data) {
+      setLikeCount(Array.isArray(data.likes) ? data.likes.length : (data.likes || 0));
+      if (user && Array.isArray(data.likes)) {
+        setLiked(data.likes.includes(user.id));
+      }
+    }
   };
 
   const loadComments = async () => {
@@ -113,6 +142,11 @@ const PostDetail = () => {
       await loadPost();
     };
     load();
+  }, [id]);
+
+  // Track view once per post load
+  useEffect(() => {
+    if (id) trackView(id);
   }, [id]);
 
   useEffect(() => {
@@ -150,6 +184,31 @@ const PostDetail = () => {
     }
   };
 
+  const handleLike = async () => {
+    if (!user) {
+      navigate('/login');
+      return;
+    }
+    try {
+      const result = await likePost(post._id || post.id);
+      setLiked(result.liked);
+      setLikeCount(result.likes);
+    } catch {
+      // optimistic
+      setLiked((prev) => !prev);
+      setLikeCount((prev) => liked ? prev - 1 : prev + 1);
+    }
+  };
+
+  const handleShare = async (platform) => {
+    if (post) sharePost(post._id || post.id);
+    if (platform === 'copy') {
+      await navigator.clipboard.writeText(window.location.href);
+      setCopyState('Link copied');
+      setTimeout(() => setCopyState(''), 1200);
+    }
+  };
+
   const handleCommentReaction = async (postId, commentId, type) => {
     try {
       await reactToComment(postId, commentId, type);
@@ -166,10 +225,12 @@ const PostDetail = () => {
     }
   };
 
-  const handleAddComment = async (postId, parentId, nextAuthor, nextText) => {
+  const handleAddComment = async (postId, parentId, nextText) => {
     if (!nextText.trim()) return;
+    // Use authenticated user name, fallback to prompt
+    const authorName = user ? user.name : 'Guest';
     try {
-      await addComment(postId, { author: nextAuthor || 'Guest', text: nextText, parentId });
+      await addComment(postId, { author: authorName, text: nextText, parentId });
       await loadComments();
     } catch {
       setComments((prev) => [
@@ -177,13 +238,23 @@ const PostDetail = () => {
         {
           id: `local-${Date.now()}`,
           parentId: parentId || null,
-          author: nextAuthor || 'Guest',
+          userId: user?.id || null,
+          author: authorName,
           text: nextText,
           createdAt: new Date().toISOString(),
           upvotes: 0,
           downvotes: 0,
         },
       ]);
+    }
+  };
+
+  const handleDeleteComment = async (postId, commentId) => {
+    try {
+      await deleteComment(postId, commentId);
+      setComments((prev) => prev.filter((c) => c.id !== commentId));
+    } catch {
+      // ignore
     }
   };
 
@@ -249,10 +320,38 @@ const PostDetail = () => {
             </div>
           )}
 
+          {/* ── Stats bar ── */}
+          <div className="post-stats-bar">
+            <span className="post-stat">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" width="14" height="14" aria-hidden="true"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+              {post.views || 0} views
+            </span>
+            <span className="post-stat">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" width="14" height="14" aria-hidden="true"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+              {likeCount} likes
+            </span>
+            <span className="post-stat">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" width="14" height="14" aria-hidden="true"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>
+              {post.shares || 0} shares
+            </span>
+            <span className="post-stat">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" width="14" height="14" aria-hidden="true"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+              {comments.length} comments
+            </span>
+          </div>
+
           <div className="post-vote">
-            <button type="button" onClick={() => handlePostReaction('up')}>Upvote {post.upvotes || 0}</button>
-            <button type="button" onClick={() => handlePostReaction('down')}>Downvote {post.downvotes || 0}</button>
+            <button type="button" onClick={() => handlePostReaction('up')}>▲ {post.upvotes || 0}</button>
+            <button type="button" onClick={() => handlePostReaction('down')}>▼ {post.downvotes || 0}</button>
             <span>Score {(post.upvotes || 0) - (post.downvotes || 0)}</span>
+            <button
+              type="button"
+              className={`like-btn${liked ? ' liked' : ''}`}
+              onClick={handleLike}
+              aria-label={liked ? 'Unlike' : 'Like'}
+            >
+              {liked ? '❤️' : '🤍'} {likeCount > 0 ? likeCount : ''} Like
+            </button>
           </div>
 
           {(post.collaborationPartner || post.collaborationType) && (
@@ -291,18 +390,14 @@ const PostDetail = () => {
             <strong>Share:</strong>
             {shareLinks && (
               <>
-                <a href={shareLinks.whatsapp} target="_blank" rel="noreferrer">WhatsApp</a>
-                <a href={shareLinks.x} target="_blank" rel="noreferrer">X</a>
-                <a href={shareLinks.facebook} target="_blank" rel="noreferrer">Facebook</a>
-                <a href={shareLinks.linkedin} target="_blank" rel="noreferrer">LinkedIn</a>
-                <a href={shareLinks.email}>Email</a>
+                <a href={shareLinks.whatsapp} target="_blank" rel="noreferrer" onClick={() => handleShare('whatsapp')}>WhatsApp</a>
+                <a href={shareLinks.x} target="_blank" rel="noreferrer" onClick={() => handleShare('x')}>X</a>
+                <a href={shareLinks.facebook} target="_blank" rel="noreferrer" onClick={() => handleShare('facebook')}>Facebook</a>
+                <a href={shareLinks.linkedin} target="_blank" rel="noreferrer" onClick={() => handleShare('linkedin')}>LinkedIn</a>
+                <a href={shareLinks.email} onClick={() => handleShare('email')}>Email</a>
                 <button
                   type="button"
-                  onClick={async () => {
-                    await navigator.clipboard.writeText(window.location.href);
-                    setCopyState('Link copied');
-                    setTimeout(() => setCopyState(''), 1200);
-                  }}
+                  onClick={() => handleShare('copy')}
                 >
                   Copy link
                 </button>
@@ -325,29 +420,55 @@ const PostDetail = () => {
           )}
 
           <section className="comments-panel">
-            <h2>Interactive Responses</h2>
-            <form
-              className="comment-form"
-              onSubmit={async (event) => {
-                event.preventDefault();
-                await handleAddComment(post._id || post.id, null, author, commentText);
-                setCommentText('');
-              }}
-            >
-              <input value={author} onChange={(event) => setAuthor(event.target.value)} placeholder="Name (optional)" />
-              <textarea value={commentText} onChange={(event) => setCommentText(event.target.value)} placeholder="Add your response..." rows={3} required />
-              <button type="submit">Post Response</button>
-            </form>
+            <h2>Interactive Responses ({comments.length})</h2>
+
+            {/* Comment form */}
+            {user ? (
+              <form
+                className="comment-form"
+                onSubmit={async (event) => {
+                  event.preventDefault();
+                  await handleAddComment(post._id || post.id, null, commentText);
+                  setCommentText('');
+                }}
+              >
+                <div className="comment-user-badge">
+                  <span className="comment-user-avatar">{user.name?.trim() ? user.name.trim()[0].toUpperCase() : '?'}</span>
+                  <span>Commenting as <strong>{user.name}</strong></span>
+                </div>
+                <textarea value={commentText} onChange={(event) => setCommentText(event.target.value)} placeholder="Share your thoughts…" rows={3} required />
+                <button type="submit">Post Response</button>
+              </form>
+            ) : (
+              <div className="comment-login-prompt">
+                <p>
+                  <a href="/login">Sign in</a> or <a href="/register">create an account</a> to leave a comment and join the conversation.
+                </p>
+                <form
+                  className="comment-form"
+                  onSubmit={async (event) => {
+                    event.preventDefault();
+                    await handleAddComment(post._id || post.id, null, commentText);
+                    setCommentText('');
+                  }}
+                >
+                  <textarea value={commentText} onChange={(event) => setCommentText(event.target.value)} placeholder="Add your response as Guest…" rows={3} required />
+                  <button type="submit">Post as Guest</button>
+                </form>
+              </div>
+            )}
 
             <div className="comment-list">
-              {commentTree.length === 0 && <p className="muted">No responses yet.</p>}
+              {commentTree.length === 0 && <p className="muted">No responses yet. Be the first to comment!</p>}
               {commentTree.map((comment) => (
                 <CommentNode
                   key={comment.id}
                   comment={comment}
                   postId={post._id || post.id}
                   onReact={handleCommentReaction}
-                  onReply={handleAddComment}
+                  onReply={(postId, parentId, text) => handleAddComment(postId, parentId, text)}
+                  onDelete={handleDeleteComment}
+                  currentUserId={user?.id}
                 />
               ))}
             </div>

@@ -5,6 +5,7 @@ const commentSchema = new mongoose.Schema(
   {
     id: { type: String, default: () => randomUUID() },
     parentId: { type: String, default: null },
+    userId: { type: String, default: null },
     author: { type: String, default: 'Guest' },
     text: { type: String, default: '' },
     createdAt: { type: String, default: () => new Date().toISOString() },
@@ -45,6 +46,9 @@ const postSchema = new mongoose.Schema(
     eventMeta: { type: eventMetaSchema, default: () => ({}) },
     upvotes: { type: Number, default: 0 },
     downvotes: { type: Number, default: 0 },
+    views: { type: Number, default: 0 },
+    likes: { type: [String], default: [] },
+    shares: { type: Number, default: 0 },
     comments: { type: [commentSchema], default: [] },
     publishDate: { type: String, default: () => new Date().toISOString() },
   },

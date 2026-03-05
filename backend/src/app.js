@@ -3,10 +3,13 @@ const cors = require('cors');
 const morgan = require('morgan');
 const path = require('path');
 const session = require('express-session');
+const cookieParser = require('cookie-parser');
 const connectDB = require('./config/db');
 const postRoutes = require('./routes/postRoutes');
 const authRoutes = require('./routes/authRoutes');
+const userRoutes = require('./routes/userRoutes');
 const { notFound, errorHandler } = require('./middleware/errorHandler');
+const { csrfProtection } = require('./middleware/csrf');
 
 connectDB();
 
@@ -20,7 +23,9 @@ app.use(
 );
 app.use(express.json({ limit: '2mb' }));
 app.use(express.urlencoded({ extended: true }));
+app.use(cookieParser());
 app.use(morgan('dev'));
+app.use(csrfProtection);
 app.use(
   session({
     name: 'bh_session',
@@ -44,6 +49,7 @@ app.get('/api/health', (req, res) => {
 });
 
 app.use('/api/auth', authRoutes);
+app.use('/api/users', userRoutes);
 app.use('/api/posts', postRoutes);
 
 // Serve frontend build (single Render service)

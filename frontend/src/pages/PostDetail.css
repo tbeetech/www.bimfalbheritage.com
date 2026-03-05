@@ -394,3 +394,157 @@ button.btn.danger:hover {
     padding: 20px 18px 28px;
   }
 }
+
+/* ── Stats bar ───────────────────────────────────────────────────── */
+.post-stats-bar {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 14px;
+  margin: 12px 0 18px;
+  padding: 10px 14px;
+  background: var(--bg-soft);
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--line-soft);
+}
+
+.post-stat {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 0.73rem;
+  color: var(--muted);
+  text-transform: uppercase;
+  letter-spacing: 0.6px;
+}
+
+.post-stat svg {
+  opacity: 0.6;
+}
+
+/* ── Like button ─────────────────────────────────────────────────── */
+.like-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  border: 1.5px solid var(--line);
+  background: var(--bg-soft);
+  color: var(--muted);
+  padding: 7px 14px;
+  text-transform: uppercase;
+  font-size: 0.7rem;
+  letter-spacing: 0.8px;
+  cursor: pointer;
+  border-radius: 30px;
+  transition: background var(--transition), color var(--transition), border-color var(--transition), transform var(--transition);
+}
+
+.like-btn:hover,
+.like-btn.liked {
+  background: rgba(220, 38, 80, 0.08);
+  color: #dc2650;
+  border-color: rgba(220, 38, 80, 0.4);
+}
+
+.like-btn.liked {
+  background: rgba(220, 38, 80, 0.12);
+}
+
+/* ── Comment login prompt ────────────────────────────────────────── */
+.comment-login-prompt {
+  margin-bottom: 16px;
+}
+
+.comment-login-prompt p {
+  font-size: 0.88rem;
+  color: var(--muted);
+  margin-bottom: 10px;
+  padding: 10px 14px;
+  border: 1px dashed var(--line);
+  border-radius: var(--radius-sm);
+  background: var(--bg-soft);
+}
+
+.comment-login-prompt a {
+  color: var(--gold-2);
+  font-weight: 600;
+  transition: color var(--transition);
+}
+
+.comment-login-prompt a:hover {
+  color: var(--green);
+}
+
+[data-theme='dark'] .comment-login-prompt a {
+  color: var(--gold);
+}
+
+/* ── Comment user badge ──────────────────────────────────────────── */
+.comment-user-badge {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.82rem;
+  color: var(--muted);
+  margin-bottom: 4px;
+}
+
+.comment-user-badge strong {
+  color: var(--text);
+}
+
+.comment-user-avatar {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, var(--green-light), var(--green));
+  color: #fff;
+  font-family: 'Marcellus SC', serif;
+  font-size: 0.72rem;
+  flex-shrink: 0;
+}
+
+/* ── Comment avatar ──────────────────────────────────────────────── */
+.comment-head {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  margin-bottom: 8px;
+  flex-wrap: wrap;
+}
+
+.comment-avatar {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, var(--gold-2), var(--gold));
+  color: #fff;
+  font-family: 'Marcellus SC', serif;
+  font-size: 0.72rem;
+  flex-shrink: 0;
+}
+
+/* ── Comment delete ──────────────────────────────────────────────── */
+.comment-delete-btn {
+  margin-left: auto;
+  background: transparent;
+  border: none;
+  color: var(--muted);
+  cursor: pointer;
+  font-size: 0.7rem;
+  opacity: 0.5;
+  transition: opacity var(--transition), color var(--transition);
+  padding: 2px 6px;
+  border-radius: 4px;
+}
+
+.comment-delete-btn:hover {
+  opacity: 1;
+  color: #c00;
+}
