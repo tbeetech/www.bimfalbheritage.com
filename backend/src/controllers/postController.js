@@ -1,4 +1,5 @@
 const store = require('../data/store');
+const { DatabaseNotConnectedError } = require('../errors');
 
 const paginate = (items, page = 1, limit = 6) => {
   const start = (page - 1) * limit;
@@ -30,6 +31,9 @@ const getPosts = async (req, res, next) => {
 
     res.json(paginate(posts, page, limit));
   } catch (err) {
+    if (err instanceof DatabaseNotConnectedError) {
+      return res.status(503).json({ message: 'Service temporarily unavailable. Please try again later.' });
+    }
     next(err);
   }
 };

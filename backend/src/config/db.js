@@ -1,5 +1,9 @@
 const mongoose = require('mongoose');
 
+// Disable command buffering so queries fail immediately when DB is not
+// connected, rather than queuing for up to 10 seconds before timing out.
+mongoose.set('bufferCommands', false);
+
 const connectDB = async () => {
   const uri = process.env.MONGODB_URI;
   if (!uri) {

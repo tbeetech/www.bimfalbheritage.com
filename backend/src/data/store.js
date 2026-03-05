@@ -1,7 +1,12 @@
 const Post = require('../models/Post');
+const mongoose = require('mongoose');
 const { randomUUID } = require('crypto');
+const { DatabaseNotConnectedError } = require('../errors');
 
 const getAll = async () => {
+  if (mongoose.connection.readyState !== mongoose.STATES.connected) {
+    throw new DatabaseNotConnectedError();
+  }
   return Post.find().lean();
 };
 
