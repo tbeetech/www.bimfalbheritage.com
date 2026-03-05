@@ -1,6 +1,5 @@
 import { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import dayjs from 'dayjs';
 import RichTextEditor from '../../components/RichTextEditor';
 import { createPost, updatePost, getPost, login, logout } from '../../services/api';
 
@@ -15,11 +14,9 @@ const AdminEditorPane = ({ session, onSessionChange }) => {
   const [form, setForm] = useState({
     title: '',
     excerpt: '',
-    authorName: '',
     category: 'Culture',
     contentType: 'blog',
     tags: '',
-    publishDate: dayjs().format('YYYY-MM-DD'),
     videoUrl: '',
     collaborationPartner: '',
     collaborationType: '',
@@ -31,6 +28,7 @@ const AdminEditorPane = ({ session, onSessionChange }) => {
     eventExternalUrl: '',
     eventPlatform: 'Facebook Events',
   });
+  const [metaOpen, setMetaOpen] = useState(false);
   const [body, setBody] = useState('');
   const [images, setImages] = useState([]);
   const [existingImages, setExistingImages] = useState([]);
@@ -48,11 +46,9 @@ const AdminEditorPane = ({ session, onSessionChange }) => {
         setForm({
           title: post.title || '',
           excerpt: post.excerpt || '',
-          authorName: post.authorName || '',
           category: post.category || 'Culture',
           contentType: post.contentType || 'blog',
           tags: post.tags || '',
-          publishDate: post.publishDate ? dayjs(post.publishDate).format('YYYY-MM-DD') : dayjs().format('YYYY-MM-DD'),
           videoUrl: post.videoUrl || '',
           collaborationPartner: post.collaborationPartner || '',
           collaborationType: post.collaborationType || '',
@@ -177,16 +173,6 @@ const AdminEditorPane = ({ session, onSessionChange }) => {
             </div>
             <div className="admin-form-grid">
               <div className="admin-field">
-                <label htmlFor="ef-author">Author</label>
-                <input
-                  id="ef-author"
-                  name="authorName"
-                  value={form.authorName}
-                  onChange={handleChange}
-                  placeholder="Author name"
-                />
-              </div>
-              <div className="admin-field">
                 <label htmlFor="ef-category">Category</label>
                 <select id="ef-category" name="category" value={form.category} onChange={handleChange}>
                   {categories.map((c) => <option key={c}>{c}</option>)}
@@ -197,16 +183,6 @@ const AdminEditorPane = ({ session, onSessionChange }) => {
                 <select id="ef-type" name="contentType" value={form.contentType} onChange={handleChange}>
                   {contentTypes.map((c) => <option key={c} value={c}>{c}</option>)}
                 </select>
-              </div>
-              <div className="admin-field">
-                <label htmlFor="ef-date">Publish Date</label>
-                <input
-                  id="ef-date"
-                  type="date"
-                  name="publishDate"
-                  value={form.publishDate}
-                  onChange={handleChange}
-                />
               </div>
             </div>
           </div>
@@ -273,7 +249,16 @@ const AdminEditorPane = ({ session, onSessionChange }) => {
 
           {/* ── Metadata ── */}
           <div className="admin-form-section">
-            <div className="admin-form-section-title">Metadata &amp; Distribution</div>
+            <button
+              type="button"
+              className="admin-form-section-toggle"
+              onClick={() => setMetaOpen((o) => !o)}
+              aria-expanded={metaOpen}
+            >
+              <span className="admin-form-section-title">Metadata &amp; Distribution</span>
+              <span className="admin-toggle-icon">{metaOpen ? '▲' : '▼'}</span>
+            </button>
+            {metaOpen && (
             <div className="admin-form-grid">
               <div className="admin-field">
                 <label htmlFor="ef-partner">Collaboration Partner</label>
@@ -316,6 +301,7 @@ const AdminEditorPane = ({ session, onSessionChange }) => {
                 />
               </div>
             </div>
+            )}
           </div>
 
           {/* ── Event meta (conditional) ── */}

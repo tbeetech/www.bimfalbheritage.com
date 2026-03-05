@@ -55,7 +55,38 @@
   color: #0d5b34;
 }
 
-.event-meta {
+.meta-summary {
+  cursor: pointer;
+  font-weight: 700;
+  font-size: 0.8rem;
+  text-transform: uppercase;
+  letter-spacing: 0.6px;
+  color: var(--muted);
+  padding: 4px 0;
+  list-style: none;
+  user-select: none;
+}
+
+.meta-summary::-webkit-details-marker {
+  display: none;
+}
+
+.meta-summary::before {
+  content: '▶ ';
+  font-size: 0.6rem;
+}
+
+details[open] .meta-summary::before {
+  content: '▼ ';
+}
+
+.meta-details {
+  display: grid;
+  gap: 12px;
+  margin-top: 10px;
+}
+
+
   padding: 14px;
   border: 1px dashed var(--line);
   background: var(--bg-soft);
