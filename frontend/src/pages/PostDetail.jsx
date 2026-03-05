@@ -48,7 +48,7 @@ const CommentNode = ({ comment, postId, onReact, onReply, onDelete, currentUserI
     <div className="comment-node">
       <div className="comment-head">
         <span className="comment-avatar">
-          {comment.author ? comment.author[0].toUpperCase() : '?'}
+          {comment.author?.trim() ? comment.author.trim()[0].toUpperCase() : '?'}
         </span>
         <strong>{comment.author}</strong>
         <span>{dayjs(comment.createdAt).format('MMM D, YYYY h:mm A')}</span>
@@ -433,7 +433,7 @@ const PostDetail = () => {
                 }}
               >
                 <div className="comment-user-badge">
-                  <span className="comment-user-avatar">{user.name[0].toUpperCase()}</span>
+                  <span className="comment-user-avatar">{user.name?.trim() ? user.name.trim()[0].toUpperCase() : '?'}</span>
                   <span>Commenting as <strong>{user.name}</strong></span>
                 </div>
                 <textarea value={commentText} onChange={(event) => setCommentText(event.target.value)} placeholder="Share your thoughts…" rows={3} required />

@@ -1,4 +1,5 @@
 const express = require('express');
+const rateLimit = require('express-rate-limit');
 const {
   getPosts,
   getPost,
@@ -21,6 +22,15 @@ const { compressImages, firebaseUpload } = upload;
 
 const router = express.Router();
 
+/** Moderate limiter for interaction endpoints: 60 per minute per IP */
+const interactionLimiter = rateLimit({
+  windowMs: 60 * 1000,
+  max: 60,
+  standardHeaders: true,
+  legacyHeaders: false,
+  message: { message: 'Too many requests, please slow down' },
+});
+
 router.route('/')
   .get(getPosts)
   .post(adminGuard, upload.array('images', 3), compressImages, firebaseUpload, createPost);
@@ -30,15 +40,15 @@ router.route('/:id')
   .put(adminGuard, upload.array('images', 3), compressImages, firebaseUpload, updatePost)
   .delete(adminGuard, deletePost);
 
-router.post('/:id/reactions', reactToPost);
-router.post('/:id/view', incrementView);
-router.post('/:id/like', optionalUserAuth, toggleLike);
-router.post('/:id/share', incrementShare);
+router.post('/:id/reactions', interactionLimiter, reactToPost);
+router.post('/:id/view', interactionLimiter, incrementView);
+router.post('/:id/like', interactionLimiter, optionalUserAuth, toggleLike);
+router.post('/:id/share', interactionLimiter, incrementShare);
 
 router.route('/:id/comments')
   .get(getComments)
-  .post(optionalUserAuth, addComment);
-router.post('/:id/comments/:commentId/reactions', reactToComment);
-router.delete('/:id/comments/:commentId', userGuard, deleteOwnComment);
+  .post(interactionLimiter, optionalUserAuth, addComment);
+router.post('/:id/comments/:commentId/reactions', interactionLimiter, reactToComment);
+router.delete('/:id/comments/:commentId', interactionLimiter, userGuard, deleteOwnComment);
 
 module.exports = router;

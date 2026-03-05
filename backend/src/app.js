@@ -9,6 +9,7 @@ const postRoutes = require('./routes/postRoutes');
 const authRoutes = require('./routes/authRoutes');
 const userRoutes = require('./routes/userRoutes');
 const { notFound, errorHandler } = require('./middleware/errorHandler');
+const { csrfProtection } = require('./middleware/csrf');
 
 connectDB();
 
@@ -24,6 +25,7 @@ app.use(express.json({ limit: '2mb' }));
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
 app.use(morgan('dev'));
+app.use(csrfProtection);
 app.use(
   session({
     name: 'bh_session',
