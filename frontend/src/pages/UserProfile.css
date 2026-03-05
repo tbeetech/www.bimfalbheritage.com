@@ -1,0 +1,137 @@
+/* ── User Profile page ───────────────────────────────────────────────────── */
+.auth-success {
+  background: rgba(9, 36, 21, 0.07);
+  border: 1.5px solid rgba(9, 36, 21, 0.2);
+  color: var(--green-light);
+  padding: 10px 14px;
+  border-radius: var(--radius-sm);
+  font-size: 0.85rem;
+  margin-bottom: 18px;
+}
+
+[data-theme='dark'] .auth-success {
+  background: rgba(30, 96, 64, 0.15);
+  border-color: rgba(30, 96, 64, 0.4);
+  color: var(--gold);
+}
+
+.profile-layout {
+  display: grid;
+  grid-template-columns: 240px 1fr;
+  gap: 24px;
+  align-items: start;
+}
+
+.profile-sidebar {
+  padding: 28px 20px;
+  text-align: center;
+  position: sticky;
+  top: 20px;
+}
+
+.profile-avatar {
+  margin-bottom: 14px;
+}
+
+.profile-avatar-img {
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 3px solid var(--gold);
+}
+
+.profile-avatar-initials {
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, var(--green-light), var(--green));
+  color: #fff;
+  font-family: 'Marcellus SC', serif;
+  font-size: 1.6rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto;
+  border: 3px solid var(--gold);
+}
+
+.profile-name {
+  font-family: 'Marcellus SC', serif;
+  font-size: 1rem;
+  margin-bottom: 4px;
+}
+
+.profile-email {
+  font-size: 0.78rem;
+  margin-bottom: 10px;
+}
+
+.profile-bio {
+  font-size: 0.83rem;
+  color: var(--muted);
+  margin-bottom: 14px;
+}
+
+.profile-logout-btn {
+  width: 100%;
+  margin-top: 10px;
+  justify-content: center;
+  background: rgba(204, 0, 0, 0.07);
+  border: 1.5px solid rgba(204, 0, 0, 0.3);
+  color: #c00;
+  font-size: 0.78rem;
+}
+
+.profile-logout-btn:hover {
+  background: #c00;
+  color: #fff;
+  border-color: #c00;
+}
+
+.profile-main {
+  display: grid;
+  gap: 20px;
+}
+
+.profile-section {
+  padding: 28px 28px 24px;
+}
+
+.profile-section h2 {
+  margin-bottom: 20px;
+  color: var(--green);
+}
+
+[data-theme='dark'] .profile-section h2 {
+  color: var(--gold);
+}
+
+.auth-textarea {
+  width: 100%;
+  border: 1.5px solid var(--line);
+  border-radius: var(--radius-sm);
+  background: var(--bg-soft);
+  color: var(--text);
+  padding: 11px 14px;
+  font-family: Montserrat, sans-serif;
+  font-size: 0.93rem;
+  resize: vertical;
+  transition: border-color var(--transition), box-shadow var(--transition);
+}
+
+.auth-textarea:focus {
+  outline: none;
+  border-color: var(--gold);
+  box-shadow: 0 0 0 3px rgba(197, 157, 85, 0.12);
+}
+
+@media (max-width: 760px) {
+  .profile-layout {
+    grid-template-columns: 1fr;
+  }
+
+  .profile-sidebar {
+    position: static;
+  }
+}

@@ -1,0 +1,136 @@
+/* ── Auth pages ──────────────────────────────────────────────────────────── */
+.auth-page {
+  min-height: 70vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 40px 20px;
+  animation: page-enter 600ms var(--ease-out) both;
+}
+
+.auth-card {
+  width: 100%;
+  max-width: 460px;
+  padding: 40px 40px 32px;
+  border-radius: var(--radius-lg);
+}
+
+.auth-header {
+  text-align: center;
+  margin-bottom: 28px;
+}
+
+.auth-emblem {
+  font-size: 2.6rem;
+  display: block;
+  margin-bottom: 10px;
+  animation: float 3s ease-in-out infinite;
+}
+
+.auth-header h1 {
+  font-size: clamp(1.5rem, 3vw, 2rem);
+  margin-bottom: 6px;
+}
+
+.auth-header .muted {
+  font-size: 0.88rem;
+}
+
+/* Error banner */
+.auth-error {
+  background: rgba(204, 0, 0, 0.08);
+  border: 1.5px solid rgba(204, 0, 0, 0.3);
+  color: #c00;
+  padding: 10px 14px;
+  border-radius: var(--radius-sm);
+  font-size: 0.85rem;
+  margin-bottom: 18px;
+}
+
+/* Form */
+.auth-form {
+  display: grid;
+  gap: 16px;
+}
+
+.auth-field {
+  display: grid;
+  gap: 6px;
+}
+
+.auth-field label {
+  font-size: 0.78rem;
+  text-transform: uppercase;
+  letter-spacing: 0.8px;
+  color: var(--muted);
+  font-weight: 600;
+}
+
+.auth-field input {
+  width: 100%;
+  border: 1.5px solid var(--line);
+  border-radius: var(--radius-sm);
+  background: var(--bg-soft);
+  color: var(--text);
+  padding: 11px 14px;
+  font-family: Montserrat, sans-serif;
+  font-size: 0.93rem;
+  transition: border-color var(--transition), box-shadow var(--transition);
+}
+
+.auth-field input:focus {
+  outline: none;
+  border-color: var(--gold);
+  box-shadow: 0 0 0 3px rgba(197, 157, 85, 0.12);
+}
+
+.auth-field input::placeholder {
+  color: var(--muted);
+  opacity: 0.6;
+}
+
+.auth-btn {
+  width: 100%;
+  padding: 13px;
+  margin-top: 6px;
+  font-size: 0.88rem;
+  justify-content: center;
+}
+
+.auth-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  transform: none;
+}
+
+/* Switch link */
+.auth-switch {
+  text-align: center;
+  margin-top: 20px;
+  font-size: 0.85rem;
+  color: var(--muted);
+}
+
+.auth-switch a {
+  color: var(--gold-2);
+  font-weight: 600;
+  transition: color var(--transition);
+}
+
+.auth-switch a:hover {
+  color: var(--green);
+}
+
+[data-theme='dark'] .auth-switch a {
+  color: var(--gold);
+}
+
+[data-theme='dark'] .auth-switch a:hover {
+  color: var(--gold-light);
+}
+
+@media (max-width: 520px) {
+  .auth-card {
+    padding: 28px 20px 24px;
+  }
+}

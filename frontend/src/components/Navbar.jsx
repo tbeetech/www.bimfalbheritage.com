@@ -1,6 +1,7 @@
 import { useState } from 'react';
-import { Link, NavLink } from 'react-router-dom';
+import { Link, NavLink, useNavigate } from 'react-router-dom';
 import { useTheme } from '../context/ThemeContext';
+import { useAuth } from '../context/AuthContext';
 import './Navbar.css';
 
 const PhoneIcon = () => (
@@ -23,9 +24,22 @@ const OrgIcon = () => (
 
 const Navbar = () => {
   const [open, setOpen] = useState(false);
+  const [userMenuOpen, setUserMenuOpen] = useState(false);
   const { dark, setDark } = useTheme();
+  const { user, logout } = useAuth();
+  const navigate = useNavigate();
 
   const linkClass = ({ isActive }) => `nav-link${isActive ? ' active' : ''}`;
+
+  const handleLogout = async () => {
+    await logout();
+    setUserMenuOpen(false);
+    navigate('/');
+  };
+
+  const initials = user?.name
+    ? user.name.split(' ').map((n) => n[0]).join('').toUpperCase().slice(0, 2)
+    : '?';
 
   return (
     <header className="site-header">
@@ -88,6 +102,40 @@ const Navbar = () => {
                 </svg>
               )}
             </button>
+
+            {/* User auth area */}
+            {user ? (
+              <div className="nav-user-wrap">
+                <button
+                  className="nav-user-btn"
+                  onClick={() => setUserMenuOpen((v) => !v)}
+                  aria-label="User menu"
+                  type="button"
+                >
+                  {user.avatar ? (
+                    <img src={user.avatar} alt={user.name} className="nav-user-avatar-img" />
+                  ) : (
+                    <span className="nav-user-initials">{initials}</span>
+                  )}
+                </button>
+                {userMenuOpen && (
+                  <div className="nav-user-dropdown">
+                    <div className="nav-user-name">{user.name}</div>
+                    <Link to="/profile" className="nav-user-item" onClick={() => setUserMenuOpen(false)}>
+                      My Profile
+                    </Link>
+                    <button type="button" className="nav-user-item nav-user-logout" onClick={handleLogout}>
+                      Sign Out
+                    </button>
+                  </div>
+                )}
+              </div>
+            ) : (
+              <Link to="/login" className="nav-login-btn" onClick={() => setOpen(false)}>
+                Sign In
+              </Link>
+            )}
+
             <button
               className="nav-toggle"
               onClick={() => setOpen((v) => !v)}

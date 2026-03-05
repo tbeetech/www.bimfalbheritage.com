@@ -101,3 +101,17 @@
 
 [data-theme='dark'] .read-more { color: var(--gold); }
 [data-theme='dark'] .read-more:hover { color: var(--gold-2); }
+
+.article-meta-stats {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.article-meta-stats span {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  font-size: 0.72rem;
+}

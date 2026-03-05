@@ -13,6 +13,11 @@ api.interceptors.request.use((config) => {
     if (storedPassword) {
       config.headers['x-admin-token'] = storedPassword;
     }
+    // JWT for user auth (Bearer fallback when cookie not sent cross-origin)
+    const token = localStorage.getItem('bh_user_token');
+    if (token) {
+      config.headers['Authorization'] = `Bearer ${token}`;
+    }
   }
   return config;
 });
@@ -102,5 +107,71 @@ export const addComment = async (id, payload) => {
 
 export const reactToComment = async (id, commentId, type = 'up') => {
   const res = await api.post(`/api/posts/${id}/comments/${commentId}/reactions`, { type });
+  return res.data;
+};
+
+export const deleteComment = async (postId, commentId) => {
+  const res = await api.delete(`/api/posts/${postId}/comments/${commentId}`);
+  return res.data;
+};
+
+// ── View / Like / Share ───────────────────────────────────────────────────────
+
+export const trackView = async (id) => {
+  try {
+    const res = await api.post(`/api/posts/${id}/view`);
+    return res.data;
+  } catch {
+    return null;
+  }
+};
+
+export const likePost = async (id) => {
+  const res = await api.post(`/api/posts/${id}/like`);
+  return res.data;
+};
+
+export const sharePost = async (id) => {
+  try {
+    const res = await api.post(`/api/posts/${id}/share`);
+    return res.data;
+  } catch {
+    return null;
+  }
+};
+
+// ── User Auth ─────────────────────────────────────────────────────────────────
+
+export const registerUser = async (name, email, password) => {
+  const res = await api.post('/api/users/register', { name, email, password });
+  if (res.data.token) localStorage.setItem('bh_user_token', res.data.token);
+  return res.data;
+};
+
+export const userLogin = async (email, password) => {
+  const res = await api.post('/api/users/login', { email, password });
+  if (res.data.token) localStorage.setItem('bh_user_token', res.data.token);
+  return res.data;
+};
+
+export const userLogout = async () => {
+  await api.post('/api/users/logout');
+  localStorage.removeItem('bh_user_token');
+};
+
+export const getUserMe = async () => {
+  const token = localStorage.getItem('bh_user_token');
+  if (!token) return null;
+  const res = await api.get('/api/users/me');
+  return res.data;
+};
+
+export const updateUserProfile = async (updates) => {
+  const res = await api.put('/api/users/me', updates);
+  return res.data;
+};
+
+export const changePassword = async (currentPassword, newPassword) => {
+  const res = await api.put('/api/users/me/password', { currentPassword, newPassword });
   return res.data;
 };

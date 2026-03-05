@@ -9,8 +9,13 @@ const {
   getComments,
   addComment,
   reactToComment,
+  incrementView,
+  toggleLike,
+  incrementShare,
+  deleteOwnComment,
 } = require('../controllers/postController');
 const { adminGuard } = require('../middleware/authMiddleware');
+const { userGuard, optionalUserAuth } = require('../middleware/userAuthMiddleware');
 const upload = require('../utils/upload');
 const { compressImages, firebaseUpload } = upload;
 
@@ -26,9 +31,14 @@ router.route('/:id')
   .delete(adminGuard, deletePost);
 
 router.post('/:id/reactions', reactToPost);
+router.post('/:id/view', incrementView);
+router.post('/:id/like', optionalUserAuth, toggleLike);
+router.post('/:id/share', incrementShare);
+
 router.route('/:id/comments')
   .get(getComments)
-  .post(addComment);
+  .post(optionalUserAuth, addComment);
 router.post('/:id/comments/:commentId/reactions', reactToComment);
+router.delete('/:id/comments/:commentId', userGuard, deleteOwnComment);
 
 module.exports = router;
