@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
-import { Link } from 'react-router-dom';
 import ArticleCard from '../components/ArticleCard';
 import Carousel from '../components/Carousel';
+import HeroSlider from '../components/HeroSlider';
 import { eventCards, goalCards, teamCards, valueCards } from '../data/siteContent';
 import { getPosts } from '../services/api';
 import './Home.css';
@@ -26,22 +26,7 @@ const Home = () => {
 
   return (
     <div className="page">
-      <section className="hero-block">
-        <div className="hero-corner" aria-hidden="true" />
-        <div className="hero-corner-br" aria-hidden="true" />
-        <div className="hero-overlay">
-          <div className="hero-badge">&#10022; Bimfalb Heritage &#10022;</div>
-          <h1>Bimfalb cultural heritage promotion and initiative</h1>
-          <p>
-            Promoting education and awareness about different cultures and heritage.
-            We also promote young, talented local musicians.
-          </p>
-          <div className="hero-actions">
-            <Link className="btn" to="/about-us-3">Learn More</Link>
-            <Link className="btn secondary" to="/news">Read News</Link>
-          </div>
-        </div>
-      </section>
+      <HeroSlider />
 
       <div className="stats-section">
         {statsData.map((stat) => (

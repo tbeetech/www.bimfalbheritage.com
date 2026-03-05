@@ -194,9 +194,12 @@ const PostDetail = () => {
       setLiked(result.liked);
       setLikeCount(result.likes);
     } catch {
-      // optimistic
-      setLiked((prev) => !prev);
-      setLikeCount((prev) => liked ? prev - 1 : prev + 1);
+      // optimistic – use functional updater to avoid stale closure
+      setLiked((prev) => {
+        const nowLiked = !prev;
+        setLikeCount((c) => nowLiked ? c + 1 : c - 1);
+        return nowLiked;
+      });
     }
   };
 
