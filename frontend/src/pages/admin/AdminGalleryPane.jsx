@@ -1,8 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 import { createGalleryItem, deleteGalleryItem, getGalleryItems, login, logout } from '../../services/api';
-
-const resolveUrl = (url) =>
-  url?.startsWith('http') ? url : `${import.meta.env.VITE_API_URL || ''}${url || ''}`;
+import { resolveImageUrl } from '../../utils/imageUrl';
 
 const AdminGalleryPane = ({ session, onSessionChange }) => {
   const [items, setItems] = useState([]);
@@ -57,7 +55,19 @@ const AdminGalleryPane = ({ session, onSessionChange }) => {
         await login(password);
         onSessionChange?.(true);
       }
-      await createGalleryItem({ images: imageFiles, caption });
+      try {
+        await createGalleryItem({ images: imageFiles, caption });
+      } catch (uploadErr) {
+        const status = uploadErr?.response?.status;
+        if (status === 401 && password) {
+          // Session expired — re-authenticate and retry once
+          await login(password);
+          onSessionChange?.(true);
+          await createGalleryItem({ images: imageFiles, caption });
+        } else {
+          throw uploadErr;
+        }
+      }
       const count = imageFiles.length;
       setStatus(`${count} ${count === 1 ? 'image' : 'images'} added to gallery!`);
       setStatusOk(true);
@@ -66,8 +76,16 @@ const AdminGalleryPane = ({ session, onSessionChange }) => {
       setPreviews([]);
       if (fileInputRef.current) fileInputRef.current.value = '';
       await loadItems();
-    } catch {
-      setStatus('Failed to add images. Check your session or server.');
+    } catch (err) {
+      const status = err?.response?.status;
+      if (status === 401) {
+        setStatus('Session expired. Enter your password and try again.');
+        onSessionChange?.(false);
+      } else if (status === 503) {
+        setStatus('Server unavailable. Please wait a moment and try again.');
+      } else {
+        setStatus('Failed to add images. Check your session or server.');
+      }
       setStatusOk(false);
     } finally {
       setSaving(false);
@@ -223,7 +241,7 @@ const AdminGalleryPane = ({ session, onSessionChange }) => {
             {items.map((item) => (
               <div key={item._id} className="admin-gallery-thumb-wrap">
                 <img
-                  src={resolveUrl(item.imageUrl)}
+                  src={resolveImageUrl(item.imageUrl)}
                   alt={item.caption || 'Gallery image'}
                   className="admin-gallery-thumb"
                 />

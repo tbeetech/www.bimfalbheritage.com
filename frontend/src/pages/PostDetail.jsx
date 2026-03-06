@@ -12,6 +12,7 @@ import {
   sharePost,
   trackView,
 } from '../services/api';
+import { resolveImageUrl } from '../utils/imageUrl';
 import { useAuth } from '../context/AuthContext';
 import './PostDetail.css';
 
@@ -258,16 +259,11 @@ const PostDetail = () => {
     return <div className="page"><p>Loading...</p></div>;
   }
 
-  const cover = post.coverImage?.startsWith('http')
-    ? post.coverImage
-    : `${import.meta.env.VITE_API_URL || ''}${post.coverImage || ''}`;
+  const cover = resolveImageUrl(post.coverImage);
 
   const postImages = Array.isArray(post.images) && post.images.length > 0
     ? post.images
     : (post.coverImage ? [post.coverImage] : []);
-
-  const resolveImageUrl = (img) =>
-    img?.startsWith('http') ? img : `${import.meta.env.VITE_API_URL || ''}${img || ''}`;
 
   const sharePlatforms = post.sharePlatforms || '';
   const platformList = Array.isArray(sharePlatforms)

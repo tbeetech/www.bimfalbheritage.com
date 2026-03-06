@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import RichTextEditor from '../../components/RichTextEditor';
 import { createPost, updatePost, getPost, login, logout } from '../../services/api';
+import { resolveImageUrl } from '../../utils/imageUrl';
 
 const categories = ['History', 'Culture', 'Heritage', 'Events', 'Lifestyle'];
 const contentTypes = ['blog', 'vlog', 'news', 'lifestyle', 'event'];
@@ -228,7 +229,7 @@ const AdminEditorPane = ({ session, onSessionChange }) => {
                     {existingImages.map((img, i) => (
                       <img
                         key={i}
-                        src={img?.startsWith('http') ? img : `${import.meta.env.VITE_API_URL || ''}${img}`}
+                        src={resolveImageUrl(img)}
                         alt={`Current image ${i + 1}`}
                         className="admin-thumb"
                       />

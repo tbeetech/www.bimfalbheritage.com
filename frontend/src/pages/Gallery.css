@@ -53,11 +53,16 @@
 }
 
 .gallery-loading,
-.gallery-empty {
+.gallery-empty,
+.gallery-error {
   text-align: center;
   padding: 3rem 0;
   color: var(--muted, #666);
   font-size: 1rem;
+}
+
+.gallery-error {
+  color: #c0392b;
 }
 
 /* ── Board view ── */
