@@ -1,14 +1,13 @@
 import { Link } from 'react-router-dom';
 import dayjs from 'dayjs';
+import { resolveImageUrl } from '../utils/imageUrl';
 import './ArticleCard.css';
 
 const toPreview = (html = '') =>
   html.replace(/<[^>]+>/g, ' ').replace(/\s+/g, ' ').trim().slice(0, 150);
 
 const ArticleCard = ({ post }) => {
-  const cover = post.coverImage?.startsWith('http')
-    ? post.coverImage
-    : `${import.meta.env.VITE_API_URL || ''}${post.coverImage || ''}`;
+  const cover = resolveImageUrl(post.coverImage);
 
   return (
     <article className="article-card card">

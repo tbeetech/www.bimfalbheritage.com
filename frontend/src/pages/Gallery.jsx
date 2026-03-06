@@ -1,13 +1,15 @@
 import { useEffect, useRef, useState } from 'react';
 import { getGalleryItems } from '../services/api';
+import { resolveImageUrl } from '../utils/imageUrl';
 import './Gallery.css';
 
-const resolveUrl = (url) =>
-  url?.startsWith('http') ? url : `${import.meta.env.VITE_API_URL || ''}${url || ''}`;
+const RETRY_COUNT = 3;
+const RETRY_DELAY_MS = 2000;
 
 const Gallery = () => {
   const [items, setItems] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [fetchError, setFetchError] = useState('');
   const [view, setView] = useState('board'); // 'board' | 'slider'
   const [sliderIndex, setSliderIndex] = useState(0);
   const startXRef = useRef(null);
@@ -17,10 +19,30 @@ const Gallery = () => {
   const draggingRef = useRef(false);
 
   useEffect(() => {
-    getGalleryItems()
-      .then((data) => setItems(Array.isArray(data) ? data : []))
-      .catch(() => setItems([]))
-      .finally(() => setLoading(false));
+    const fetchWithRetry = async (retries = RETRY_COUNT, delay = RETRY_DELAY_MS) => {
+      for (let attempt = 0; attempt < retries; attempt++) {
+        try {
+          const data = await getGalleryItems();
+          setItems(Array.isArray(data) ? data : []);
+          setFetchError('');
+          return;
+        } catch (err) {
+          const status = err?.response?.status;
+          if (status === 503 && attempt < retries - 1) {
+            await new Promise((resolve) => setTimeout(resolve, delay));
+            continue;
+          }
+          setFetchError(
+            status === 503
+              ? 'Gallery service is unavailable. Please try again shortly.'
+              : 'Failed to load gallery images. Please refresh the page.'
+          );
+          setItems([]);
+          return;
+        }
+      }
+    };
+    fetchWithRetry().finally(() => setLoading(false));
   }, []);
 
   // ── Slider drag handlers ───────────────────────────────────────────────────
@@ -94,7 +116,11 @@ const Gallery = () => {
 
       {loading && <p className="gallery-loading">Loading gallery…</p>}
 
-      {!loading && items.length === 0 && (
+      {!loading && fetchError && (
+        <p className="gallery-error">{fetchError}</p>
+      )}
+
+      {!loading && !fetchError && items.length === 0 && (
         <p className="gallery-empty">No gallery images yet. Check back soon!</p>
       )}
 
@@ -111,7 +137,7 @@ const Gallery = () => {
               onKeyDown={(e) => e.key === 'Enter' && setLightbox(i)}
               aria-label={item.caption || `Gallery image ${i + 1}`}
             >
-              <img src={resolveUrl(item.imageUrl)} alt={item.caption || `Gallery image ${i + 1}`} loading="lazy" />
+              <img src={resolveImageUrl(item.imageUrl)} alt={item.caption || `Gallery image ${i + 1}`} loading="lazy" />
               {item.caption && <div className="gallery-card-caption">{item.caption}</div>}
             </div>
           ))}
@@ -143,7 +169,7 @@ const Gallery = () => {
                 onClick={() => !dragOffset && setLightbox(i)}
                 aria-label={item.caption || `Gallery image ${i + 1}`}
               >
-                <img src={resolveUrl(item.imageUrl)} alt={item.caption || `Gallery image ${i + 1}`} draggable={false} />
+                <img src={resolveImageUrl(item.imageUrl)} alt={item.caption || `Gallery image ${i + 1}`} draggable={false} />
                 {item.caption && <div className="gallery-slide-caption">{item.caption}</div>}
               </div>
             ))}
@@ -214,7 +240,7 @@ const Gallery = () => {
           </button>
           <div className="gallery-lightbox-inner" onClick={(e) => e.stopPropagation()}>
             <img
-              src={resolveUrl(items[lightbox].imageUrl)}
+              src={resolveImageUrl(items[lightbox].imageUrl)}
               alt={items[lightbox].caption || `Image ${lightbox + 1}`}
             />
             {items[lightbox].caption && (
