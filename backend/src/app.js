@@ -7,6 +7,7 @@ const mongoose = require('mongoose');
 const postRoutes = require('./routes/postRoutes');
 const authRoutes = require('./routes/authRoutes');
 const userRoutes = require('./routes/userRoutes');
+const galleryRoutes = require('./routes/galleryRoutes');
 const { notFound, errorHandler } = require('./middleware/errorHandler');
 const { csrfProtection } = require('./middleware/csrf');
 
@@ -39,6 +40,7 @@ app.get('/api/health', (req, res) => {
 app.use('/api/auth', authRoutes);
 app.use('/api/users', userRoutes);
 app.use('/api/posts', postRoutes);
+app.use('/api/gallery', galleryRoutes);
 
 // Serve frontend build (single Render service)
 const distPath = path.join(__dirname, '..', '..', 'frontend', 'dist');

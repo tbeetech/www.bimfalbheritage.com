@@ -4,6 +4,7 @@ import { getSessionStatus, logout } from '../services/api';
 import AdminDashboardPane from './admin/AdminDashboardPane';
 import AdminPostsPane from './admin/AdminPostsPane';
 import AdminEditorPane from './admin/AdminEditorPane';
+import AdminGalleryPane from './admin/AdminGalleryPane';
 import './Admin.css';
 
 const Admin = () => {
@@ -80,6 +81,19 @@ const Admin = () => {
             </svg>
             Create Post
           </NavLink>
+
+          <NavLink
+            to="/admin/gallery"
+            className={({ isActive }) => `admin-nav-item${isActive ? ' active' : ''}`}
+            onClick={() => setMenuOpen(false)}
+          >
+            <svg className="admin-nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden="true">
+              <rect x="3" y="3" width="18" height="18" rx="2" />
+              <circle cx="8.5" cy="8.5" r="1.5" />
+              <polyline points="21,15 16,10 5,21" />
+            </svg>
+            Gallery
+          </NavLink>
         </nav>
 
         <div className="admin-sidebar-footer">
@@ -129,6 +143,10 @@ const Admin = () => {
             <Route
               path="edit/:id"
               element={<AdminEditorPane session={session} onSessionChange={setSession} />}
+            />
+            <Route
+              path="gallery"
+              element={<AdminGalleryPane session={session} onSessionChange={setSession} />}
             />
           </Routes>
         </div>
