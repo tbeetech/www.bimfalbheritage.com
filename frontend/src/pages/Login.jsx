@@ -13,7 +13,9 @@ const Login = () => {
   const [loading, setLoading] = useState(false);
 
   // The page the user originally tried to access before being sent to login
-  const from = location.state?.from || '/';
+  // Avoid redirecting back to /login to prevent a redirect loop
+  const rawFrom = location.state?.from || '/';
+  const from = rawFrom === '/login' ? '/' : rawFrom;
 
   // If already authenticated, send them to their intended destination
   useEffect(() => {
