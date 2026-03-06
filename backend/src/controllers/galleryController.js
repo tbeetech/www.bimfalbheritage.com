@@ -1,5 +1,6 @@
 const mongoose = require('mongoose');
 const GalleryItem = require('../models/Gallery');
+const { bufferToDataUrl } = require('../utils/upload');
 
 const getGalleryItems = async (req, res, next) => {
   if (mongoose.connection.readyState !== 1) {
@@ -27,7 +28,7 @@ const createGalleryItem = async (req, res, next) => {
     const caption = req.body.caption || '';
     const items = await Promise.all(
       files.map((file) =>
-        new GalleryItem({ imageUrl: `/uploads/${file.filename}`, caption }).save()
+        new GalleryItem({ imageUrl: bufferToDataUrl(file), caption }).save()
       )
     );
 
