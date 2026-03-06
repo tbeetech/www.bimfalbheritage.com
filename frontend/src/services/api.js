@@ -181,3 +181,23 @@ export const changePassword = async (currentPassword, newPassword) => {
   const res = await api.put('/api/users/me/password', { currentPassword, newPassword });
   return res.data;
 };
+
+// ── Gallery ───────────────────────────────────────────────────────────────────
+
+export const getGalleryItems = async () => {
+  const res = await api.get('/api/gallery');
+  return res.data;
+};
+
+export const createGalleryItem = async (payload) => {
+  const formData = new FormData();
+  if (payload.image) formData.append('images', payload.image);
+  if (payload.caption !== undefined) formData.append('caption', payload.caption);
+  const res = await api.post('/api/gallery', formData);
+  return res.data;
+};
+
+export const deleteGalleryItem = async (id) => {
+  const res = await api.delete(`/api/gallery/${id}`);
+  return res.data;
+};
