@@ -414,6 +414,11 @@
   margin-bottom: 24px;
 }
 
+.admin-table-scroll {
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
 .admin-table-hdr {
   display: flex;
   align-items: center;
@@ -509,8 +514,15 @@
   text-decoration: none;
   display: inline-flex;
   align-items: center;
+  gap: 4px;
   font-weight: 500;
   white-space: nowrap;
+}
+
+.admin-btn-icon {
+  display: none;
+  font-style: normal;
+  line-height: 1;
 }
 
 .admin-btn-edit {
@@ -531,6 +543,13 @@
 
 .admin-btn-delete:hover {
   background: rgba(160, 82, 45, 0.1);
+}
+
+.admin-col-title {
+  max-width: 260px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 /* ── Filter bar ─────────────────────────────────────────────── */
@@ -847,6 +866,48 @@
 
   .admin-stats-grid {
     grid-template-columns: repeat(2, 1fr);
+  }
+
+  /* Hide less-important table columns on tablet and below */
+  .admin-col-author {
+    display: none;
+  }
+}
+
+/* ── Phone-size optimisations (≤ 540 px) ───────────────────── */
+@media (max-width: 540px) {
+  .admin-col-date {
+    display: none;
+  }
+
+  .admin-col-type {
+    display: none;
+  }
+
+  /* Show emoji icon, hide text label – keeps buttons tiny but tappable */
+  .admin-btn-label {
+    display: none;
+  }
+
+  .admin-btn-icon {
+    display: inline;
+  }
+
+  .admin-btn-edit,
+  .admin-btn-delete {
+    padding: 6px 8px;
+    font-size: 1rem;
+    min-width: 36px;
+    min-height: 36px;
+    justify-content: center;
+  }
+
+  .admin-row-actions {
+    gap: 4px;
+  }
+
+  .admin-col-title {
+    max-width: 140px;
   }
 }
 

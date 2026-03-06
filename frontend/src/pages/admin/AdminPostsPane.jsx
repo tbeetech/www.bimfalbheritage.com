@@ -79,61 +79,60 @@ const AdminPostsPane = () => {
             No posts found.
           </div>
         ) : (
-          <table className="admin-table">
-            <thead>
-              <tr>
-                <th>Title</th>
-                <th>Type</th>
-                <th>Author</th>
-                <th>Date</th>
-                <th>Actions</th>
-              </tr>
-            </thead>
-            <tbody>
-              {filtered.map((post) => {
-                const pid = post._id || post.id;
-                return (
-                  <tr key={pid}>
-                    <td
-                      style={{
-                        maxWidth: '260px',
-                        overflow: 'hidden',
-                        textOverflow: 'ellipsis',
-                        whiteSpace: 'nowrap',
-                      }}
-                    >
-                      {post.title}
-                    </td>
-                    <td>
-                      <span className={`admin-type-badge ${post.contentType || 'blog'}`}>
-                        {post.contentType || 'blog'}
-                      </span>
-                    </td>
-                    <td style={{ color: 'var(--muted)', fontSize: '0.8rem' }}>
-                      {post.authorName || '—'}
-                    </td>
-                    <td style={{ color: 'var(--muted)', fontSize: '0.8rem' }}>
-                      {post.publishDate ? post.publishDate.slice(0, 10) : '—'}
-                    </td>
-                    <td>
-                      <div className="admin-row-actions">
-                        <Link to={`/admin/edit/${pid}`} className="admin-btn-edit">
-                          Edit
-                        </Link>
-                        <button
-                          className="admin-btn-delete"
-                          type="button"
-                          onClick={() => handleDelete(pid)}
-                        >
-                          Delete
-                        </button>
-                      </div>
-                    </td>
-                  </tr>
-                );
-              })}
-            </tbody>
-          </table>
+          <div className="admin-table-scroll">
+            <table className="admin-table">
+              <thead>
+                <tr>
+                  <th>Title</th>
+                  <th className="admin-col-type">Type</th>
+                  <th className="admin-col-author">Author</th>
+                  <th className="admin-col-date">Date</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody>
+                {filtered.map((post) => {
+                  const pid = post._id || post.id;
+                  return (
+                    <tr key={pid}>
+                      <td className="admin-col-title">
+                        {post.title}
+                      </td>
+                      <td className="admin-col-type">
+                        <span className={`admin-type-badge ${post.contentType || 'blog'}`}>
+                          {post.contentType || 'blog'}
+                        </span>
+                      </td>
+                      <td className="admin-col-author" style={{ color: 'var(--muted)', fontSize: '0.8rem' }}>
+                        {post.authorName || '—'}
+                      </td>
+                      <td className="admin-col-date" style={{ color: 'var(--muted)', fontSize: '0.8rem' }}>
+                        {post.publishDate ? post.publishDate.slice(0, 10) : '—'}
+                      </td>
+                      <td>
+                        <div className="admin-row-actions">
+                          <Link to={`/admin/edit/${pid}`} className="admin-btn-edit" title="Edit post" aria-label="Edit post">
+                            <span className="admin-btn-label">Edit</span>
+                            <span className="admin-btn-icon" aria-hidden="true">✏️</span>
+                          </Link>
+                          <button
+                            className="admin-btn-delete"
+                            type="button"
+                            onClick={() => handleDelete(pid)}
+                            title="Delete post"
+                            aria-label="Delete post"
+                          >
+                            <span className="admin-btn-label">Delete</span>
+                            <span className="admin-btn-icon" aria-hidden="true">🗑️</span>
+                          </button>
+                        </div>
+                      </td>
+                    </tr>
+                  );
+                })}
+              </tbody>
+            </table>
+          </div>
         )}
       </div>
     </div>
