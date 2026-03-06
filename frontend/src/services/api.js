@@ -5,6 +5,17 @@ const baseURL = import.meta.env.VITE_API_URL || (typeof window !== 'undefined' ?
 
 const api = axios.create({ baseURL, withCredentials: true });
 
+// Attach stored JWT as Bearer token so auth works even when cookies are unavailable
+api.interceptors.request.use((config) => {
+  if (typeof window !== 'undefined') {
+    const token = localStorage.getItem('bh_token');
+    if (token && !config.headers.Authorization) {
+      config.headers.Authorization = `Bearer ${token}`;
+    }
+  }
+  return config;
+});
+
 export const getPosts = async (page = 1, limit = 6, contentType = '') => {
   try {
     const res = await api.get('/api/posts', { params: { page, limit, contentType } });
