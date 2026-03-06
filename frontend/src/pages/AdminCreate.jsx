@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import RichTextEditor from '../components/RichTextEditor';
-import { createPost, updatePost, getPost, login, getSessionStatus, logout } from '../services/api';
+import { createPost, updatePost, getPost } from '../services/api';
 import './AdminCreate.css';
 
 const categories = ['History', 'Culture', 'Heritage', 'Events', 'Lifestyle'];
@@ -33,21 +33,7 @@ const AdminCreate = () => {
   const [body, setBody] = useState('');
   const [images, setImages] = useState([]);
   const [existingImages, setExistingImages] = useState([]);
-  const [password, setPassword] = useState('');
   const [status, setStatus] = useState('');
-  const [session, setSession] = useState(false);
-
-  useEffect(() => {
-    const check = async () => {
-      try {
-        const res = await getSessionStatus();
-        setSession(res.admin);
-      } catch {
-        setSession(false);
-      }
-    };
-    check();
-  }, []);
 
   useEffect(() => {
     if (!isEditing) return;
@@ -95,10 +81,6 @@ const AdminCreate = () => {
     e.preventDefault();
     setStatus('Saving...');
     try {
-      if (!session) {
-        await login(password);
-        setSession(true);
-      }
       let post;
       if (isEditing) {
         post = await updatePost(editId, { ...form, body, images });
@@ -109,25 +91,8 @@ const AdminCreate = () => {
       }
       navigate(`/blog/${post._id || post.id}`);
     } catch (err) {
-      setStatus(isEditing ? 'Failed to update post.' : 'Failed to create post. Check session or server.');
+      setStatus(isEditing ? 'Failed to update post.' : 'Failed to create post. Check server.');
     }
-  };
-
-  const handleLogin = async () => {
-    try {
-      await login(password);
-      setSession(true);
-      setStatus('Session active');
-    } catch {
-      setSession(false);
-      setStatus('Login failed');
-    }
-  };
-
-  const handleLogout = async () => {
-    await logout();
-    setSession(false);
-    setStatus('Logged out');
   };
 
   return (
@@ -136,7 +101,7 @@ const AdminCreate = () => {
         <div>
           <div className="pill">Admin</div>
           <h1>{isEditing ? 'Edit post' : 'Create a new cultural post'}</h1>
-          <p className="muted">Session-based admin composer with cooperation fields and cross-platform sharing metadata.</p>
+          <p className="muted">Admin composer with cooperation fields and cross-platform sharing metadata.</p>
         </div>
         <form className="admin-form" onSubmit={handleSubmit}>
           <label>
@@ -251,23 +216,6 @@ const AdminCreate = () => {
             Article body
             <RichTextEditor value={body} onChange={setBody} placeholder="Compose with bold, lists, quotes..." />
           </label>
-          <div className="session-row">
-            <label>
-              Admin password
-              <input
-                name="adminPassword"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                type="password"
-                required
-              />
-            </label>
-            <div className="session-actions">
-              <button className="btn secondary" type="button" onClick={handleLogin}>Save session</button>
-              <button className="btn secondary" type="button" onClick={handleLogout}>Logout</button>
-              <span className={`session-dot ${session ? 'on' : 'off'}`}>{session ? 'Session active' : 'Session off'}</span>
-            </div>
-          </div>
           <button className="btn" type="submit">{isEditing ? 'Update post' : 'Publish post'}</button>
           {status && <p className="muted">{status}</p>}
         </form>

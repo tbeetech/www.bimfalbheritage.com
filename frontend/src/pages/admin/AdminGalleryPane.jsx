@@ -1,14 +1,13 @@
 import { useEffect, useRef, useState } from 'react';
-import { createGalleryItem, deleteGalleryItem, getGalleryItems, login, logout } from '../../services/api';
+import { createGalleryItem, deleteGalleryItem, getGalleryItems } from '../../services/api';
 import { resolveImageUrl } from '../../utils/imageUrl';
 
-const AdminGalleryPane = ({ session, onSessionChange }) => {
+const AdminGalleryPane = () => {
   const [items, setItems] = useState([]);
   const [loading, setLoading] = useState(true);
   const [caption, setCaption] = useState('');
   const [imageFiles, setImageFiles] = useState([]);
   const [previews, setPreviews] = useState([]);
-  const [password, setPassword] = useState('');
   const [status, setStatus] = useState('');
   const [statusOk, setStatusOk] = useState(true);
   const [saving, setSaving] = useState(false);
@@ -51,23 +50,7 @@ const AdminGalleryPane = ({ session, onSessionChange }) => {
     setSaving(true);
     setStatus('');
     try {
-      if (!session) {
-        await login(password);
-        onSessionChange?.(true);
-      }
-      try {
-        await createGalleryItem({ images: imageFiles, caption });
-      } catch (uploadErr) {
-        const status = uploadErr?.response?.status;
-        if (status === 401 && password) {
-          // Session expired — re-authenticate and retry once
-          await login(password);
-          onSessionChange?.(true);
-          await createGalleryItem({ images: imageFiles, caption });
-        } else {
-          throw uploadErr;
-        }
-      }
+      await createGalleryItem({ images: imageFiles, caption });
       const count = imageFiles.length;
       setStatus(`${count} ${count === 1 ? 'image' : 'images'} added to gallery!`);
       setStatusOk(true);
@@ -77,14 +60,13 @@ const AdminGalleryPane = ({ session, onSessionChange }) => {
       if (fileInputRef.current) fileInputRef.current.value = '';
       await loadItems();
     } catch (err) {
-      const status = err?.response?.status;
-      if (status === 401) {
-        setStatus('Session expired. Enter your password and try again.');
-        onSessionChange?.(false);
-      } else if (status === 503) {
+      const errStatus = err?.response?.status;
+      if (errStatus === 401) {
+        setStatus('Unauthorized. Authentication required.');
+      } else if (errStatus === 503) {
         setStatus('Server unavailable. Please wait a moment and try again.');
       } else {
-        setStatus('Failed to add images. Check your session or server.');
+        setStatus('Failed to add images. Check server.');
       }
       setStatusOk(false);
     } finally {
@@ -103,26 +85,6 @@ const AdminGalleryPane = ({ session, onSessionChange }) => {
       setStatus('Failed to delete image.');
       setStatusOk(false);
     }
-  };
-
-  const handleLogin = async () => {
-    try {
-      await login(password);
-      onSessionChange?.(true);
-      setStatus('Session active');
-      setStatusOk(true);
-    } catch {
-      onSessionChange?.(false);
-      setStatus('Login failed');
-      setStatusOk(false);
-    }
-  };
-
-  const handleLogout = async () => {
-    await logout();
-    onSessionChange?.(false);
-    setStatus('Logged out');
-    setStatusOk(true);
   };
 
   return (
@@ -181,36 +143,6 @@ const AdminGalleryPane = ({ session, onSessionChange }) => {
                   ))}
                 </div>
               )}
-            </div>
-          </div>
-
-          {/* ── Authentication ── */}
-          <div className="admin-form-section">
-            <div className="admin-form-section-title">Authentication</div>
-            <div className="admin-login-panel">
-              <div className="admin-field">
-                <label htmlFor="gal-password">Admin Password</label>
-                <input
-                  id="gal-password"
-                  type="password"
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  placeholder="Enter admin password"
-                  required={!session}
-                />
-              </div>
-              <div className="admin-login-actions">
-                <button className="btn secondary" type="button" onClick={handleLogin}>
-                  Save Session
-                </button>
-                <button className="btn secondary" type="button" onClick={handleLogout}>
-                  Sign Out
-                </button>
-                <span className={`admin-session-tag${session ? ' active' : ''}`}>
-                  <span className="admin-dot" />
-                  {session ? 'Session active' : 'Not logged in'}
-                </span>
-              </div>
             </div>
           </div>
 

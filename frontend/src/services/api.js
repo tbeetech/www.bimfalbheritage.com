@@ -5,23 +5,6 @@ const baseURL = import.meta.env.VITE_API_URL || (typeof window !== 'undefined' ?
 
 const api = axios.create({ baseURL, withCredentials: true });
 
-// Include stored admin JWT token as x-admin-token header so token-based auth
-// works as a fallback when the cookie is unavailable (e.g. cross-origin).
-api.interceptors.request.use((config) => {
-  if (typeof window !== 'undefined') {
-    const adminToken = localStorage.getItem('bh_admin_token');
-    if (adminToken) {
-      config.headers['x-admin-token'] = adminToken;
-    }
-    // JWT for user auth (Bearer fallback when cookie not sent cross-origin)
-    const token = localStorage.getItem('bh_user_token');
-    if (token) {
-      config.headers['Authorization'] = `Bearer ${token}`;
-    }
-  }
-  return config;
-});
-
 export const getPosts = async (page = 1, limit = 6, contentType = '') => {
   try {
     const res = await api.get('/api/posts', { params: { page, limit, contentType } });
@@ -45,15 +28,11 @@ export const getPost = async (id) => {
 
 export const login = async (password) => {
   const res = await api.post('/api/auth/login', { password });
-  if (res.data.token) {
-    localStorage.setItem('bh_admin_token', res.data.token);
-  }
   return res.data;
 };
 
 export const logout = async () => {
   await api.post('/api/auth/logout');
-  localStorage.removeItem('bh_admin_token');
 };
 
 export const getSessionStatus = async () => {
@@ -150,24 +129,19 @@ export const sharePost = async (id) => {
 
 export const registerUser = async (name, email, password) => {
   const res = await api.post('/api/users/register', { name, email, password });
-  if (res.data.token) localStorage.setItem('bh_user_token', res.data.token);
   return res.data;
 };
 
 export const userLogin = async (email, password) => {
   const res = await api.post('/api/users/login', { email, password });
-  if (res.data.token) localStorage.setItem('bh_user_token', res.data.token);
   return res.data;
 };
 
 export const userLogout = async () => {
   await api.post('/api/users/logout');
-  localStorage.removeItem('bh_user_token');
 };
 
 export const getUserMe = async () => {
-  const token = localStorage.getItem('bh_user_token');
-  if (!token) return null;
   const res = await api.get('/api/users/me');
   return res.data;
 };

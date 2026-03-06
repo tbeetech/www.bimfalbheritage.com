@@ -1,13 +1,13 @@
 import { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import RichTextEditor from '../../components/RichTextEditor';
-import { createPost, updatePost, getPost, login, logout } from '../../services/api';
+import { createPost, updatePost, getPost } from '../../services/api';
 import { resolveImageUrl } from '../../utils/imageUrl';
 
 const categories = ['History', 'Culture', 'Heritage', 'Events', 'Lifestyle'];
 const contentTypes = ['blog', 'vlog', 'news', 'lifestyle', 'event'];
 
-const AdminEditorPane = ({ session, onSessionChange }) => {
+const AdminEditorPane = () => {
   const { id: editId } = useParams();
   const navigate = useNavigate();
   const isEditing = Boolean(editId) && editId !== 'new';
@@ -33,7 +33,6 @@ const AdminEditorPane = ({ session, onSessionChange }) => {
   const [body, setBody] = useState('');
   const [images, setImages] = useState([]);
   const [existingImages, setExistingImages] = useState([]);
-  const [password, setPassword] = useState('');
   const [status, setStatus] = useState('');
   const [statusOk, setStatusOk] = useState(true);
   const [saving, setSaving] = useState(false);
@@ -91,10 +90,6 @@ const AdminEditorPane = ({ session, onSessionChange }) => {
     setSaving(true);
     setStatus('');
     try {
-      if (!session) {
-        await login(password);
-        onSessionChange?.(true);
-      }
       let post;
       if (isEditing) {
         post = await updatePost(editId, { ...form, body, images });
@@ -107,31 +102,11 @@ const AdminEditorPane = ({ session, onSessionChange }) => {
       }
       navigate(`/blog/${post._id || post.id}`);
     } catch {
-      setStatus(isEditing ? 'Failed to update post.' : 'Failed to create post. Check session or server.');
+      setStatus(isEditing ? 'Failed to update post.' : 'Failed to create post. Check server.');
       setStatusOk(false);
     } finally {
       setSaving(false);
     }
-  };
-
-  const handleLogin = async () => {
-    try {
-      await login(password);
-      onSessionChange?.(true);
-      setStatus('Session active');
-      setStatusOk(true);
-    } catch {
-      onSessionChange?.(false);
-      setStatus('Login failed');
-      setStatusOk(false);
-    }
-  };
-
-  const handleLogout = async () => {
-    await logout();
-    onSessionChange?.(false);
-    setStatus('Logged out');
-    setStatusOk(true);
   };
 
   return (
@@ -372,37 +347,6 @@ const AdminEditorPane = ({ session, onSessionChange }) => {
               </div>
             </div>
           )}
-
-          {/* ── Session / auth ── */}
-          <div className="admin-form-section">
-            <div className="admin-form-section-title">Authentication</div>
-            <div className="admin-login-panel">
-              <div className="admin-field">
-                <label htmlFor="ef-password">Admin Password</label>
-                <input
-                  id="ef-password"
-                  name="adminPassword"
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  type="password"
-                  required
-                  placeholder="Enter admin password"
-                />
-              </div>
-              <div className="admin-login-actions">
-                <button className="btn secondary" type="button" onClick={handleLogin}>
-                  Save Session
-                </button>
-                <button className="btn secondary" type="button" onClick={handleLogout}>
-                  Sign Out
-                </button>
-                <span className={`admin-session-tag${session ? ' active' : ''}`}>
-                  <span className="admin-dot" />
-                  {session ? 'Session active' : 'Not logged in'}
-                </span>
-              </div>
-            </div>
-          </div>
 
           {/* ── Submit ── */}
           <div className="admin-form-section">

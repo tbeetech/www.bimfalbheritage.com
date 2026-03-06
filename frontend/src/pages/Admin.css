@@ -173,6 +173,8 @@
   font-family: Montserrat, sans-serif;
   text-align: left;
   width: 100%;
+  text-decoration: none;
+  display: block;
 }
 
 .admin-signout-btn:hover {
