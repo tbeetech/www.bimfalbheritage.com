@@ -11,11 +11,18 @@ export const AuthProvider = ({ children }) => {
   // Restore session on mount
   useEffect(() => {
     const restore = async () => {
+      // Skip the network call if we have no stored token (avoids a guaranteed 401)
+      const storedToken = localStorage.getItem('bh_token');
+      if (!storedToken) {
+        setAuthLoading(false);
+        return;
+      }
       try {
         const me = await getUserMe();
         setUser(me);
       } catch {
         setUser(null);
+        localStorage.removeItem('bh_token');
       } finally {
         setAuthLoading(false);
       }
@@ -26,18 +33,21 @@ export const AuthProvider = ({ children }) => {
   const login = useCallback(async (email, password) => {
     const data = await apiUserLogin(email, password);
     setUser(data.user);
+    if (data.token) localStorage.setItem('bh_token', data.token);
     return data;
   }, []);
 
   const register = useCallback(async (name, email, password) => {
     const data = await registerUser(name, email, password);
     setUser(data.user);
+    if (data.token) localStorage.setItem('bh_token', data.token);
     return data;
   }, []);
 
   const logout = useCallback(async () => {
     await apiUserLogout();
     setUser(null);
+    localStorage.removeItem('bh_token');
   }, []);
 
   return (

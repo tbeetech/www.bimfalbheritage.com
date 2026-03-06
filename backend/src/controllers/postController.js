@@ -1,5 +1,6 @@
 const mongoose = require('mongoose');
 const store = require('../data/store');
+const GalleryItem = require('../models/Gallery');
 const { bufferToDataUrl } = require('../utils/upload');
 
 const paginate = (items, page = 1, limit = 6) => {
@@ -59,6 +60,9 @@ const getPost = async (req, res, next) => {
 };
 
 const createPost = async (req, res, next) => {
+  if (mongoose.connection.readyState !== 1) {
+    return res.status(503).json({ message: 'Service temporarily unavailable, please try again later' });
+  }
   try {
     const uploadedImages = Array.isArray(req.files) && req.files.length > 0
       ? req.files.map((f) => bufferToDataUrl(f))
@@ -89,6 +93,19 @@ const createPost = async (req, res, next) => {
       },
       publishDate: req.body.publishDate || new Date().toISOString(),
     });
+
+    // Also persist uploaded images to the gallery so they are accessible from the gallery view
+    if (uploadedImages.length > 0) {
+      const caption = req.body.title || 'Untitled Post';
+      await Promise.all(
+        uploadedImages.map((imageUrl) =>
+          new GalleryItem({ imageUrl, caption }).save().catch((e) => {
+            console.error('[postController] Failed to save image to gallery:', e.message);
+          })
+        )
+      );
+    }
+
     res.status(201).json(post);
   } catch (err) {
     next(err);
@@ -96,10 +113,14 @@ const createPost = async (req, res, next) => {
 };
 
 const updatePost = async (req, res, next) => {
+  if (mongoose.connection.readyState !== 1) {
+    return res.status(503).json({ message: 'Service temporarily unavailable, please try again later' });
+  }
   try {
     const updates = { ...req.body };
+    let uploadedImages = [];
     if (Array.isArray(req.files) && req.files.length > 0) {
-      const uploadedImages = req.files.map((f) => bufferToDataUrl(f));
+      uploadedImages = req.files.map((f) => bufferToDataUrl(f));
       updates.images = uploadedImages;
       updates.coverImage = uploadedImages[0];
     }
@@ -108,6 +129,19 @@ const updatePost = async (req, res, next) => {
       res.status(404);
       throw new Error('Post not found');
     }
+
+    // Also persist newly uploaded images to the gallery
+    if (uploadedImages.length > 0) {
+      const caption = req.body.title || post.title || 'Untitled Post';
+      await Promise.all(
+        uploadedImages.map((imageUrl) =>
+          new GalleryItem({ imageUrl, caption }).save().catch((e) => {
+            console.error('[postController] Failed to save image to gallery:', e.message);
+          })
+        )
+      );
+    }
+
     res.json(post);
   } catch (err) {
     next(err);
