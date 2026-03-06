@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { getPosts } from '../../services/api';
 
-const AdminDashboardPane = ({ session }) => {
+const AdminDashboardPane = () => {
   const [stats, setStats] = useState({ total: 0, blog: 0, event: 0, news: 0, vlog: 0, lifestyle: 0 });
   const [recentPosts, setRecentPosts] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -29,12 +29,6 @@ const AdminDashboardPane = ({ session }) => {
         <h1>Dashboard</h1>
         <p>Manage cultural posts and content for Bimfalb Heritage.</p>
       </div>
-
-      {!session && (
-        <div className="admin-alert warning">
-          No active session — log in via Create Post to manage content.
-        </div>
-      )}
 
       <div className="admin-stats-grid">
         <div className="admin-stat-card">

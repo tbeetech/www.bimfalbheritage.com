@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { getPosts, deletePost } from '../../services/api';
 
-const AdminPostsPane = ({ session }) => {
+const AdminPostsPane = () => {
   const [posts, setPosts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [status, setStatus] = useState('');
@@ -35,12 +35,6 @@ const AdminPostsPane = ({ session }) => {
         <h1>All Posts</h1>
         <p>Manage and edit all cultural content.</p>
       </div>
-
-      {!session && (
-        <div className="admin-alert warning">
-          No active session — some actions may be blocked.
-        </div>
-      )}
 
       {status && (
         <div className={`admin-alert ${status.toLowerCase().includes('failed') ? 'error' : 'success'}`}>
