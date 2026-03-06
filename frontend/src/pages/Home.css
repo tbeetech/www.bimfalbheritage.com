@@ -3,114 +3,6 @@
   animation: reveal-up 600ms var(--ease-out) both;
 }
 
-/* ── Hero ──────────────────────────────────────────────────────── */
-.hero-block {
-  position: relative;
-  min-height: 620px;
-  background:
-    linear-gradient(160deg, rgba(6, 24, 12, 0.85) 0%, rgba(4, 14, 8, 0.70) 50%, rgba(8, 28, 14, 0.60) 100%),
-    url('https://bimfalbheritage.com/wp-content/uploads/2025/04/pexels-photo-27844274-27844274.jpg') center/cover no-repeat;
-  display: flex;
-  align-items: flex-end;
-  overflow: hidden;
-  border-radius: var(--radius-xl);
-  animation: scale-in 900ms var(--ease-out) both;
-  border: 1px solid rgba(197, 157, 85, 0.2);
-}
-
-.hero-block::before {
-  content: '';
-  position: absolute;
-  inset: 0;
-  background: radial-gradient(ellipse at 75% 45%, rgba(197, 157, 85, 0.18) 0%, transparent 55%);
-  pointer-events: none;
-}
-
-.hero-block::after {
-  content: '';
-  position: absolute;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  height: 4px;
-  background: linear-gradient(90deg, transparent, var(--gold), var(--terracotta), var(--gold), transparent);
-}
-
-/* Decorative corner pattern */
-.hero-block .hero-corner {
-  position: absolute;
-  top: 24px;
-  right: 24px;
-  width: 80px;
-  height: 80px;
-  border-top: 2px solid rgba(197, 157, 85, 0.4);
-  border-right: 2px solid rgba(197, 157, 85, 0.4);
-  border-radius: 0 8px 0 0;
-  pointer-events: none;
-}
-
-.hero-block .hero-corner-br {
-  position: absolute;
-  bottom: 24px;
-  left: 24px;
-  width: 60px;
-  height: 60px;
-  border-bottom: 2px solid rgba(197, 157, 85, 0.3);
-  border-left: 2px solid rgba(197, 157, 85, 0.3);
-  border-radius: 0 0 0 8px;
-  pointer-events: none;
-}
-
-.hero-badge {
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  font-family: 'Marcellus SC', serif;
-  font-size: 0.72rem;
-  letter-spacing: 3px;
-  color: var(--gold);
-  text-transform: uppercase;
-  margin-bottom: 16px;
-  background: rgba(197, 157, 85, 0.1);
-  border: 1px solid rgba(197, 157, 85, 0.3);
-  padding: 6px 16px;
-  border-radius: 30px;
-}
-
-.hero-overlay {
-  position: relative;
-  z-index: 1;
-  padding: 60px 48px;
-  max-width: 720px;
-  color: #fff;
-  animation: hero-fade 900ms var(--ease-out) both;
-}
-
-.hero-overlay h1 {
-  margin-bottom: 18px;
-  font-size: clamp(2.2rem, 4vw, 3.2rem);
-  line-height: 1.2;
-  background: linear-gradient(135deg, #ffffff 50%, rgba(212, 170, 90, 0.9) 100%);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
-}
-
-.hero-overlay p {
-  margin-bottom: 28px;
-  font-size: 1.05rem;
-  opacity: 0.88;
-  text-shadow: 0 1px 6px rgba(0, 0, 0, 0.4);
-  max-width: 560px;
-  line-height: 1.9;
-}
-
-.hero-actions {
-  display: flex;
-  gap: 14px;
-  flex-wrap: wrap;
-}
-
 /* ── Section divider (African-inspired) ─────────────────────────── */
 .african-divider {
   position: relative;
@@ -426,22 +318,7 @@
   margin: 0 auto;
 }
 
-@keyframes hero-fade {
-  from {
-    opacity: 0;
-    transform: translateY(40px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
 @media (max-width: 640px) {
-  .hero-overlay {
-    padding: 36px 24px;
-  }
-
   .stats-section {
     grid-template-columns: repeat(2, 1fr);
   }
