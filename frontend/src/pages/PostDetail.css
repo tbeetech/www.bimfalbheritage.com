@@ -395,6 +395,16 @@ button.btn.danger:hover {
   }
 }
 
+@media (max-width: 400px) {
+  .post-body {
+    padding: 16px 12px 24px;
+  }
+
+  .post-hero {
+    height: 240px;
+  }
+}
+
 /* ── Stats bar ───────────────────────────────────────────────────── */
 .post-stats-bar {
   display: flex;

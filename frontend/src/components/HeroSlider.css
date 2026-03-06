@@ -225,6 +225,7 @@
 @media (max-width: 640px) {
   .hero-slider {
     min-height: 520px;
+    border-radius: var(--radius-lg);
   }
 
   .hero-slider-content {
@@ -239,4 +240,23 @@
 
   .hero-slider-arrow--prev { left: 8px; }
   .hero-slider-arrow--next { right: 8px; }
+}
+
+@media (max-width: 400px) {
+  .hero-slider {
+    min-height: 460px;
+    border-radius: var(--radius);
+  }
+
+  .hero-slider-content {
+    padding: 28px 16px;
+  }
+
+  .hero-slider-content h1 {
+    font-size: clamp(1.6rem, 6vw, 2.4rem);
+  }
+
+  .hero-slider-content p {
+    font-size: 0.9rem;
+  }
 }
