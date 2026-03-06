@@ -3,11 +3,9 @@ import { useParams, useNavigate } from 'react-router-dom';
 import dayjs from 'dayjs';
 import {
   addComment,
-  deletePost,
   deleteComment,
   getComments,
   getPost,
-  getSessionStatus,
   likePost,
   reactToComment,
   reactToPost,
@@ -113,7 +111,6 @@ const PostDetail = () => {
   const [copyState, setCopyState] = useState('');
   const [comments, setComments] = useState([]);
   const [commentText, setCommentText] = useState('');
-  const [isAdmin, setIsAdmin] = useState(false);
   const [liked, setLiked] = useState(false);
   const [likeCount, setLikeCount] = useState(0);
 
@@ -152,10 +149,6 @@ const PostDetail = () => {
   useEffect(() => {
     if (id) loadComments();
   }, [id]);
-
-  useEffect(() => {
-    getSessionStatus().then((res) => setIsAdmin(res.admin)).catch(() => setIsAdmin(false));
-  }, []);
 
   const shareLinks = useMemo(() => {
     if (!post || typeof window === 'undefined') return null;
@@ -261,17 +254,6 @@ const PostDetail = () => {
     }
   };
 
-  const handleDeletePost = async () => {
-    if (!post) return;
-    if (!window.confirm('Delete this post permanently?')) return;
-    try {
-      await deletePost(post._id || post.id);
-      navigate('/blog');
-    } catch {
-      alert('Failed to delete post.');
-    }
-  };
-
   if (!post) {
     return <div className="page"><p>Loading...</p></div>;
   }
@@ -315,13 +297,6 @@ const PostDetail = () => {
             {dayjs(post.publishDate).format('MMMM DD, YYYY')} | {post.category || 'General'} | Type: {post.contentType || 'blog'}
             {post.authorName ? ` | By ${post.authorName}` : ''}
           </p>
-
-          {isAdmin && (
-            <div className="admin-actions">
-              <a className="btn secondary" href={`/admin/edit/${post._id || post.id}`}>Edit post</a>
-              <button type="button" className="btn danger" onClick={handleDeletePost}>Delete post</button>
-            </div>
-          )}
 
           {/* ── Stats bar ── */}
           <div className="post-stats-bar">
