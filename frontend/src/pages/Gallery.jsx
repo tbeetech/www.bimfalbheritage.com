@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 import { getGalleryItems } from '../services/api';
 import { resolveImageUrl } from '../utils/imageUrl';
+import Spinner from '../components/Spinner';
 import './Gallery.css';
 
 const RETRY_COUNT = 3;
@@ -114,7 +115,7 @@ const Gallery = () => {
         </div>
       </div>
 
-      {loading && <p className="gallery-loading">Loading gallery…</p>}
+      {loading && <Spinner message="Loading gallery…" />}
 
       {!loading && fetchError && (
         <p className="gallery-error">{fetchError}</p>

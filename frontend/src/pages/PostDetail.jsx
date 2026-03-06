@@ -14,6 +14,7 @@ import {
 } from '../services/api';
 import { resolveImageUrl } from '../utils/imageUrl';
 import { useAuth } from '../context/AuthContext';
+import Spinner from '../components/Spinner';
 import './PostDetail.css';
 
 const toEmbedUrl = (url) => {
@@ -256,7 +257,7 @@ const PostDetail = () => {
   };
 
   if (!post) {
-    return <div className="page"><p>Loading...</p></div>;
+    return <div className="page"><Spinner message="Loading post…" /></div>;
   }
 
   const cover = resolveImageUrl(post.coverImage);

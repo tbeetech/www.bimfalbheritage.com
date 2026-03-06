@@ -1,4 +1,4 @@
-import { BrowserRouter, Routes, Route } from 'react-router-dom';
+import { BrowserRouter, Routes, Route, Navigate, useParams } from 'react-router-dom';
 import { ThemeProvider } from './context/ThemeContext';
 import { AuthProvider } from './context/AuthContext';
 import Layout from './components/Layout';
@@ -16,6 +16,11 @@ import Login from './pages/Login';
 import Register from './pages/Register';
 import UserProfile from './pages/UserProfile';
 
+const NewsRedirect = () => {
+  const { id } = useParams();
+  return <Navigate to={`/blog/${id}`} replace />;
+};
+
 const App = () => {
   return (
     <ThemeProvider>
@@ -28,9 +33,9 @@ const App = () => {
           <Route path="/about" element={<About />} />
           <Route path="/events" element={<Events />} />
           <Route path="/donations" element={<Donations />} />
-          <Route path="/news" element={<Blog />} />
+          <Route path="/news" element={<Navigate to="/blog" replace />} />
           <Route path="/blog" element={<Blog />} />
-          <Route path="/news/:id" element={<PostDetail />} />
+          <Route path="/news/:id" element={<NewsRedirect />} />
           <Route path="/blog/:id" element={<PostDetail />} />
           <Route path="/contact" element={<Contact />} />
           <Route path="/faq" element={<Faq />} />

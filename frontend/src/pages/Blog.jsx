@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import ArticleCard from '../components/ArticleCard';
 import Pagination from '../components/Pagination';
+import Spinner from '../components/Spinner';
 import { getPosts } from '../services/api';
 import './Blog.css';
 
@@ -17,11 +18,17 @@ const Blog = () => {
   const [posts, setPosts] = useState([]);
   const [pagination, setPagination] = useState();
   const [activeTab, setActiveTab] = useState('');
+  const [loading, setLoading] = useState(true);
 
   const load = async (page = 1, contentType = activeTab) => {
-    const res = await getPosts(page, 6, contentType);
-    setPosts(res.data || []);
-    setPagination(res.pagination);
+    setLoading(true);
+    try {
+      const res = await getPosts(page, 6, contentType);
+      setPosts(res.data || []);
+      setPagination(res.pagination);
+    } finally {
+      setLoading(false);
+    }
   };
 
   useEffect(() => {
@@ -54,13 +61,20 @@ const Blog = () => {
         ))}
       </div>
 
-      <div className="grid blog-grid">
-        {posts.map((post) => (
-          <ArticleCard key={post._id || post.id} post={post} />
-        ))}
-      </div>
-
-      <Pagination pagination={pagination} onChange={(page) => load(page, activeTab)} />
+      {loading ? (
+        <Spinner message="Loading posts…" />
+      ) : posts.length === 0 ? (
+        <p className="muted" style={{ textAlign: 'center', padding: '40px 0' }}>No posts found.</p>
+      ) : (
+        <>
+          <div className="grid blog-grid">
+            {posts.map((post) => (
+              <ArticleCard key={post._id || post.id} post={post} />
+            ))}
+          </div>
+          <Pagination pagination={pagination} onChange={(page) => load(page, activeTab)} />
+        </>
+      )}
     </div>
   );
 };
