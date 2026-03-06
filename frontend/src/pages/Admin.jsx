@@ -1,6 +1,5 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { Routes, Route, NavLink } from 'react-router-dom';
-import { getSessionStatus, logout } from '../services/api';
 import AdminDashboardPane from './admin/AdminDashboardPane';
 import AdminPostsPane from './admin/AdminPostsPane';
 import AdminEditorPane from './admin/AdminEditorPane';
@@ -8,19 +7,7 @@ import AdminGalleryPane from './admin/AdminGalleryPane';
 import './Admin.css';
 
 const Admin = () => {
-  const [session, setSession] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
-
-  useEffect(() => {
-    getSessionStatus()
-      .then((r) => setSession(r.admin))
-      .catch(() => setSession(false));
-  }, []);
-
-  const handleLogout = async () => {
-    await logout();
-    setSession(false);
-  };
 
   return (
     <div className="admin-shell">
@@ -97,15 +84,7 @@ const Admin = () => {
         </nav>
 
         <div className="admin-sidebar-footer">
-          <div className={`admin-session-indicator${session ? ' active' : ''}`}>
-            <span className="admin-dot" />
-            <span>{session ? 'Session active' : 'Not logged in'}</span>
-          </div>
-          {session && (
-            <button className="admin-signout-btn" type="button" onClick={handleLogout}>
-              Sign out
-            </button>
-          )}
+          <a href="/" className="admin-signout-btn" style={{ textDecoration: 'none' }}>← Back to site</a>
         </div>
       </aside>
 
@@ -124,29 +103,25 @@ const Admin = () => {
             </svg>
           </button>
           <span className="admin-topbar-title">Bimfalb Heritage</span>
-          <div className={`admin-topbar-badge${session ? ' active' : ''}`}>
-            <span className="admin-dot" />
-            <span>{session ? 'Active' : 'Offline'}</span>
-          </div>
         </header>
 
         <div className="admin-pane">
           <Routes>
             <Route
               index
-              element={<AdminDashboardPane session={session} />}
+              element={<AdminDashboardPane />}
             />
             <Route
               path="posts"
-              element={<AdminPostsPane session={session} />}
+              element={<AdminPostsPane />}
             />
             <Route
               path="edit/:id"
-              element={<AdminEditorPane session={session} onSessionChange={setSession} />}
+              element={<AdminEditorPane />}
             />
             <Route
               path="gallery"
-              element={<AdminGalleryPane session={session} onSessionChange={setSession} />}
+              element={<AdminGalleryPane />}
             />
           </Routes>
         </div>
