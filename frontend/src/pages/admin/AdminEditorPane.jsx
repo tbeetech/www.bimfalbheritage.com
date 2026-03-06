@@ -32,7 +32,7 @@ const AdminEditorPane = ({ session, onSessionChange }) => {
   const [body, setBody] = useState('');
   const [images, setImages] = useState([]);
   const [existingImages, setExistingImages] = useState([]);
-  const [password, setPassword] = useState(() => localStorage.getItem('bh_admin_password') || '');
+  const [password, setPassword] = useState('');
   const [status, setStatus] = useState('');
   const [statusOk, setStatusOk] = useState(true);
   const [saving, setSaving] = useState(false);
@@ -93,7 +93,6 @@ const AdminEditorPane = ({ session, onSessionChange }) => {
       if (!session) {
         await login(password);
         onSessionChange?.(true);
-        localStorage.setItem('bh_admin_password', password);
       }
       let post;
       if (isEditing) {
@@ -118,7 +117,6 @@ const AdminEditorPane = ({ session, onSessionChange }) => {
     try {
       await login(password);
       onSessionChange?.(true);
-      localStorage.setItem('bh_admin_password', password);
       setStatus('Session active');
       setStatusOk(true);
     } catch {

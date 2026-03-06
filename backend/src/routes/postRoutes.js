@@ -31,14 +31,23 @@ const interactionLimiter = rateLimit({
   message: { message: 'Too many requests, please slow down' },
 });
 
+/** Admin CRUD limiter: 30 requests per 15 minutes per IP */
+const adminLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000,
+  max: 30,
+  standardHeaders: true,
+  legacyHeaders: false,
+  message: { message: 'Too many admin requests, please slow down' },
+});
+
 router.route('/')
   .get(getPosts)
-  .post(adminGuard, upload.array('images', 3), compressImages, firebaseUpload, createPost);
+  .post(adminLimiter, adminGuard, upload.array('images', 3), compressImages, firebaseUpload, createPost);
 
 router.route('/:id')
   .get(getPost)
-  .put(adminGuard, upload.array('images', 3), compressImages, firebaseUpload, updatePost)
-  .delete(adminGuard, deletePost);
+  .put(adminLimiter, adminGuard, upload.array('images', 3), compressImages, firebaseUpload, updatePost)
+  .delete(adminLimiter, adminGuard, deletePost);
 
 router.post('/:id/reactions', interactionLimiter, reactToPost);
 router.post('/:id/view', interactionLimiter, incrementView);
