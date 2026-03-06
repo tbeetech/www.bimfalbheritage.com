@@ -33,7 +33,7 @@ const AdminCreate = () => {
   const [body, setBody] = useState('');
   const [images, setImages] = useState([]);
   const [existingImages, setExistingImages] = useState([]);
-  const [password, setPassword] = useState(() => localStorage.getItem('bh_admin_password') || '');
+  const [password, setPassword] = useState('');
   const [status, setStatus] = useState('');
   const [session, setSession] = useState(false);
 
@@ -98,7 +98,6 @@ const AdminCreate = () => {
       if (!session) {
         await login(password);
         setSession(true);
-        localStorage.setItem('bh_admin_password', password);
       }
       let post;
       if (isEditing) {
@@ -118,7 +117,6 @@ const AdminCreate = () => {
     try {
       await login(password);
       setSession(true);
-      localStorage.setItem('bh_admin_password', password);
       setStatus('Session active');
     } catch {
       setSession(false);

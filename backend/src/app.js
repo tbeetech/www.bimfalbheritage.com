@@ -2,7 +2,6 @@ const express = require('express');
 const cors = require('cors');
 const morgan = require('morgan');
 const path = require('path');
-const session = require('express-session');
 const cookieParser = require('cookie-parser');
 const mongoose = require('mongoose');
 const postRoutes = require('./routes/postRoutes');
@@ -15,7 +14,7 @@ const app = express();
 
 app.use(
   cors({
-    origin: process.env.CORS_ORIGIN ? process.env.CORS_ORIGIN.split(',') : true,
+    origin: process.env.CORS_ORIGIN ? process.env.CORS_ORIGIN.split(',').map((o) => o.trim()) : true,
     credentials: true,
   })
 );
@@ -24,20 +23,6 @@ app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
 app.use(morgan('dev'));
 app.use(csrfProtection);
-app.use(
-  session({
-    name: 'bh_session',
-    secret: process.env.SESSION_SECRET || 'local-demo-secret',
-    resave: false,
-    saveUninitialized: false,
-    cookie: {
-      httpOnly: true,
-      sameSite: 'lax',
-      secure: process.env.NODE_ENV === 'production',
-      maxAge: 1000 * 60 * 60 * 4, // 4 hours
-    },
-  })
-);
 
 // Serve uploaded images statically for demo purposes
 app.use('/uploads', express.static(path.join(__dirname, '..', 'uploads')));
