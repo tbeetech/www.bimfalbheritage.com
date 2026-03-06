@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { updateUserProfile, changePassword } from '../services/api';
@@ -7,7 +7,7 @@ import './UserProfile.css';
 
 const UserProfile = () => {
   const navigate = useNavigate();
-  const { user, logout } = useAuth();
+  const { user, authLoading, logout } = useAuth();
 
   const [name, setName] = useState(user?.name || '');
   const [bio, setBio] = useState(user?.bio || '');
@@ -23,8 +23,17 @@ const UserProfile = () => {
   const [pwdError, setPwdError] = useState('');
   const [pwdLoading, setPwdLoading] = useState(false);
 
+  useEffect(() => {
+    if (!authLoading && !user) {
+      navigate('/login', { replace: true });
+    }
+  }, [user, authLoading, navigate]);
+
+  if (authLoading) {
+    return <div style={{ padding: '2rem', textAlign: 'center' }}>Loading…</div>;
+  }
+
   if (!user) {
-    navigate('/login');
     return null;
   }
 
