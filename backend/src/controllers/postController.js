@@ -60,7 +60,7 @@ const getPost = async (req, res, next) => {
 const createPost = async (req, res, next) => {
   try {
     const uploadedImages = Array.isArray(req.files) && req.files.length > 0
-      ? req.files.map((f) => f.firebaseUrl || `/uploads/${f.filename}`)
+      ? req.files.map((f) => `/uploads/${f.filename}`)
       : [];
     const images = uploadedImages.length > 0 ? uploadedImages : (req.body.coverImage ? [req.body.coverImage] : []);
     const coverImage = images[0] || '';
@@ -98,7 +98,7 @@ const updatePost = async (req, res, next) => {
   try {
     const updates = { ...req.body };
     if (Array.isArray(req.files) && req.files.length > 0) {
-      const uploadedImages = req.files.map((f) => f.firebaseUrl || `/uploads/${f.filename}`);
+      const uploadedImages = req.files.map((f) => `/uploads/${f.filename}`);
       updates.images = uploadedImages;
       updates.coverImage = uploadedImages[0];
     }

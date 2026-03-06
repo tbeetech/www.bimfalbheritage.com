@@ -20,7 +20,7 @@ const createGalleryItem = async (req, res, next) => {
   try {
     const imageUrl =
       (Array.isArray(req.files) && req.files.length > 0)
-        ? (req.files[0].firebaseUrl || `/uploads/${req.files[0].filename}`)
+        ? `/uploads/${req.files[0].filename}`
         : (req.body.imageUrl || '');
 
     if (!imageUrl) {
