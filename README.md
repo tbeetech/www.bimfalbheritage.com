@@ -1,56 +1,16 @@
 Bimfalb Heritage - Cultural Platform
 =====================================
 
-Single-service app: Express serves both the Firestore-backed API and the built React UI.
-Posts are stored in **Firebase Firestore**; images are uploaded to **Firebase Storage**.
+Single-service app: Express serves both the MongoDB-backed API and the built React UI.
+Posts and all data are stored in **MongoDB Atlas**; images are uploaded to and served from local disk (`backend/uploads`).
 Admin session uses cookies (the password can be remembered in `localStorage` for demo speed).
 
 Stack
 - Frontend: React (Vite), React Router, Day.js
-- Backend: Node.js, Express, express-session, Multer → Firebase Storage, dotenv, CORS, Morgan
-- Database: Firebase Firestore (NoSQL cloud)
-- File storage: Firebase Storage (public image URLs)
+- Backend: Node.js, Express, express-session, Multer → local disk, dotenv, CORS, Morgan
+- Database: MongoDB Atlas (Mongoose ODM)
+- File storage: Local disk (`backend/uploads`, served as `/uploads/*`)
 - Deployment target: Render (one Web Service)
-
----
-
-Firebase setup (one-time, required)
--------------------------------------
-1. Go to https://console.firebase.google.com and create a new project (or use an existing one).
-2. **Enable Firestore**
-   - In the Firebase Console: Build → Firestore Database → Create database.
-   - Start in **production mode** (you can tighten rules later).
-   - Choose the region closest to your users.
-3. **Enable Storage**
-   - In the Firebase Console: Build → Storage → Get started.
-   - Accept the default security rules for now.
-4. **Create a Service Account key**
-   - Go to Project Settings (gear icon) → Service Accounts tab.
-   - Click **Generate new private key** → confirm → a `.json` file is downloaded.
-5. **Set environment variables** in `backend/.env` (see `backend/.env.example`):
-   ```
-   FIREBASE_SERVICE_ACCOUNT_KEY=<paste the entire JSON file content as one line>
-   FIREBASE_STORAGE_BUCKET=<your-project-id>.appspot.com
-   ```
-   > Tip: on Render, paste each variable value in the "Environment" section of your Web Service.
-6. **Firestore security rules** – once tested, lock down the `posts` collection so only
-   your server (service account) can write:
-   ```
-   rules_version = '2';
-   service cloud.firestore {
-     match /databases/{database}/documents {
-       match /posts/{postId} {
-         allow read: if true;
-         allow write: if false;   // writes are only via the Admin SDK (backend)
-       }
-     }
-   }
-   ```
-7. **Storage CORS** – if the browser needs to load images directly from Storage,
-   add a CORS config via `gsutil` or the Google Cloud Console:
-   ```json
-   [{"origin":["*"],"method":["GET"],"maxAgeSeconds":3600}]
-   ```
 
 ---
 
@@ -59,13 +19,13 @@ Folder structure
 .
 |- backend/             # Express API + static file server
 |  |- src/
-|  |  |- config/        # firebase.js – Admin SDK initialisation
+|  |  |- config/        # db.js – MongoDB connection
 |  |  |- controllers/   # posts + auth handlers
 |  |  |- routes/        # API routes
 |  |  |- middleware/    # auth + errors
-|  |  |- utils/         # Multer + Firebase Storage upload config
-|  |  |- data/          # store.js (Firestore)
-|  |  |- seed/          # seed data + writer (seeds to Firestore)
+|  |  |- utils/         # Multer + image compression config
+|  |  |- data/          # store.js (MongoDB via Mongoose)
+|  |  |- seed/          # seed data + writer (seeds to MongoDB)
 |  |  |- app.js         # Express app wiring
 |  |  |- server.js      # Entrypoint
 |  |- .env.example
@@ -84,13 +44,12 @@ Quick start (local)
 1) Copy env: `cp backend/.env.example backend/.env` and fill in:
    - `ADMIN_PASSWORD` (for admin login)
    - `SESSION_SECRET` (any random string)
-   - `FIREBASE_SERVICE_ACCOUNT_KEY` (full JSON from step 4 above)
-   - `FIREBASE_STORAGE_BUCKET` (e.g. `my-project.appspot.com`)
+   - `MONGODB_URI` (MongoDB Atlas connection string)
    - `CORS_ORIGIN` (e.g. `http://localhost:5173` when hitting the API from Vite dev)
 2) Install backend deps: `cd backend && npm install`.
 3) Build the frontend into `frontend/dist` (once per UI change):  
    `cd ../frontend && npm install && npm run build`
-4) Seed demo posts to Firestore (optional): `cd ../backend && npm run seed`.
+4) Seed demo posts to MongoDB (optional): `cd ../backend && npm run seed`.
 5) Run everything: `npm run dev` (or `npm start`) from `backend`. The API and UI share `http://localhost:5000`.
 
 Reference structure clone coverage
@@ -135,8 +94,8 @@ Admin auth
 - The Admin UI page does this automatically and can remember the password in `localStorage`.
 
 Uploads
-- Images are uploaded to Firebase Storage and served via public `https://storage.googleapis.com/…` URLs.
-- `FIREBASE_STORAGE_BUCKET` must be set; otherwise images fall back to local `backend/uploads` (ephemeral on Render).
+- Images are stored on local disk in `backend/uploads/` and served at `/uploads/<filename>`.
+- Uploaded images are compressed to JPEG (max 1200 px wide, 80% quality) before saving.
 
 Frontend-only dev (optional)
 - `cd frontend && npm install && npm run dev` (set `VITE_API_URL` if you want to target a remote API; otherwise it uses window origin).
@@ -157,10 +116,9 @@ Render deployment (single Web Service)
    - `ADMIN_PASSWORD=<your-password>`
    - `SESSION_SECRET=<random-string>`
    - `NODE_ENV=production`
-   - `FIREBASE_SERVICE_ACCOUNT_KEY=<paste the full service account JSON>`
-   - `FIREBASE_STORAGE_BUCKET=<your-project-id>.appspot.com`
+   - `MONGODB_URI=<your-mongodb-atlas-connection-string>`
 5) Express serves `frontend/dist` and the API under `/api/*`; no separate frontend URL needed.
-6) The old `backend/uploads` disk is no longer needed since images are stored in Firebase Storage.
+6) Uploaded images are stored in `backend/uploads` on the Render disk and served at `/uploads/*`.
 
 Demo notes
 - Newsletter form is frontend-only.

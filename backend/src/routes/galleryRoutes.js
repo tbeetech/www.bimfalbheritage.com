@@ -3,7 +3,7 @@ const rateLimit = require('express-rate-limit');
 const { getGalleryItems, createGalleryItem, deleteGalleryItem } = require('../controllers/galleryController');
 const { adminGuard } = require('../middleware/authMiddleware');
 const upload = require('../utils/upload');
-const { compressImages, firebaseUpload } = upload;
+const { compressImages } = upload;
 
 const router = express.Router();
 
@@ -24,7 +24,7 @@ const readLimiter = rateLimit({
 });
 
 router.get('/', readLimiter, getGalleryItems);
-router.post('/', adminLimiter, adminGuard, upload.array('images', 1), compressImages, firebaseUpload, createGalleryItem);
+router.post('/', adminLimiter, adminGuard, upload.array('images', 1), compressImages, createGalleryItem);
 router.delete('/:id', adminLimiter, adminGuard, deleteGalleryItem);
 
 module.exports = router;

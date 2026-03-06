@@ -18,7 +18,7 @@ const {
 const { adminGuard } = require('../middleware/authMiddleware');
 const { userGuard, optionalUserAuth } = require('../middleware/userAuthMiddleware');
 const upload = require('../utils/upload');
-const { compressImages, firebaseUpload } = upload;
+const { compressImages } = upload;
 
 const router = express.Router();
 
@@ -42,11 +42,11 @@ const adminLimiter = rateLimit({
 
 router.route('/')
   .get(getPosts)
-  .post(adminLimiter, adminGuard, upload.array('images', 3), compressImages, firebaseUpload, createPost);
+  .post(adminLimiter, adminGuard, upload.array('images', 3), compressImages, createPost);
 
 router.route('/:id')
   .get(getPost)
-  .put(adminLimiter, adminGuard, upload.array('images', 3), compressImages, firebaseUpload, updatePost)
+  .put(adminLimiter, adminGuard, upload.array('images', 3), compressImages, updatePost)
   .delete(adminLimiter, adminGuard, deletePost);
 
 router.post('/:id/reactions', interactionLimiter, reactToPost);
