@@ -41,11 +41,15 @@ const HeroSlider = () => {
           key={slide.url}
           id={`hero-slide-${i}`}
           className={`hero-slide${i === current ? ' active' : ''}`}
-          style={{ backgroundImage: `url(${slide.url})` }}
-          role="img"
-          aria-label={slide.alt}
           aria-hidden={i !== current}
-        />
+        >
+          <img
+            src={slide.url}
+            alt={slide.alt}
+            referrerPolicy="no-referrer"
+            loading={i === 0 ? 'eager' : 'lazy'}
+          />
+        </div>
       ))}
 
       {/* Overlay gradient */}
