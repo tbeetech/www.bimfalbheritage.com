@@ -192,3 +192,235 @@
     grid-template-columns: 1fr;
   }
 }
+
+/* ── Way card donate link ────────────────────────────────────────── */
+.way-card-donate-link {
+  display: inline-block;
+  margin-top: 14px;
+  font-size: 0.78rem;
+  font-family: 'Marcellus SC', serif;
+  color: var(--gold);
+  letter-spacing: 0.5px;
+  transition: color var(--transition), letter-spacing var(--transition);
+}
+
+.way-card:hover .way-card-donate-link {
+  color: var(--terracotta);
+  letter-spacing: 1.5px;
+}
+
+.way-card {
+  cursor: pointer;
+}
+
+/* ── Donate overlay ──────────────────────────────────────────────── */
+.donate-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.55);
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  padding: 20px;
+  animation: fade-in 200ms var(--ease-out) both;
+}
+
+@keyframes fade-in {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+/* ── Donate panel ────────────────────────────────────────────────── */
+.donate-panel {
+  position: relative;
+  width: 100%;
+  max-width: 500px;
+  padding: 40px 36px 32px;
+  animation: panel-up 320ms var(--ease-out) both;
+}
+
+@keyframes panel-up {
+  from { opacity: 0; transform: translateY(28px) scale(0.97); }
+  to   { opacity: 1; transform: translateY(0)   scale(1); }
+}
+
+.donate-panel-close {
+  position: absolute;
+  top: 16px;
+  right: 16px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: var(--muted);
+  padding: 6px;
+  border-radius: var(--radius-sm);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: color var(--transition), background var(--transition);
+}
+
+.donate-panel-close:hover {
+  color: var(--text);
+  background: rgba(197, 157, 85, 0.1);
+}
+
+.donate-panel-header {
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+.donate-panel-icon {
+  font-size: 2.4rem;
+  display: block;
+  margin-bottom: 10px;
+}
+
+.donate-panel-header h2 {
+  font-family: 'Marcellus SC', serif;
+  font-size: 1.4rem;
+  color: var(--green);
+  margin: 0 0 6px;
+}
+
+[data-theme='dark'] .donate-panel-header h2 { color: var(--gold); }
+
+.donate-panel-context {
+  font-size: 0.8rem;
+  text-transform: uppercase;
+  letter-spacing: 1.5px;
+  color: var(--gold);
+  margin: 0;
+}
+
+.donate-panel-intro {
+  font-size: 0.9rem;
+  color: var(--text-secondary);
+  line-height: 1.75;
+  margin-bottom: 22px;
+  text-align: center;
+}
+
+/* ── Account card ────────────────────────────────────────────────── */
+.donate-account-card {
+  background: linear-gradient(135deg, var(--green) 0%, var(--green-2) 100%);
+  border-radius: var(--radius);
+  padding: 22px 24px;
+  margin-bottom: 18px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  box-shadow: var(--shadow);
+}
+
+[data-theme='dark'] .donate-account-card {
+  background: linear-gradient(135deg, #0c2318 0%, #091a10 100%);
+  border-color: rgba(197, 157, 85, 0.2);
+}
+
+.donate-account-row {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding: 10px 0;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.donate-account-row:last-child {
+  border-bottom: none;
+  padding-bottom: 0;
+}
+
+.donate-account-row:first-child {
+  padding-top: 0;
+}
+
+.donate-account-label {
+  font-size: 0.68rem;
+  text-transform: uppercase;
+  letter-spacing: 1.2px;
+  color: rgba(255, 255, 255, 0.55);
+}
+
+.donate-account-value {
+  font-size: 0.95rem;
+  color: #fff;
+  font-weight: 500;
+}
+
+.donate-account-name {
+  font-family: 'Marcellus SC', serif;
+  font-size: 0.82rem;
+  color: var(--gold-light);
+  line-height: 1.4;
+}
+
+.donate-account-number-row { flex-direction: column; gap: 6px; }
+
+.donate-account-number-wrap {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.donate-account-number {
+  font-family: 'Marcellus SC', serif;
+  font-size: 1.5rem;
+  color: var(--gold-light);
+  letter-spacing: 2px;
+  flex: 1;
+}
+
+.donate-copy-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 6px 12px;
+  font-size: 0.72rem;
+  font-family: 'Marcellus SC', serif;
+  letter-spacing: 0.5px;
+  background: rgba(255, 255, 255, 0.12);
+  color: #fff;
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  transition: background var(--transition), border-color var(--transition), color var(--transition);
+  white-space: nowrap;
+}
+
+.donate-copy-btn:hover {
+  background: rgba(197, 157, 85, 0.3);
+  border-color: var(--gold);
+}
+
+.donate-copy-btn.copied {
+  background: rgba(40, 160, 80, 0.35);
+  border-color: #5ec47a;
+  color: #9effc0;
+}
+
+/* ── Note & done ─────────────────────────────────────────────────── */
+.donate-panel-note {
+  font-size: 0.8rem;
+  color: var(--muted);
+  line-height: 1.7;
+  text-align: center;
+  margin-bottom: 22px;
+}
+
+.donate-panel-done {
+  width: 100%;
+  justify-content: center;
+}
+
+@media (max-width: 520px) {
+  .donate-panel {
+    padding: 32px 20px 24px;
+  }
+
+  .donate-account-number {
+    font-size: 1.25rem;
+    letter-spacing: 1.5px;
+  }
+}
