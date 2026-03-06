@@ -1,6 +1,16 @@
 const jwt = require('jsonwebtoken');
+const mongoose = require('mongoose');
 const User = require('../models/User');
 const { JWT_SECRET } = require('../middleware/userAuthMiddleware');
+
+/** Return 503 when the database connection is not yet established. */
+const requireDb = (res) => {
+  if (mongoose.connection.readyState !== 1) {
+    res.status(503).json({ message: 'Service temporarily unavailable, please try again later' });
+    return true;
+  }
+  return false;
+};
 
 const COOKIE_OPTIONS = {
   httpOnly: true,
@@ -15,6 +25,7 @@ const signToken = (user) =>
   });
 
 const register = async (req, res, next) => {
+  if (requireDb(res)) return;
   try {
     const { name, email, password } = req.body;
     if (!name || !email || !password) {
@@ -46,6 +57,7 @@ const register = async (req, res, next) => {
 };
 
 const userLogin = async (req, res, next) => {
+  if (requireDb(res)) return;
   try {
     const { email, password } = req.body;
     if (!email || !password) {
@@ -83,6 +95,7 @@ const userLogout = (req, res) => {
 };
 
 const getMe = async (req, res, next) => {
+  if (requireDb(res)) return;
   try {
     const user = await User.findById(req.user.id);
     if (!user) {
@@ -96,6 +109,7 @@ const getMe = async (req, res, next) => {
 };
 
 const updateProfile = async (req, res, next) => {
+  if (requireDb(res)) return;
   try {
     const { name, bio, avatar } = req.body;
     const updates = {};
@@ -115,6 +129,7 @@ const updateProfile = async (req, res, next) => {
 };
 
 const changePassword = async (req, res, next) => {
+  if (requireDb(res)) return;
   try {
     const { currentPassword, newPassword } = req.body;
     if (!currentPassword || !newPassword) {

@@ -4,6 +4,7 @@ const morgan = require('morgan');
 const path = require('path');
 const session = require('express-session');
 const cookieParser = require('cookie-parser');
+const mongoose = require('mongoose');
 const postRoutes = require('./routes/postRoutes');
 const authRoutes = require('./routes/authRoutes');
 const userRoutes = require('./routes/userRoutes');
@@ -41,8 +42,13 @@ app.use(
 // Serve uploaded images statically for demo purposes
 app.use('/uploads', express.static(path.join(__dirname, '..', 'uploads')));
 
+const DB_STATES = { 0: 'disconnected', 1: 'connected', 2: 'connecting', 3: 'disconnecting' };
+
 app.get('/api/health', (req, res) => {
-  res.json({ status: 'ok', service: 'Bimfalb Heritage API' });
+  const dbState = mongoose.connection.readyState;
+  const dbStatus = DB_STATES[dbState] ?? 'unknown';
+  const status = dbState === 1 ? 'ok' : 'degraded';
+  res.status(dbState === 1 ? 200 : 503).json({ status, service: 'Bimfalb Heritage API', db: dbStatus });
 });
 
 app.use('/api/auth', authRoutes);

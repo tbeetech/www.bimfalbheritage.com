@@ -3,7 +3,11 @@ const mongoose = require('mongoose');
 const connectDB = async () => {
   const uri = process.env.MONGODB_URI;
   if (!uri) {
-    console.warn('[db] MONGODB_URI not set – database connection skipped.');
+    if (process.env.NODE_ENV === 'production') {
+      console.error('[db] FATAL: MONGODB_URI is not set. User authentication and all database operations will fail.');
+    } else {
+      console.warn('[db] MONGODB_URI not set – database connection skipped.');
+    }
     return;
   }
   try {
