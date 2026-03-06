@@ -2,6 +2,8 @@ import { useEffect, useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
 import './HeroSlider.css';
 
+const SWIPE_THRESHOLD = 40;
+
 const SLIDES = [
   { url: 'https://i.pinimg.com/736x/38/3f/20/383f208ebe7ec9bbe705c0709f3d3217.jpg', alt: 'Bimfalb Heritage – cultural scene' },
   { url: 'https://i.pinimg.com/736x/7a/ed/71/7aed71741f7a0e9f6cf1722c06b7ae9e.jpg', alt: 'Bimfalb Heritage – community gathering' },
@@ -11,6 +13,7 @@ const SLIDES = [
 const HeroSlider = () => {
   const [current, setCurrent] = useState(0);
   const timerRef = useRef(null);
+  const touchStartX = useRef(null);
 
   const goTo = (index) => {
     setCurrent((index + SLIDES.length) % SLIDES.length);
@@ -28,13 +31,34 @@ const HeroSlider = () => {
     return () => clearInterval(timerRef.current);
   }, []);
 
-  const handleNav = (dir) => {
-    goTo(current + dir);
-    startTimer();
+  const handleTouchStart = (e) => {
+    touchStartX.current = e.touches[0].clientX;
+  };
+
+  const handleTouchEnd = (e) => {
+    if (touchStartX.current === null) return;
+    const delta = touchStartX.current - e.changedTouches[0].clientX;
+    if (Math.abs(delta) > SWIPE_THRESHOLD) {
+      goTo(current + (delta > 0 ? 1 : -1));
+      startTimer();
+    }
+    touchStartX.current = null;
+  };
+
+  const handleKeyDown = (e) => {
+    if (e.key === 'ArrowLeft') { goTo(current - 1); startTimer(); }
+    else if (e.key === 'ArrowRight') { goTo(current + 1); startTimer(); }
   };
 
   return (
-    <section className="hero-slider" aria-label="Hero image carousel">
+    <section
+      className="hero-slider"
+      aria-label="Hero image carousel"
+      onTouchStart={handleTouchStart}
+      onTouchEnd={handleTouchEnd}
+      onKeyDown={handleKeyDown}
+      tabIndex="0"
+    >
       {/* Slides */}
       {SLIDES.map((slide, i) => (
         <div
@@ -72,24 +96,6 @@ const HeroSlider = () => {
           <Link className="btn secondary" to="/news">Read News</Link>
         </div>
       </div>
-
-      {/* Prev / Next buttons */}
-      <button
-        type="button"
-        className="hero-slider-arrow hero-slider-arrow--prev"
-        onClick={() => handleNav(-1)}
-        aria-label="Previous slide"
-      >
-        &#8249;
-      </button>
-      <button
-        type="button"
-        className="hero-slider-arrow hero-slider-arrow--next"
-        onClick={() => handleNav(1)}
-        aria-label="Next slide"
-      >
-        &#8250;
-      </button>
 
       {/* Dot indicators */}
       <div className="hero-slider-dots" role="tablist" aria-label="Slide indicators">
