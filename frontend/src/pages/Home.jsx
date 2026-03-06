@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import ArticleCard from '../components/ArticleCard';
 import Carousel from '../components/Carousel';
 import HeroSlider from '../components/HeroSlider';
+import Spinner from '../components/Spinner';
 import { eventCards, goalCards, teamCards, valueCards } from '../data/siteContent';
 import { getPosts } from '../services/api';
 import './Home.css';
@@ -16,11 +17,13 @@ const statsData = [
 
 const Home = () => {
   const [posts, setPosts] = useState([]);
+  const [postsLoading, setPostsLoading] = useState(true);
 
   useEffect(() => {
     const load = async () => {
       const res = await getPosts(1, 6);
       setPosts(res.data || []);
+      setPostsLoading(false);
     };
     load();
   }, []);
@@ -138,19 +141,23 @@ const Home = () => {
         />
       </section>
 
-      {posts.length > 0 && (
-        <section className="home-section">
-          <div className="section-title african-divider">
-            <h2>Latest News</h2>
-          </div>
+      <section className="home-section">
+        <div className="section-title african-divider">
+          <h2>Latest News</h2>
+        </div>
+        {postsLoading ? (
+          <Spinner message="Loading latest posts…" />
+        ) : posts.length > 0 ? (
           <Carousel
             items={posts}
             renderItem={(post) => (
               <ArticleCard post={post} />
             )}
           />
-        </section>
-      )}
+        ) : (
+          <p className="muted" style={{ textAlign: 'center', padding: '20px 0' }}>No posts available yet.</p>
+        )}
+      </section>
 
       <section className="contact-strip card">
         <h2><Link to="/contact">Contact Us today</Link></h2>
