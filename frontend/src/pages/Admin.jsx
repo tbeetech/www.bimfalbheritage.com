@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { Routes, Route, NavLink, useNavigate } from 'react-router-dom';
+import { Routes, Route, NavLink, useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import AdminDashboardPane from './admin/AdminDashboardPane';
 import AdminPostsPane from './admin/AdminPostsPane';
@@ -10,14 +10,16 @@ import './Admin.css';
 const Admin = () => {
   const { user, authLoading } = useAuth();
   const navigate = useNavigate();
+  const location = useLocation();
   const [menuOpen, setMenuOpen] = useState(false);
 
-  // Redirect to login if not authenticated or not an admin-role user
+  // Redirect to login if not authenticated or not an admin-role user,
+  // passing the current path so login can redirect back here afterward.
   useEffect(() => {
     if (!authLoading && (!user || user.role !== 'admin')) {
-      navigate('/login', { replace: true });
+      navigate('/login', { replace: true, state: { from: location.pathname } });
     }
-  }, [user, authLoading, navigate]);
+  }, [user, authLoading, navigate, location.pathname]);
 
   if (authLoading) {
     return <div style={{ padding: '2rem', textAlign: 'center' }}>Loading…</div>;
