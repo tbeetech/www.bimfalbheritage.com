@@ -8,8 +8,8 @@ const AdminGalleryPane = ({ session, onSessionChange }) => {
   const [items, setItems] = useState([]);
   const [loading, setLoading] = useState(true);
   const [caption, setCaption] = useState('');
-  const [imageFile, setImageFile] = useState(null);
-  const [preview, setPreview] = useState('');
+  const [imageFiles, setImageFiles] = useState([]);
+  const [previews, setPreviews] = useState([]);
   const [password, setPassword] = useState('');
   const [status, setStatus] = useState('');
   const [statusOk, setStatusOk] = useState(true);
@@ -30,21 +30,23 @@ const AdminGalleryPane = ({ session, onSessionChange }) => {
   useEffect(() => { loadItems(); }, []);
 
   const handleFileChange = (e) => {
-    const file = e.target.files?.[0] || null;
-    setImageFile(file);
-    if (file) {
-      const reader = new FileReader();
-      reader.onload = (ev) => setPreview(ev.target.result);
-      reader.readAsDataURL(file);
-    } else {
-      setPreview('');
-    }
+    const files = Array.from(e.target.files || []);
+    setImageFiles(files);
+    const readers = files.map(
+      (file) =>
+        new Promise((resolve) => {
+          const reader = new FileReader();
+          reader.onload = (ev) => resolve(ev.target.result);
+          reader.readAsDataURL(file);
+        })
+    );
+    Promise.all(readers).then(setPreviews);
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (!imageFile) {
-      setStatus('Please select an image.');
+    if (imageFiles.length === 0) {
+      setStatus('Please select at least one image.');
       setStatusOk(false);
       return;
     }
@@ -55,16 +57,17 @@ const AdminGalleryPane = ({ session, onSessionChange }) => {
         await login(password);
         onSessionChange?.(true);
       }
-      await createGalleryItem({ image: imageFile, caption });
-      setStatus('Image added to gallery!');
+      await createGalleryItem({ images: imageFiles, caption });
+      const count = imageFiles.length;
+      setStatus(`${count} ${count === 1 ? 'image' : 'images'} added to gallery!`);
       setStatusOk(true);
       setCaption('');
-      setImageFile(null);
-      setPreview('');
+      setImageFiles([]);
+      setPreviews([]);
       if (fileInputRef.current) fileInputRef.current.value = '';
       await loadItems();
     } catch {
-      setStatus('Failed to add image. Check your session or server.');
+      setStatus('Failed to add images. Check your session or server.');
       setStatusOk(false);
     } finally {
       setSaving(false);
@@ -117,43 +120,47 @@ const AdminGalleryPane = ({ session, onSessionChange }) => {
         {/* ── Upload form ── */}
         <form onSubmit={handleSubmit}>
           <div className="admin-form-section">
-            <div className="admin-form-section-title">New Gallery Image</div>
+            <div className="admin-form-section-title">New Gallery Images</div>
 
             <div className="admin-field">
-              <label htmlFor="gal-caption">Caption <span style={{ color: 'var(--muted)' }}>(required)</span></label>
+              <label htmlFor="gal-caption">Caption <span style={{ color: 'var(--muted)' }}>(optional — applied to all uploaded images)</span></label>
               <input
                 id="gal-caption"
                 type="text"
                 value={caption}
                 onChange={(e) => setCaption(e.target.value)}
-                placeholder="Describe this image…"
-                required
+                placeholder="Describe these images…"
               />
             </div>
 
             <div className="admin-field">
-              <label htmlFor="gal-image">Image <span style={{ color: 'var(--muted)' }}>(required)</span></label>
+              <label htmlFor="gal-image">Images <span style={{ color: 'var(--muted)' }}>(required — select one or more)</span></label>
               <div className="admin-image-zone">
                 <input
                   id="gal-image"
                   type="file"
                   accept="image/*"
+                  multiple
                   onChange={handleFileChange}
                   ref={fileInputRef}
-                  aria-label="Upload gallery image"
-                  required
+                  aria-label="Upload gallery images"
                 />
                 <div className="admin-image-zone-label">
-                  {imageFile ? imageFile.name : 'Click or drag an image here'}
+                  {imageFiles.length > 0
+                    ? `${imageFiles.length} ${imageFiles.length === 1 ? 'image' : 'images'} selected`
+                    : 'Click or drag images here (select multiple)'}
                 </div>
               </div>
-              {preview && (
-                <div style={{ marginTop: '10px' }}>
-                  <img
-                    src={preview}
-                    alt="Preview"
-                    style={{ maxWidth: '200px', maxHeight: '150px', objectFit: 'cover', borderRadius: '6px', border: '1px solid var(--border)' }}
-                  />
+              {previews.length > 0 && (
+                <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px', marginTop: '10px' }}>
+                  {previews.map((src, i) => (
+                    <img
+                      key={`${imageFiles[i]?.name}-${imageFiles[i]?.size}-${i}`}
+                      src={src}
+                      alt={`Preview ${i + 1}`}
+                      style={{ width: '80px', height: '80px', objectFit: 'cover', borderRadius: '6px', border: '1px solid var(--border)' }}
+                    />
+                  ))}
                 </div>
               )}
             </div>
@@ -192,7 +199,7 @@ const AdminGalleryPane = ({ session, onSessionChange }) => {
           <div className="admin-form-section">
             <div className="admin-form-footer">
               <button className="btn" type="submit" disabled={saving}>
-                {saving ? 'Uploading…' : 'Add to Gallery'}
+                {saving ? 'Uploading…' : `Add to Gallery${imageFiles.length > 1 ? ` (${imageFiles.length} images)` : ''}`}
               </button>
               {status && (
                 <span className={`admin-status-msg ${statusOk ? 'ok' : 'err'}`}>
