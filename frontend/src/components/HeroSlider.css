@@ -201,6 +201,18 @@
   background: rgba(197, 157, 85, 0.35);
 }
 
+/* ── Keyframes ────────────────────────────────────────────────────── */
+@keyframes hero-fade {
+  from {
+    opacity: 0;
+    transform: translateY(40px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
 /* ── Responsive ───────────────────────────────────────────────────── */
 @media (max-width: 640px) {
   .hero-slider {
