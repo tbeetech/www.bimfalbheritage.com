@@ -23,8 +23,11 @@ const readLimiter = rateLimit({
   message: { message: 'Too many requests, please slow down' },
 });
 
+// Allow up to 50 images per bulk upload request
+const MAX_GALLERY_UPLOAD = 50;
+
 router.get('/', readLimiter, getGalleryItems);
-router.post('/', adminLimiter, adminGuard, upload.array('images', 1), compressImages, createGalleryItem);
+router.post('/', adminLimiter, adminGuard, upload.array('images', MAX_GALLERY_UPLOAD), compressImages, createGalleryItem);
 router.delete('/:id', adminLimiter, adminGuard, deleteGalleryItem);
 
 module.exports = router;

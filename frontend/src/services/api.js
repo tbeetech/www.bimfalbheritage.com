@@ -191,7 +191,8 @@ export const getGalleryItems = async () => {
 
 export const createGalleryItem = async (payload) => {
   const formData = new FormData();
-  if (payload.image) formData.append('images', payload.image);
+  const images = Array.isArray(payload.images) ? payload.images : (payload.image ? [payload.image] : []);
+  images.forEach((img) => formData.append('images', img));
   if (payload.caption !== undefined) formData.append('caption', payload.caption);
   const res = await api.post('/api/gallery', formData);
   return res.data;

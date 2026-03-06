@@ -18,22 +18,20 @@ const createGalleryItem = async (req, res, next) => {
     return res.status(503).json({ message: 'Database not connected' });
   }
   try {
-    const imageUrl =
-      (Array.isArray(req.files) && req.files.length > 0)
-        ? `/uploads/${req.files[0].filename}`
-        : (req.body.imageUrl || '');
-
-    if (!imageUrl) {
+    const files = Array.isArray(req.files) ? req.files : [];
+    if (files.length === 0) {
       res.status(400);
-      throw new Error('An image is required');
+      throw new Error('At least one image is required');
     }
 
-    const item = new GalleryItem({
-      imageUrl,
-      caption: req.body.caption || '',
-    });
-    await item.save();
-    res.status(201).json(item.toObject());
+    const caption = req.body.caption || '';
+    const items = await Promise.all(
+      files.map((file) =>
+        new GalleryItem({ imageUrl: `/uploads/${file.filename}`, caption }).save()
+      )
+    );
+
+    res.status(201).json(items.length === 1 ? items[0].toObject() : items.map((i) => i.toObject()));
   } catch (err) {
     next(err);
   }
