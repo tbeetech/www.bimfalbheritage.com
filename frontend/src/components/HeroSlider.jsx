@@ -3,12 +3,10 @@ import { Link } from 'react-router-dom';
 import './HeroSlider.css';
 
 const SLIDES = [
-  { id: '1yPKNNzuLHSNE1TEE_J2Quc2vsDIPvfE0', alt: 'Bimfalb Heritage – cultural scene' },
-  { id: '1md_DWJhT5CLH2PYSl7UffWJm9acECUOc', alt: 'Bimfalb Heritage – community gathering' },
-  { id: '1w4vFPELBZ1hw8Oth8YjWsUstoqx2CIxi', alt: 'Bimfalb Heritage – artisan craft' },
+  { url: 'https://i.pinimg.com/736x/38/3f/20/383f208ebe7ec9bbe705c0709f3d3217.jpg', alt: 'Bimfalb Heritage – cultural scene' },
+  { url: 'https://i.pinimg.com/736x/7a/ed/71/7aed71741f7a0e9f6cf1722c06b7ae9e.jpg', alt: 'Bimfalb Heritage – community gathering' },
+  { url: 'https://i.pinimg.com/736x/ac/a8/b9/aca8b919a9277761dc8157c67fc87c38.jpg', alt: 'Bimfalb Heritage – artisan craft' },
 ];
-
-const driveUrl = (id) => `https://drive.google.com/uc?export=view&id=${id}`;
 
 const HeroSlider = () => {
   const [current, setCurrent] = useState(0);
@@ -40,10 +38,10 @@ const HeroSlider = () => {
       {/* Slides */}
       {SLIDES.map((slide, i) => (
         <div
-          key={slide.id}
+          key={slide.url}
           id={`hero-slide-${i}`}
           className={`hero-slide${i === current ? ' active' : ''}`}
-          style={{ backgroundImage: `url(${driveUrl(slide.id)})` }}
+          style={{ backgroundImage: `url(${slide.url})` }}
           role="img"
           aria-label={slide.alt}
           aria-hidden={i !== current}
@@ -93,7 +91,7 @@ const HeroSlider = () => {
       <div className="hero-slider-dots" role="tablist" aria-label="Slide indicators">
         {SLIDES.map((slide, i) => (
           <button
-            key={slide.id}
+            key={slide.url}
             type="button"
             role="tab"
             aria-selected={i === current}
