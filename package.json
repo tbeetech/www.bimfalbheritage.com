@@ -1,0 +1,10 @@
+{
+  "name": "bimfalb-heritage",
+  "private": true,
+  "version": "1.0.0",
+  "description": "Bimfalb Heritage - root workspace scripts",
+  "scripts": {
+    "install-frontend": "cd frontend && npm ci",
+    "build": "cd frontend && npm run build"
+  }
+}
