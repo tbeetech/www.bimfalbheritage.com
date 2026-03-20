@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import ArticleCard from '../components/ArticleCard';
 import Carousel from '../components/Carousel';
 import HeroSlider from '../components/HeroSlider';
+import { useSEO } from '../hooks/useSEO';
 import Spinner from '../components/Spinner';
 import { eventCards, goalCards, teamCards, valueCards } from '../data/siteContent';
 import { getPosts } from '../services/api';
@@ -18,6 +19,32 @@ const statsData = [
 const Home = () => {
   const [posts, setPosts] = useState([]);
   const [postsLoading, setPostsLoading] = useState(true);
+
+  useSEO({
+    title: 'Home',
+    description:
+      'Bimfalb Heritage preserves and promotes Nigerian cultural heritage, supports local artists, and documents historic traditions across Africa.',
+    url: 'https://www.bimfalbheritage.com/',
+    jsonLd: {
+      '@context': 'https://schema.org',
+      '@type': 'Organization',
+      name: 'Bimfalb Heritage',
+      url: 'https://www.bimfalbheritage.com',
+      logo: 'https://www.bimfalbheritage.com/og-default.jpg',
+      sameAs: [
+        'https://twitter.com/bimfalbheritage',
+        'https://www.facebook.com/bimfalbheritage',
+        'https://wa.me/2348033842322',
+      ],
+      contactPoint: {
+        '@type': 'ContactPoint',
+        telephone: '+234-803-384-2322',
+        contactType: 'customer service',
+        areaServed: 'NG',
+        availableLanguage: 'English',
+      },
+    },
+  });
 
   useEffect(() => {
     const load = async () => {

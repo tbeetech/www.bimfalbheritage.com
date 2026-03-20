@@ -8,6 +8,7 @@ const postRoutes = require('./routes/postRoutes');
 const authRoutes = require('./routes/authRoutes');
 const userRoutes = require('./routes/userRoutes');
 const galleryRoutes = require('./routes/galleryRoutes');
+const sitemapRoute = require('./routes/sitemapRoute');
 const { notFound, errorHandler } = require('./middleware/errorHandler');
 const { csrfProtection } = require('./middleware/csrf');
 
@@ -41,6 +42,9 @@ app.use('/api/auth', authRoutes);
 app.use('/api/users', userRoutes);
 app.use('/api/posts', postRoutes);
 app.use('/api/gallery', galleryRoutes);
+
+// Dynamic sitemap – lists all static pages and published post URLs
+app.use('/', sitemapRoute);
 
 // Serve frontend build – document root is public_html (TrueHost/cPanel convention).
 // On cPanel, Apache serves ~/public_html/ directly and only /api/* reaches Node.js,

@@ -1,3 +1,4 @@
+import { useSEO } from '../hooks/useSEO';
 import './Contact.css';
 
 const contactDetails = [
@@ -33,6 +34,12 @@ const contactDetails = [
 ];
 
 const Contact = () => {
+  useSEO({
+    title: 'Contact Us',
+    description:
+      'Get in touch with Bimfalb Heritage for partnerships, cultural programs, donations, or media enquiries. Located in Akure, Ondo State, Nigeria.',
+    url: 'https://www.bimfalbheritage.com/contact',
+  });
   return (
     <div className="page">
       <header className="page-header">
