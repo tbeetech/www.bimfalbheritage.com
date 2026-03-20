@@ -5,12 +5,13 @@ import react from '@vitejs/plugin-react'
 export default defineConfig({
   plugins: [react()],
   build: {
-    // Output directly to public_html at the repository root so TrueHost
-    // (cPanel) serves the built SPA from the correct document root.
+    // Output to dist/ at the repository root so `npm run build` (local and CI)
+    // produces a standard dist/ folder. The cPanel deployment task then rsyncs
+    // dist/ into ~/public_html/ on the server.
     // emptyOutDir is required because the output directory is outside the
-    // frontend workspace; it is safe here because public_html contains only
+    // frontend workspace; it is safe here because dist/ contains only
     // generated build artifacts.
-    outDir: '../public_html',
+    outDir: '../dist',
     emptyOutDir: true,
   },
 })
