@@ -51,11 +51,12 @@ Quick start (local)
    - `SESSION_SECRET` (any random string)
    - `MONGODB_URI` (MongoDB Atlas connection string)
    - `CORS_ORIGIN` (e.g. `http://localhost:5173` when hitting the API from Vite dev)
+   - `SERVE_FRONTEND=true` (lets the Express server also serve the React build)
 2) Install backend deps: `cd backend && npm install`.
 3) Build the frontend into `public_html` (once per UI change):  
    `cd ../frontend && npm install && npm run build`
 4) Seed demo posts to MongoDB (optional): `cd ../backend && npm run seed`.
-5) Run everything: `npm run dev` (or `npm start`) from `backend`. The API and UI share `http://localhost:5000`.
+5) Run everything: `npm run dev` (or `npm start`) from `backend`. The API and UI share `http://localhost:3000`.
 
 Reference structure clone coverage
 - Main menu is aligned to the live reference: `Home`, `About Us`, `Events`, `Donations`, `News`, `Contact Us`, `FAQ`.
@@ -122,28 +123,60 @@ Render deployment (single Web Service)
    - `SESSION_SECRET=<random-string>`
    - `NODE_ENV=production`
    - `MONGODB_URI=<your-mongodb-atlas-connection-string>`
+   - `SERVE_FRONTEND=true`  ← tells Express to serve `public_html/` as the static root
 5) Express serves `public_html` and the API under `/api/*`; no separate frontend URL needed.
 6) Uploaded images are stored in `backend/uploads` on the Render disk and served at `/uploads/*`.
 
 TrueHost Web Hosting deployment (cPanel – Starter plan)
-The document root on TrueHost Starter is `public_html`. The frontend is built there
-automatically by `.cpanel.yml` whenever you push via cPanel Git Version Control.
+The strategy is a **two-folder split**: the React SPA lives in Apache's document root
+(`public_html`), while the Express/Node.js backend lives in a private folder outside
+`public_html` (cPanel's "Setup Node.js App" proxies `/api/*` to it via Passenger).
 
+#### Part A – Automated deploy via cPanel Git Version Control
 1) In cPanel → **Git™ Version Control**, clone this repository. Set the clone path to
-   somewhere inside your home directory (e.g. `~/repos/www.bimfalbheritage.com`).
-2) cPanel will run `.cpanel.yml` on every `git pull` / deploy:
-   - installs frontend dependencies
-   - builds the React SPA → output goes to `public_html/` in the repo
-   - copies built files into `~/public_html/`
-3) The `.htaccess` (copied from `frontend/public/.htaccess`) handles Apache URL rewriting
-   for client-side routing.
-4) For the Node.js backend API, either:
-   - Use cPanel → **Setup Node.js App**: set the application root to
-     `repos/<your-repo-name>/backend`, startup file `src/server.js`, and provide the
-     required environment variables (`ADMIN_PASSWORD`, `SESSION_SECRET`, `MONGODB_URI`,
-     `CORS_ORIGIN`).
-   - Or host the backend on a separate service (Render, Railway, etc.) and point
-     `VITE_API_URL` in `frontend/.env` to that URL before building.
+   a private folder, e.g. `~/repos/www.bimfalbheritage.com`.
+2) On every `git pull` / **Deploy**, cPanel runs `.cpanel.yml`, which:
+   - installs frontend deps and builds the React SPA → outputs to `public_html/` in the
+     repo
+   - syncs `public_html/` to `~/public_html/` (removes stale files with `rsync --delete`)
+   - runs `npm install` for the backend (deps installed in the private folder)
+3) `frontend/public/.htaccess` is copied into `~/public_html/` during the build; it
+   handles Apache URL rewriting for React Router (`/about`, `/contact`, etc.) while
+   letting Apache's Passenger proxy handle `/api/*` requests.
+
+#### Part B – Setup Node.js App (backend API)
+1) In cPanel → **Setup Node.js App** → **Create Application**:
+   - **Node.js version**: 18 or 20
+   - **Application mode**: Production
+   - **Application root**: `repos/<your-repo-name>/backend`
+   - **Application URL**: `api`  ← this proxies `yourdomain.com/api/*` to Node.js
+   - **Application startup file**: `src/server.js`
+2) Click **Create**, then click **Run NPM Install** (or it was already done by `.cpanel.yml`).
+3) Add **Environment Variables** in the Node.js App interface (do **not** upload `.env`):
+   - `NODE_ENV` = `production`
+   - `MONGODB_URI` = `<your MongoDB Atlas connection string>`
+   - `ADMIN_PASSWORD` = `<your admin password>`
+   - `SESSION_SECRET` = `<random string>`
+   - `CORS_ORIGIN` = `https://yourdomain.com`
+4) Click **Restart**.
+
+#### Part C – MongoDB Atlas
+1) Use **MongoDB Atlas** free tier (`cloud.mongodb.com`) — Starter plans cannot host MongoDB locally.
+2) In Atlas → **Network Access** → **Add IP Address**: add your **TrueHost Shared IP**
+   (found in cPanel → **Server Information**). Without this, the app returns "Connection
+   Refused".
+
+#### React Router on Apache (`.htaccess` summary)
+The `.htaccess` deployed to `~/public_html/` does three things:
+- Passes `/api/*` requests through unchanged (Passenger handles them).
+- Serves existing files and directories (JS/CSS bundles, images) directly.
+- Rewrites all other URLs to `/index.html` so React Router works client-side.
+
+| Component  | Location on server             | Served by            |
+|------------|-------------------------------|----------------------|
+| React SPA  | `~/public_html/`              | Apache               |
+| Express API| `~/repos/<repo>/backend/`     | Node.js via Passenger|
+| MongoDB    | MongoDB Atlas (external)      | Atlas free cluster   |
 
 Demo notes
 - Newsletter form is frontend-only.

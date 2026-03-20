@@ -9,7 +9,7 @@ export default defineConfig({
     // (cPanel) serves the built SPA from the correct document root.
     // emptyOutDir is required because the output directory is outside the
     // frontend workspace; it is safe here because public_html contains only
-    // generated build artefacts.
+    // generated build artifacts.
     outDir: '../public_html',
     emptyOutDir: true,
   },
