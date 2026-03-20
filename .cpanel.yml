@@ -1,0 +1,8 @@
+---
+deployment:
+  tasks:
+    # Install frontend dependencies and build the React SPA into public_html/
+    - npm install --prefix frontend
+    - npm run build --prefix frontend
+    # Sync built assets into the cPanel document root, removing stale files
+    - rsync -a --delete public_html/. ~/public_html/

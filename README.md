@@ -31,12 +31,17 @@ Folder structure
 |  |- .env.example
 |  |- package.json
 |- frontend/            # Vite React SPA
+|  |- public/           # Static assets copied verbatim to build output
+|  |  |- .htaccess      # Apache SPA routing rules (copied into public_html/)
 |  |- src/components/
 |  |- src/pages/        # Home, About, Events, Donations, News, Contact, FAQ, Post, Admin
 |  |- src/services/     # Axios helper + fallback
 |  |- src/data/         # Local demo posts (fallback)
 |  |- .env.example
 |  |- package.json
+|  |- vite.config.js    # outDir set to ../public_html (TrueHost document root)
+|- public_html/         # ← build output / TrueHost document root (git-ignored)
+|- .cpanel.yml          # cPanel Git deployment tasks
 |- README.md
 ```
 
@@ -47,7 +52,7 @@ Quick start (local)
    - `MONGODB_URI` (MongoDB Atlas connection string)
    - `CORS_ORIGIN` (e.g. `http://localhost:5173` when hitting the API from Vite dev)
 2) Install backend deps: `cd backend && npm install`.
-3) Build the frontend into `frontend/dist` (once per UI change):  
+3) Build the frontend into `public_html` (once per UI change):  
    `cd ../frontend && npm install && npm run build`
 4) Seed demo posts to MongoDB (optional): `cd ../backend && npm run seed`.
 5) Run everything: `npm run dev` (or `npm start`) from `backend`. The API and UI share `http://localhost:5000`.
@@ -117,8 +122,28 @@ Render deployment (single Web Service)
    - `SESSION_SECRET=<random-string>`
    - `NODE_ENV=production`
    - `MONGODB_URI=<your-mongodb-atlas-connection-string>`
-5) Express serves `frontend/dist` and the API under `/api/*`; no separate frontend URL needed.
+5) Express serves `public_html` and the API under `/api/*`; no separate frontend URL needed.
 6) Uploaded images are stored in `backend/uploads` on the Render disk and served at `/uploads/*`.
+
+TrueHost Web Hosting deployment (cPanel – Starter plan)
+The document root on TrueHost Starter is `public_html`. The frontend is built there
+automatically by `.cpanel.yml` whenever you push via cPanel Git Version Control.
+
+1) In cPanel → **Git™ Version Control**, clone this repository. Set the clone path to
+   somewhere inside your home directory (e.g. `~/repos/www.bimfalbheritage.com`).
+2) cPanel will run `.cpanel.yml` on every `git pull` / deploy:
+   - installs frontend dependencies
+   - builds the React SPA → output goes to `public_html/` in the repo
+   - copies built files into `~/public_html/`
+3) The `.htaccess` (copied from `frontend/public/.htaccess`) handles Apache URL rewriting
+   for client-side routing.
+4) For the Node.js backend API, either:
+   - Use cPanel → **Setup Node.js App**: set the application root to
+     `repos/<your-repo-name>/backend`, startup file `src/server.js`, and provide the
+     required environment variables (`ADMIN_PASSWORD`, `SESSION_SECRET`, `MONGODB_URI`,
+     `CORS_ORIGIN`).
+   - Or host the backend on a separate service (Render, Railway, etc.) and point
+     `VITE_API_URL` in `frontend/.env` to that URL before building.
 
 Demo notes
 - Newsletter form is frontend-only.

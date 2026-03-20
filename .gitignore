@@ -6,3 +6,4 @@ backend/uploads
 .env
 backend/.env
 frontend/.env
+public_html

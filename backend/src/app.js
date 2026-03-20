@@ -42,8 +42,8 @@ app.use('/api/users', userRoutes);
 app.use('/api/posts', postRoutes);
 app.use('/api/gallery', galleryRoutes);
 
-// Serve frontend build (single Render service)
-const distPath = path.join(__dirname, '..', '..', 'frontend', 'dist');
+// Serve frontend build – document root is public_html (TrueHost/cPanel convention)
+const distPath = path.join(__dirname, '..', '..', 'public_html');
 app.use(express.static(distPath));
 // SPA fallback for non-API routes
 app.get(/^\/(?!api).*/, (req, res, next) => {
