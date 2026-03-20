@@ -1,0 +1,16 @@
+---
+deployment:
+  tasks:
+    # ── Frontend ────────────────────────────────────────────────────────────────
+    # Install dependencies and build the React SPA.
+    # Vite writes the output to public_html/ (repo root) – the cPanel document root.
+    - npm install --prefix frontend
+    - npm run build --prefix frontend
+    # Sync built assets into ~/public_html/, removing any stale files from old builds.
+    - rsync -a --delete public_html/. ~/public_html/
+
+    # ── Backend ─────────────────────────────────────────────────────────────────
+    # Install Node.js dependencies for the Express API.
+    # The backend folder stays OUTSIDE public_html (private directory).
+    # After this runs, go to cPanel → Setup Node.js App → <your app> → Restart.
+    - npm install --prefix backend

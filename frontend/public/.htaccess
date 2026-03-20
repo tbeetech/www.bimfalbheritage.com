@@ -1,0 +1,15 @@
+Options -MultiViews
+RewriteEngine On
+
+# Pass /api/* requests straight through to the cPanel Node.js App (Passenger proxy).
+# Apache handles the proxy at the vhost level; these rules must not interfere.
+RewriteCond %{REQUEST_URI} ^/api/ [NC]
+RewriteRule ^ - [L]
+
+# Serve existing files (JS/CSS bundles, images, fonts…) and directories directly.
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+
+# Everything else → React's index.html so React Router handles client-side URLs
+# (e.g. /about, /contact, /news/:slug).
+RewriteRule ^ /index.html [QSA,L]
