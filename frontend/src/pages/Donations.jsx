@@ -1,4 +1,5 @@
 import { useState, useCallback } from 'react';
+import { useSEO } from '../hooks/useSEO';
 import './Donations.css';
 
 const impactStats = [
@@ -118,6 +119,13 @@ const DonatePanel = ({ context, onClose }) => {
 
 const Donations = () => {
   const [panelContext, setPanelContext] = useState(null);
+
+  useSEO({
+    title: 'Support Us — Donate',
+    description:
+      'Support the preservation of Nigerian cultural heritage. Donate to Bimfalb Heritage to fund events, empower artists, and document historic traditions.',
+    url: 'https://www.bimfalbheritage.com/donations',
+  });
 
   const openPanel = useCallback((context) => setPanelContext(context || 'General Donation'), []);
   const closePanel = useCallback(() => setPanelContext(null), []);

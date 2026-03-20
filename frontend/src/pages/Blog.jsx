@@ -3,6 +3,7 @@ import ArticleCard from '../components/ArticleCard';
 import Pagination from '../components/Pagination';
 import Spinner from '../components/Spinner';
 import { getPosts } from '../services/api';
+import { useSEO } from '../hooks/useSEO';
 import './Blog.css';
 
 const feedTabs = [
@@ -19,6 +20,13 @@ const Blog = () => {
   const [pagination, setPagination] = useState();
   const [activeTab, setActiveTab] = useState('');
   const [loading, setLoading] = useState(true);
+
+  useSEO({
+    title: 'Blog & News',
+    description:
+      'Explore articles, vlogs, news, and events covering Nigerian festivals, cultural heritage, and African traditions from the Bimfalb Heritage editorial team.',
+    url: 'https://www.bimfalbheritage.com/blog',
+  });
 
   const load = async (page = 1, contentType = activeTab) => {
     setLoading(true);

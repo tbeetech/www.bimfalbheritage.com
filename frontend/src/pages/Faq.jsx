@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { faqItems } from '../data/siteContent';
+import { useSEO } from '../hooks/useSEO';
 import './Faq.css';
 
 const FaqItem = ({ item }) => {
@@ -28,6 +29,12 @@ const FaqItem = ({ item }) => {
 };
 
 const Faq = () => {
+  useSEO({
+    title: 'Frequently Asked Questions',
+    description:
+      'Find answers to common questions about Bimfalb Heritage — our programs, how to collaborate, nominate heritage sites, and support cultural preservation.',
+    url: 'https://www.bimfalbheritage.com/faq',
+  });
   return (
     <div className="page">
       <header className="page-header">
