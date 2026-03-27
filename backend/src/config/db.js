@@ -18,7 +18,7 @@ const connectDB = async () => {
     if (process.env.NODE_ENV === 'production') {
       console.error('[db] FATAL: MONGODB_URI (or MONGODB_URI_DIRECT) is not set. User authentication and all database operations will fail.');
     } else {
-      console.warn('[db] MONGODB_URI not set – database connection skipped.');
+      console.warn('[db] MONGODB_URI/MONGODB_URI_DIRECT not set – database connection skipped.');
     }
     return;
   }
