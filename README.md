@@ -132,8 +132,8 @@ Vercel frontend + Render backend (recommended split setup)
 1) Keep backend deployed on Render (`https://bimfalb-heritage.onrender.com`).
 2) Keep root `vercel.json` rewrite so `/api/*` is proxied to Render.
 3) In Vercel Project → Settings → Environment Variables, set:
-   - `VITE_API_URL=https://bimfalb-heritage.onrender.com`
-   - (optional) `VITE_PROD_API_FALLBACK_ORIGIN=https://bimfalb-heritage.onrender.com`
+   - `VITE_API_URL=` (empty) to use same-origin `/api/*` via `vercel.json` rewrite, or set it explicitly to `https://bimfalb-heritage.onrender.com`.
+   - (optional) `VITE_PROD_API_FALLBACK_ORIGIN=` (leave empty unless you intentionally want direct cross-origin API calls)
    - (optional) `VITE_PROD_HOSTNAMES=www.bimfalbheritage.org,bimfalbheritage.org,www.bimfalbheritage.com,bimfalbheritage.com`
 4) In Render backend env vars, ensure:
    - `CORS_ORIGIN=https://www.bimfalbheritage.org,https://bimfalbheritage.org,https://www.bimfalbheritage.com,https://bimfalbheritage.com`
