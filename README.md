@@ -7,7 +7,7 @@ Admin session uses cookies (the password can be remembered in `localStorage` for
 
 Stack
 - Frontend: React (Vite), React Router, Day.js
-- Backend: Node.js, Express, express-session, Multer → local disk, dotenv, CORS, Morgan
+- Backend: Node.js, Express, express-session, Multer → local disk, dotenv, Morgan
 - Database: MongoDB Atlas (Mongoose ODM)
 - File storage: Local disk (`backend/uploads`, served as `/uploads/*`)
 - Deployment target: Render (one Web Service)
@@ -51,7 +51,6 @@ Quick start (local)
    - `SESSION_SECRET` (any random string)
    - `MONGODB_URI` (MongoDB Atlas connection string)
    - `MONGODB_URI_DIRECT` (optional direct-node Atlas URI fallback if SRV DNS lookup is blocked on your host)
-   - `CORS_ORIGIN` (e.g. `http://localhost:5173` when hitting the API from Vite dev)
    - `SERVE_FRONTEND=true` (lets the Express server also serve the React build)
 2) Install backend deps: `cd backend && npm install`.
 3) Build the frontend into `public_html` (once per UI change):  
@@ -136,8 +135,6 @@ Vercel frontend + Render backend (recommended split setup)
    - (optional) `VITE_PROD_API_FALLBACK_ORIGIN=` (leave empty unless you intentionally want direct cross-origin API calls)
    - (optional) `VITE_PROD_HOSTNAMES=www.bimfalbheritage.org,bimfalbheritage.org,www.bimfalbheritage.com,bimfalbheritage.com`
 4) In Render backend env vars, ensure:
-    - `CORS_ORIGIN=https://www.bimfalbheritage.org,https://bimfalbheritage.org,https://www.bimfalbheritage.com,https://bimfalbheritage.com`
-      (entries may be full origins like `https://example.com` or bare hosts like `example.com`)
     - `MONGODB_URI` and, when DNS SRV lookup is blocked, `MONGODB_URI_DIRECT`.
 5) Redeploy both services after saving env vars.
 
@@ -171,7 +168,6 @@ The strategy is a **two-folder split**: the React SPA lives in Apache's document
    - `MONGODB_URI` = `<your MongoDB Atlas connection string>`
    - `ADMIN_PASSWORD` = `<your admin password>`
    - `SESSION_SECRET` = `<random string>`
-   - `CORS_ORIGIN` = `https://yourdomain.com`
 4) Click **Restart**.
 
 #### Part C – MongoDB Atlas
