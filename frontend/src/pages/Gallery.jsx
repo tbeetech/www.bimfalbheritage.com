@@ -24,7 +24,7 @@ const Gallery = () => {
     title: 'Gallery',
     description:
       'Browse photos and visual documentation of Nigerian cultural festivals, heritage sites, and community events curated by Bimfalb Heritage.',
-    url: 'https://www.bimfalbheritage.com/gallery',
+    url: 'https://www.bimfalbheritage.org/gallery',
   });
 
   useEffect(() => {

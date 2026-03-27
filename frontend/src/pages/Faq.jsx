@@ -33,7 +33,7 @@ const Faq = () => {
     title: 'Frequently Asked Questions',
     description:
       'Find answers to common questions about Bimfalb Heritage — our programs, how to collaborate, nominate heritage sites, and support cultural preservation.',
-    url: 'https://www.bimfalbheritage.com/faq',
+    url: 'https://www.bimfalbheritage.org/faq',
   });
   return (
     <div className="page">

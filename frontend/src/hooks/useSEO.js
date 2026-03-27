@@ -17,8 +17,8 @@
 import { useEffect, useMemo } from 'react';
 
 const SITE_NAME = 'Bimfalb Heritage';
-const SITE_URL = 'https://www.bimfalbheritage.com';
-const DEFAULT_IMAGE = `${SITE_URL}/og-default.jpg`;
+const SITE_URL = 'https://www.bimfalbheritage.org';
+const DEFAULT_IMAGE = 'https://i.pinimg.com/736x/9c/50/73/9c5073e69ef82e9ef07ea68fa1a97b11.jpg';
 const TWITTER_HANDLE = '@bimfalbheritage';
 
 /**

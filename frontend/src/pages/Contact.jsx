@@ -38,7 +38,7 @@ const Contact = () => {
     title: 'Contact Us',
     description:
       'Get in touch with Bimfalb Heritage for partnerships, cultural programs, donations, or media enquiries. Located in Akure, Ondo State, Nigeria.',
-    url: 'https://www.bimfalbheritage.com/contact',
+    url: 'https://www.bimfalbheritage.org/contact',
   });
   return (
     <div className="page">
