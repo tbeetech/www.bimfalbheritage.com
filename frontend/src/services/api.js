@@ -1,7 +1,23 @@
 import axios from 'axios';
 import fallbackPosts from '../data/fallbackPosts';
 
-const baseURL = import.meta.env.VITE_API_URL || (typeof window !== 'undefined' ? window.location.origin : '');
+const DEFAULT_PROD_API_ORIGIN = 'https://bimfalb-heritage.onrender.com';
+const PROD_HOSTNAMES = new Set([
+  'www.bimfalbheritage.org',
+  'bimfalbheritage.org',
+  'www.bimfalbheritage.com',
+  'bimfalbheritage.com',
+]);
+
+const resolveBaseURL = () => {
+  const configured = import.meta.env.VITE_API_URL?.trim();
+  if (configured) return configured;
+  if (typeof window === 'undefined') return '';
+  if (PROD_HOSTNAMES.has(window.location.hostname)) return DEFAULT_PROD_API_ORIGIN;
+  return window.location.origin;
+};
+
+const baseURL = resolveBaseURL();
 
 const api = axios.create({ baseURL, withCredentials: true });
 
