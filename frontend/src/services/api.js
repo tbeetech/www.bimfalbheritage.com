@@ -12,6 +12,10 @@ api.interceptors.request.use((config) => {
     if (token && !config.headers.Authorization) {
       config.headers.Authorization = `Bearer ${token}`;
     }
+    const adminToken = localStorage.getItem('bh_admin_token');
+    if (adminToken && !config.headers['x-admin-token']) {
+      config.headers['x-admin-token'] = adminToken;
+    }
   }
   return config;
 });
@@ -39,11 +43,15 @@ export const getPost = async (id) => {
 
 export const login = async (password) => {
   const res = await api.post('/api/auth/login', { password });
+  if (res.data.token) {
+    localStorage.setItem('bh_admin_token', res.data.token);
+  }
   return res.data;
 };
 
 export const logout = async () => {
   await api.post('/api/auth/logout');
+  localStorage.removeItem('bh_admin_token');
 };
 
 export const getSessionStatus = async () => {
