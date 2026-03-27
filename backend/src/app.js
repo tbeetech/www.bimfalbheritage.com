@@ -1,4 +1,5 @@
 const express = require('express');
+const cors = require('cors');
 const morgan = require('morgan');
 const path = require('path');
 const cookieParser = require('cookie-parser');
@@ -12,6 +13,38 @@ const { notFound, errorHandler } = require('./middleware/errorHandler');
 const { csrfProtection } = require('./middleware/csrf');
 
 const app = express();
+
+// Build the list of allowed CORS origins from the CORS_ORIGIN env var (comma-separated)
+// plus a set of hard-coded production defaults so the server works even if the env
+// var is not explicitly set on Render.
+const DEFAULT_CORS_ORIGINS = [
+  'https://www.bimfalbheritage.org',
+  'https://bimfalbheritage.org',
+  'https://www.bimfalbheritage.com',
+  'https://bimfalbheritage.com',
+  'https://bimfalb-heritage.onrender.com',
+];
+
+const envOrigins = (process.env.CORS_ORIGIN || '')
+  .split(',')
+  .map((o) => o.trim())
+  .filter(Boolean);
+
+const allowedOrigins = new Set([...DEFAULT_CORS_ORIGINS, ...envOrigins]);
+
+app.use(
+  cors({
+    origin: (origin, callback) => {
+      // Allow requests with no Origin (e.g. curl, server-to-server, or same-origin)
+      if (!origin) return callback(null, true);
+      if (allowedOrigins.has(origin)) return callback(null, true);
+      callback(new Error('CORS: origin not allowed'));
+    },
+    credentials: true,
+    methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
+    allowedHeaders: ['Content-Type', 'Authorization', 'x-admin-token'],
+  })
+);
 
 app.use(express.json({ limit: '2mb' }));
 app.use(express.urlencoded({ extended: true }));
