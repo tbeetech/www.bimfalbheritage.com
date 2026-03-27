@@ -26,5 +26,4 @@ deployment:
     #   MONGODB_URI     = your MongoDB Atlas connection string
     #   JWT_SECRET      = a long random secret string
     #   ADMIN_PASSWORD  = the admin panel password
-    #   CORS_ORIGIN     = https://www.bimfalbheritage.com,https://bimfalbheritage.com
     - npm install --prefix backend

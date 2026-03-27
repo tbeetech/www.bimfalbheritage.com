@@ -20,8 +20,6 @@ services:
         value: production
       - key: SERVE_FRONTEND
         value: "true"
-      - key: CORS_ORIGIN
-        value: "https://www.bimfalbheritage.com,https://bimfalbheritage.com,https://www.bimfalbheritage.org,https://bimfalbheritage.org"
       # The following secrets must be configured in the Render dashboard:
       - key: MONGODB_URI
         sync: false
