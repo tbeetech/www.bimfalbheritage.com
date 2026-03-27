@@ -12,13 +12,13 @@ const DEFAULT_PROD_HOSTNAMES = [
 const PROD_API_FALLBACK_ORIGIN =
   import.meta.env.VITE_PROD_API_FALLBACK_ORIGIN?.trim() || DEFAULT_PROD_API_FALLBACK_ORIGIN;
 
-const configuredProdHostnames = import.meta.env.VITE_PROD_HOSTNAMES
-  ?.split(',')
-  .map((host) => host.trim())
-  .filter(Boolean);
+const configuredProdHostnamesRaw = import.meta.env.VITE_PROD_HOSTNAMES?.trim();
+const configuredProdHostnames = configuredProdHostnamesRaw
+  ? configuredProdHostnamesRaw.split(',').map((host) => host.trim()).filter(Boolean)
+  : [];
 
 const PROD_HOSTNAMES = new Set(
-  configuredProdHostnames?.length ? configuredProdHostnames : DEFAULT_PROD_HOSTNAMES
+  configuredProdHostnames.length ? configuredProdHostnames : DEFAULT_PROD_HOSTNAMES
 );
 
 const resolveBaseURL = () => {
