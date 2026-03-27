@@ -14,6 +14,7 @@ import {
 } from '../services/api';
 import { resolveImageUrl } from '../utils/imageUrl';
 import { useAuth } from '../context/AuthContext';
+import { useSEO } from '../hooks/useSEO';
 import Spinner from '../components/Spinner';
 import './PostDetail.css';
 
@@ -152,11 +153,47 @@ const PostDetail = () => {
     if (id) loadComments();
   }, [id]);
 
+  const postSlug = post?._id || post?.id || id;
+  const postUrl = `https://www.bimfalbheritage.com/blog/${postSlug}`;
+  const postImage = post?.coverImage || post?.images?.[0] || undefined;
+
+  useSEO({
+    title: post?.title,
+    description: post?.excerpt,
+    image: postImage,
+    url: post ? postUrl : undefined,
+    type: 'article',
+    jsonLd: post
+      ? {
+          '@context': 'https://schema.org',
+          '@type': post.contentType === 'news' ? 'NewsArticle' : 'BlogPosting',
+          headline: post.title,
+          description: post.excerpt,
+          image: postImage ? [postImage] : undefined,
+          datePublished: post.publishDate || post.createdAt,
+          dateModified: post.updatedAt || post.publishDate || post.createdAt,
+          author: {
+            '@type': 'Person',
+            name: post.authorName || 'Bimfalb Heritage Editorial',
+          },
+          publisher: {
+            '@type': 'Organization',
+            name: 'Bimfalb Heritage',
+            url: 'https://www.bimfalbheritage.com',
+          },
+          mainEntityOfPage: {
+            '@type': 'WebPage',
+            '@id': postUrl,
+          },
+          keywords: post.tags,
+        }
+      : undefined,
+  });
+
   const shareLinks = useMemo(() => {
     if (!post || typeof window === 'undefined') return null;
     const url = encodeURIComponent(window.location.href);
-    const title = encodeURIComponent(post.title);
-    return {
+    const title = encodeURIComponent(post.title);    return {
       whatsapp: `https://wa.me/?text=${title}%20${url}`,
       x: `https://twitter.com/intent/tweet?text=${title}&url=${url}`,
       facebook: `https://www.facebook.com/sharer/sharer.php?u=${url}`,

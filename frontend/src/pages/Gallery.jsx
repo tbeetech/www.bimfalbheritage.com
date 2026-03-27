@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from 'react';
 import { getGalleryItems } from '../services/api';
 import { resolveImageUrl } from '../utils/imageUrl';
 import Spinner from '../components/Spinner';
+import { useSEO } from '../hooks/useSEO';
 import './Gallery.css';
 
 const RETRY_COUNT = 3;
@@ -18,6 +19,13 @@ const Gallery = () => {
   const trackRef = useRef(null);
   const [dragOffset, setDragOffset] = useState(0);
   const draggingRef = useRef(false);
+
+  useSEO({
+    title: 'Gallery',
+    description:
+      'Browse photos and visual documentation of Nigerian cultural festivals, heritage sites, and community events curated by Bimfalb Heritage.',
+    url: 'https://www.bimfalbheritage.com/gallery',
+  });
 
   useEffect(() => {
     const fetchWithRetry = async (retries = RETRY_COUNT, delay = RETRY_DELAY_MS) => {

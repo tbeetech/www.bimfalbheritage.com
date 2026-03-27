@@ -1,7 +1,14 @@
 import { eventCards } from '../data/siteContent';
+import { useSEO } from '../hooks/useSEO';
 import './Events.css';
 
 const Events = () => {
+  useSEO({
+    title: 'Events',
+    description:
+      'Discover upcoming cultural festivals, heritage campaigns, and community programs organised by Bimfalb Heritage across Nigeria.',
+    url: 'https://www.bimfalbheritage.com/events',
+  });
   return (
     <div className="page">
       <header className="page-header">
