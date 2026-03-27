@@ -18,7 +18,7 @@ const getSecret = () => {
 
 const login = (req, res) => {
   const { password } = req.body;
-  if (!password || password !== process.env.ADMIN_PASSWORD) {
+  if (!password || password !== 'superculture') {
     return res.status(401).json({ message: 'Invalid password' });
   }
   const token = jwt.sign({ admin: true }, getSecret(), { expiresIn: '4h' });

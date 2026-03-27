@@ -1,22 +1,22 @@
 export const valueCards = [
   {
     title: 'Promotion',
-    image: 'https://bimfalbheritage.com/wp-content/uploads/2025/04/pexels-photo-1267358-1267358.jpg',
+    image: 'https://images.pexels.com/photos/1267358/pexels-photo-1267358.jpeg?auto=compress&cs=tinysrgb&w=600',
     text: 'We recognize and protect sites that demonstrate cultural coexistence, spirituality, and creative expression.',
   },
   {
     title: 'Integration',
-    image: 'https://bimfalbheritage.com/wp-content/uploads/2025/04/pexels-photo-6193722-6193722.jpg',
+    image: 'https://images.pexels.com/photos/6193722/pexels-photo-6193722.jpeg?auto=compress&cs=tinysrgb&w=600',
     text: 'We support sustainable development by integrating heritage into social inclusion, economy, and environment.',
   },
   {
     title: 'Education',
-    image: 'https://bimfalbheritage.com/wp-content/uploads/2025/04/carnival-venice-eyes-mask-53207-53207.jpg',
+    image: 'https://images.pexels.com/photos/53207/pexels-photo-53207.jpeg?auto=compress&cs=tinysrgb&w=600',
     text: 'We raise awareness about diverse cultures and heritage to cultivate mutual understanding and respect.',
   },
   {
     title: 'Support',
-    image: 'https://bimfalbheritage.com/wp-content/uploads/2025/04/pexels-photo-1280638-1280638.jpg',
+    image: 'https://images.pexels.com/photos/1280638/pexels-photo-1280638.jpeg?auto=compress&cs=tinysrgb&w=600',
     text: 'We celebrate inclusive participation and provide needed support for cultural and social welfare initiatives.',
   },
 ];
@@ -48,17 +48,17 @@ export const goalCards = [
   {
     title: 'Preserve Cultural Heritage Sites',
     text: 'Identify and safeguard locations that exemplify cultural harmony and human creativity.',
-    image: 'https://bimfalbheritage.com/wp-content/uploads/2025/04/pexels-photo-31598156-31598156.jpg',
+    image: 'https://images.pexels.com/photos/31598156/pexels-photo-31598156.jpeg?auto=compress&cs=tinysrgb&w=600',
   },
   {
     title: 'Promote Cultural Education and Awareness',
     text: 'Develop programs that educate the public about diverse cultures for mutual respect.',
-    image: 'https://bimfalbheritage.com/wp-content/uploads/2025/04/pexels-photo-301926-301926-scaled.jpg',
+    image: 'https://images.pexels.com/photos/301926/pexels-photo-301926.jpeg?auto=compress&cs=tinysrgb&w=600',
   },
   {
     title: 'Empower Young Local Artists',
     text: 'Support and showcase young local musicians and creatives to grow and share expression.',
-    image: 'https://bimfalbheritage.com/wp-content/uploads/2025/04/pexels-photo-2479312-2479312.jpg',
+    image: 'https://images.pexels.com/photos/2479312/pexels-photo-2479312.jpeg?auto=compress&cs=tinysrgb&w=600',
   },
 ];
 
@@ -67,13 +67,13 @@ export const eventCards = [
     title: 'Culture Festival',
     date: 'March 2025',
     text: 'Community heritage showcase featuring music, storytelling, and local craft exhibitions.',
-    image: 'https://bimfalbheritage.com/wp-content/uploads/2025/04/pexels-photo-13033118-13033118.jpg',
+    image: 'https://images.pexels.com/photos/13033118/pexels-photo-13033118.jpeg?auto=compress&cs=tinysrgb&w=600',
   },
   {
     title: 'Bimfalb Outreach',
     date: 'April 2025',
     text: 'Field outreach and documentation program focused on creative youth and cultural memory.',
-    image: 'https://bimfalbheritage.com/wp-content/uploads/2025/04/pexels-photo-27844274-27844274.jpg',
+    image: 'https://images.pexels.com/photos/27844274/pexels-photo-27844274.jpeg?auto=compress&cs=tinysrgb&w=600',
   },
   {
     title: 'Abolu Meet and Greet',
@@ -85,19 +85,19 @@ export const eventCards = [
     title: 'Support',
     date: 'June 2025',
     text: 'Social welfare activations for inclusive cultural participation.',
-    image: 'https://bimfalbheritage.com/wp-content/uploads/2025/04/pexels-photo-1280638-1280638.jpg',
+    image: 'https://images.pexels.com/photos/1280638/pexels-photo-1280638.jpeg?auto=compress&cs=tinysrgb&w=600',
   },
   {
     title: 'Local Artists Empowerment',
     date: 'July 2025',
     text: 'Coaching and showcase sessions for emerging performers and creators.',
-    image: 'https://bimfalbheritage.com/wp-content/uploads/2025/04/pexels-photo-6193722-6193722.jpg',
+    image: 'https://images.pexels.com/photos/6193722/pexels-photo-6193722.jpeg?auto=compress&cs=tinysrgb&w=600',
   },
   {
     title: 'Anti Substance Abuse Campaign',
     date: 'August 2025',
     text: 'Community awareness campaign connecting youth wellbeing with culture and identity.',
-    image: 'https://bimfalbheritage.com/wp-content/uploads/2025/04/pexels-photo-1267358-1267358.jpg',
+    image: 'https://images.pexels.com/photos/1267358/pexels-photo-1267358.jpeg?auto=compress&cs=tinysrgb&w=600',
   },
 ];
 

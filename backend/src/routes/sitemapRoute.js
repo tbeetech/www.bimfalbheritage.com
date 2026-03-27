@@ -14,7 +14,7 @@ const sitemapLimiter = rateLimit({
   message: { message: 'Too many requests, please slow down' },
 });
 
-const SITE_URL = 'https://www.bimfalbheritage.com';
+const SITE_URL = 'https://www.bimfalbheritage.org';
 
 const staticPages = [
   { loc: '/', changefreq: 'weekly', priority: '1.0' },

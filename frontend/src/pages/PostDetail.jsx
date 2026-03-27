@@ -154,7 +154,7 @@ const PostDetail = () => {
   }, [id]);
 
   const postSlug = post?._id || post?.id || id;
-  const postUrl = `https://www.bimfalbheritage.com/blog/${postSlug}`;
+  const postUrl = `https://www.bimfalbheritage.org/blog/${postSlug}`;
   const postImage = post?.coverImage || post?.images?.[0] || undefined;
 
   useSEO({
@@ -179,7 +179,7 @@ const PostDetail = () => {
           publisher: {
             '@type': 'Organization',
             name: 'Bimfalb Heritage',
-            url: 'https://www.bimfalbheritage.com',
+            url: 'https://www.bimfalbheritage.org',
           },
           mainEntityOfPage: {
             '@type': 'WebPage',

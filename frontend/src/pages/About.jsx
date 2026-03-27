@@ -29,7 +29,7 @@ const About = () => {
     title: 'About Us',
     description:
       'Learn about Bimfalb Heritage — our mission to preserve Nigerian cultural identity, empower local artists, and document the traditions that define Africa.',
-    url: 'https://www.bimfalbheritage.com/about',
+    url: 'https://www.bimfalbheritage.org/about',
   });
   return (
     <div className="page">

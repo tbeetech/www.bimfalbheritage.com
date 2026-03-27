@@ -7,7 +7,7 @@ const Events = () => {
     title: 'Events',
     description:
       'Discover upcoming cultural festivals, heritage campaigns, and community programs organised by Bimfalb Heritage across Nigeria.',
-    url: 'https://www.bimfalbheritage.com/events',
+    url: 'https://www.bimfalbheritage.org/events',
   });
   return (
     <div className="page">

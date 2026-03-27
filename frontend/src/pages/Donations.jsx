@@ -124,7 +124,7 @@ const Donations = () => {
     title: 'Support Us — Donate',
     description:
       'Support the preservation of Nigerian cultural heritage. Donate to Bimfalb Heritage to fund events, empower artists, and document historic traditions.',
-    url: 'https://www.bimfalbheritage.com/donations',
+    url: 'https://www.bimfalbheritage.org/donations',
   });
 
   const openPanel = useCallback((context) => setPanelContext(context || 'General Donation'), []);
