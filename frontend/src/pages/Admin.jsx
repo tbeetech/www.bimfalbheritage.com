@@ -1,5 +1,6 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Routes, Route, NavLink } from 'react-router-dom';
+import { login, logout, getSessionStatus } from '../services/api';
 import AdminDashboardPane from './admin/AdminDashboardPane';
 import AdminPostsPane from './admin/AdminPostsPane';
 import AdminEditorPane from './admin/AdminEditorPane';
@@ -8,6 +9,79 @@ import './Admin.css';
 
 const Admin = () => {
   const [menuOpen, setMenuOpen] = useState(false);
+  const [isAdmin, setIsAdmin] = useState(false);
+  const [authLoading, setAuthLoading] = useState(true);
+  const [password, setPassword] = useState('');
+  const [loginError, setLoginError] = useState('');
+  const [loginLoading, setLoginLoading] = useState(false);
+
+  useEffect(() => {
+    getSessionStatus()
+      .then((data) => setIsAdmin(!!data.admin))
+      .catch(() => setIsAdmin(false))
+      .finally(() => setAuthLoading(false));
+  }, []);
+
+  const handleLogin = async (e) => {
+    e.preventDefault();
+    setLoginLoading(true);
+    setLoginError('');
+    try {
+      await login(password);
+      setIsAdmin(true);
+    } catch (err) {
+      if (err?.response?.status === 401) {
+        setLoginError('Invalid password. Please try again.');
+      } else {
+        setLoginError('Login failed. Please check your connection and try again.');
+      }
+    } finally {
+      setLoginLoading(false);
+    }
+  };
+
+  const handleLogout = async () => {
+    try { await logout(); } catch { /* ignore */ }
+    setIsAdmin(false);
+  };
+
+  if (authLoading) {
+    return <div className="admin-auth-loading">Loading…</div>;
+  }
+
+  if (!isAdmin) {
+    return (
+      <div className="admin-login-wrap">
+        <div className="admin-login-box">
+          <div className="admin-brand">
+            <span className="admin-brand-icon">🌿</span>
+            <div>
+              <div className="admin-brand-name">Heritage Admin</div>
+              <div className="admin-brand-sub">Bimfalb Management</div>
+            </div>
+          </div>
+          <form onSubmit={handleLogin} className="admin-login-form">
+            <h2 className="admin-login-title">Admin Login</h2>
+            <p className="admin-login-hint">Enter the admin password to access the dashboard.</p>
+            <input
+              type="password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              placeholder="Admin password"
+              required
+              autoFocus
+              className="admin-login-input"
+            />
+            {loginError && <p className="admin-login-error">{loginError}</p>}
+            <button type="submit" disabled={loginLoading} className="admin-login-btn">
+              {loginLoading ? 'Logging in…' : 'Login'}
+            </button>
+          </form>
+          <a href="/" className="admin-login-back">← Back to site</a>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="admin-shell">
@@ -85,6 +159,9 @@ const Admin = () => {
 
         <div className="admin-sidebar-footer">
           <a href="/" className="admin-signout-btn" style={{ textDecoration: 'none' }}>← Back to site</a>
+          <button type="button" onClick={handleLogout} className="admin-signout-btn admin-logout-btn">
+            Sign out
+          </button>
         </div>
       </aside>
 
