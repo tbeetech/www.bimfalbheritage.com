@@ -15,23 +15,53 @@ const { csrfProtection } = require('./middleware/csrf');
 const app = express();
 
 // Allow requests from explicitly listed origins (comma-separated CORS_ORIGIN env var).
+// Entries may be full origins (https://example.com) or bare hosts (example.com).
 // When CORS_ORIGIN is not set every origin is permitted – suitable for open public APIs.
 const _corsOrigins = process.env.CORS_ORIGIN
   ? process.env.CORS_ORIGIN.split(',').map((o) => o.trim()).filter(Boolean)
   : [];
 
+const isAllowedOrigin = (origin) => {
+  // Allow requests without an Origin header (e.g. server-to-server, curl, health checks).
+  if (!origin) return true;
+  if (_corsOrigins.length === 0) return true;
+
+  let requestUrl;
+  try {
+    requestUrl = new URL(origin);
+  } catch {
+    return false;
+  }
+
+  return _corsOrigins.some((allowed) => {
+    if (allowed.includes('://')) {
+      try {
+        return new URL(allowed).origin === requestUrl.origin;
+      } catch {
+        return false;
+      }
+    }
+
+    return (
+      // Match either hostname-only entries (example.com) or host entries with port (example.com:5173).
+      allowed === requestUrl.hostname
+      || allowed === requestUrl.host
+    );
+  });
+};
+
 app.use(
   cors({
     origin:
-      _corsOrigins.length > 0
-        ? (origin, callback) => {
-            if (!origin || _corsOrigins.includes(origin)) {
+      _corsOrigins.length === 0
+        ? true
+        : (origin, callback) => {
+            if (isAllowedOrigin(origin)) {
               callback(null, true);
             } else {
               callback(new Error('Not allowed by CORS'));
             }
-          }
-        : true,
+          },
     credentials: true,
   })
 );
