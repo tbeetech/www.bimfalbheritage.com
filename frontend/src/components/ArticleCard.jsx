@@ -29,7 +29,7 @@ const ArticleCard = ({ post }) => {
         <p className="muted preview">
           {post.excerpt || `${toPreview(post.body)}...`}
         </p>
-        <Link className="read-more" to={`/news/${post._id || post.id}`}>Continue Reading</Link>
+        <Link className="read-more" to={`/blog/${post._id || post.id}`}>Continue Reading</Link>
       </div>
     </article>
   );

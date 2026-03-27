@@ -13,4 +13,18 @@ deployment:
     # Install Node.js dependencies for the Express API.
     # The backend folder stays OUTSIDE public_html (private directory).
     # After this runs, go to cPanel → Setup Node.js App → <your app> → Restart.
+    #
+    # Required cPanel Node.js App settings:
+    #   Application mode:    Production
+    #   Application root:    /home/<user>/backend          (adjust to your home dir)
+    #   Application URL:     /api                          (proxies /api/* to Node.js)
+    #   Application startup: src/server.js
+    #
+    # Required environment variables (set in cPanel Node.js App → Edit → Env Vars):
+    #   NODE_ENV        = production
+    #   PORT            = (leave blank; cPanel injects it automatically)
+    #   MONGODB_URI     = your MongoDB Atlas connection string
+    #   JWT_SECRET      = a long random secret string
+    #   ADMIN_PASSWORD  = the admin panel password
+    #   CORS_ORIGIN     = https://www.bimfalbheritage.com,https://bimfalbheritage.com
     - npm install --prefix backend

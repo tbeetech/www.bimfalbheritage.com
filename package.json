@@ -5,6 +5,7 @@
   "description": "Bimfalb Heritage - root workspace scripts",
   "scripts": {
     "install-frontend": "cd frontend && npm ci",
-    "build": "cd frontend && npm run build"
+    "build": "cd frontend && npm run build",
+    "start": "node backend/src/server.js"
   }
 }

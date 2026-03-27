@@ -14,9 +14,24 @@ const { csrfProtection } = require('./middleware/csrf');
 
 const app = express();
 
+// Allow requests from explicitly listed origins (comma-separated CORS_ORIGIN env var).
+// When CORS_ORIGIN is not set every origin is permitted – suitable for open public APIs.
+const _corsOrigins = process.env.CORS_ORIGIN
+  ? process.env.CORS_ORIGIN.split(',').map((o) => o.trim()).filter(Boolean)
+  : [];
+
 app.use(
   cors({
-    origin: true,
+    origin:
+      _corsOrigins.length > 0
+        ? (origin, callback) => {
+            if (!origin || _corsOrigins.includes(origin)) {
+              callback(null, true);
+            } else {
+              callback(new Error('Not allowed by CORS'));
+            }
+          }
+        : true,
     credentials: true,
   })
 );
@@ -46,12 +61,11 @@ app.use('/api/gallery', galleryRoutes);
 // Dynamic sitemap – lists all static pages and published post URLs
 app.use('/', sitemapRoute);
 
-// Serve frontend build – document root is public_html (TrueHost/cPanel convention).
-// On cPanel, Apache serves ~/public_html/ directly and only /api/* reaches Node.js,
-// so this block is skipped. On Render (single-service), set SERVE_FRONTEND=true so
-// Express serves both the API and the built React SPA.
+// Serve frontend build when SERVE_FRONTEND=true (e.g. on Render where Express
+// handles all traffic). The build is written to dist/ at the repo root by Vite.
+// On cPanel, Apache serves ~/public_html/ directly so this block is skipped.
 if (process.env.SERVE_FRONTEND === 'true') {
-  const distPath = path.join(__dirname, '..', '..', 'public_html');
+  const distPath = path.join(__dirname, '..', '..', 'dist');
   app.use(express.static(distPath));
   // SPA fallback for non-API routes
   app.get(/^\/(?!api).*/, (req, res, next) => {
