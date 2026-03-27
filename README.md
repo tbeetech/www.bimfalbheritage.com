@@ -10,7 +10,7 @@ Stack
 - Backend: Node.js, Express, express-session, Multer → local disk, dotenv, Morgan
 - Database: MongoDB Atlas (Mongoose ODM)
 - File storage: Local disk (`backend/uploads`, served as `/uploads/*`)
-- Deployment target: Render (one Web Service)
+- Deployment target: Vercel (full-stack – CDN for the React SPA + Serverless Function for the Express API)
 
 ---
 
@@ -106,37 +106,23 @@ Uploads
 Frontend-only dev (optional)
 - `cd frontend && npm install && npm run dev` (set `VITE_API_URL` if you want to target a remote API; otherwise it uses window origin).
 
-Render deployment (single Web Service)
-1) Service root: repository root.
-2) Build command:
-   ```
-   npm install --prefix backend
-   npm install --prefix frontend
-   npm run build --prefix frontend
-   ```
-3) Start command:
-   ```
-   cd backend && npm start
-   ```
-4) Environment variables on Render:
-   - `ADMIN_PASSWORD=<your-password>`
-   - `SESSION_SECRET=<random-string>`
-   - `NODE_ENV=production`
-   - `MONGODB_URI=<your-mongodb-atlas-connection-string>`
-   - `SERVE_FRONTEND=true`  ← tells Express to serve `public_html/` as the static root
-5) Express serves `public_html` and the API under `/api/*`; no separate frontend URL needed.
-6) Uploaded images are stored in `backend/uploads` on the Render disk and served at `/uploads/*`.
+Vercel deployment (full-stack – recommended)
+The repository root is connected to a Vercel project. Vercel serves the React SPA from
+its CDN and runs the Express API as a Serverless Function under `/api/*`.
 
-Vercel frontend + Render backend (recommended split setup)
-1) Keep backend deployed on Render (`https://bimfalb-heritage.onrender.com`).
-2) Keep root `vercel.json` rewrite so `/api/*` is proxied to Render.
-3) In Vercel Project → Settings → Environment Variables, set:
-   - `VITE_API_URL=` (empty) to use same-origin `/api/*` via `vercel.json` rewrite, or set it explicitly to `https://bimfalb-heritage.onrender.com`.
-   - (optional) `VITE_PROD_API_FALLBACK_ORIGIN=` (leave empty unless you intentionally want direct cross-origin API calls)
-   - (optional) `VITE_PROD_HOSTNAMES=www.bimfalbheritage.org,bimfalbheritage.org,www.bimfalbheritage.com,bimfalbheritage.com`
-4) In Render backend env vars, ensure:
-    - `MONGODB_URI` and, when DNS SRV lookup is blocked, `MONGODB_URI_DIRECT`.
-5) Redeploy both services after saving env vars.
+1) Connect the GitHub repository to a Vercel project (one-time).
+2) In Vercel Project → Settings → Environment Variables, add:
+   - `MONGODB_URI` – MongoDB Atlas connection string
+   - `JWT_SECRET` – random secret string (min 32 characters recommended)
+   - `ADMIN_PASSWORD` – password for the admin panel
+   - `NODE_ENV` = `production` (Vercel sets this automatically)
+3) Deploy by pushing to `master` (or merge a PR). Vercel runs:
+   - Install: `npm ci --prefix backend && cd frontend && npm ci`
+   - Build: `cd frontend && npm run build`
+4) All `/api/*` requests are handled by `api/index.js` (Express serverless function).
+   All other paths are served as static React SPA files from `dist/`.
+5) Images are stored as base64 data URLs in MongoDB Atlas and served directly from the API.
+6) Do **not** set `SERVE_FRONTEND=true` in Vercel env vars – the CDN serves the React build.
 
 TrueHost Web Hosting deployment (cPanel – Starter plan)
 The strategy is a **two-folder split**: the React SPA lives in Apache's document root

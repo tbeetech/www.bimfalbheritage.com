@@ -15,14 +15,12 @@ const { csrfProtection } = require('./middleware/csrf');
 const app = express();
 
 // Build the list of allowed CORS origins from the CORS_ORIGIN env var (comma-separated)
-// plus a set of hard-coded production defaults so the server works even if the env
-// var is not explicitly set on Render.
+// plus a set of hard-coded production defaults.
 const DEFAULT_CORS_ORIGINS = [
   'https://www.bimfalbheritage.org',
   'https://bimfalbheritage.org',
   'https://www.bimfalbheritage.com',
   'https://bimfalbheritage.com',
-  'https://bimfalb-heritage.onrender.com',
 ];
 
 const envOrigins = (process.env.CORS_ORIGIN || '')
@@ -72,9 +70,9 @@ app.use('/api/gallery', galleryRoutes);
 // Dynamic sitemap – lists all static pages and published post URLs
 app.use('/', sitemapRoute);
 
-// Serve frontend build when SERVE_FRONTEND=true (e.g. on Render where Express
-// handles all traffic). The build is written to dist/ at the repo root by Vite.
-// On cPanel, Apache serves ~/public_html/ directly so this block is skipped.
+// Serve frontend build when SERVE_FRONTEND=true (e.g. on cPanel where the Node.js
+// app also handles the React SPA). On Vercel, the CDN serves the React build
+// directly and Express only handles /api/* – leave SERVE_FRONTEND unset there.
 if (process.env.SERVE_FRONTEND === 'true') {
   const distPath = path.join(__dirname, '..', '..', 'dist');
   app.use(express.static(distPath));

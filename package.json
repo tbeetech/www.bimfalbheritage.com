@@ -4,8 +4,11 @@
   "version": "1.0.0",
   "description": "Bimfalb Heritage - root workspace scripts",
   "scripts": {
+    "install-backend": "npm ci --prefix backend",
     "install-frontend": "cd frontend && npm ci",
     "build": "cd frontend && npm run build",
-    "start": "node backend/src/server.js"
+    "start": "node backend/src/server.js",
+    "dev:backend": "cd backend && npm run dev",
+    "dev:frontend": "cd frontend && npm run dev"
   }
 }
