@@ -136,8 +136,9 @@ Vercel frontend + Render backend (recommended split setup)
    - (optional) `VITE_PROD_API_FALLBACK_ORIGIN=` (leave empty unless you intentionally want direct cross-origin API calls)
    - (optional) `VITE_PROD_HOSTNAMES=www.bimfalbheritage.org,bimfalbheritage.org,www.bimfalbheritage.com,bimfalbheritage.com`
 4) In Render backend env vars, ensure:
-   - `CORS_ORIGIN=https://www.bimfalbheritage.org,https://bimfalbheritage.org,https://www.bimfalbheritage.com,https://bimfalbheritage.com`
-   - `MONGODB_URI` and, when DNS SRV lookup is blocked, `MONGODB_URI_DIRECT`.
+    - `CORS_ORIGIN=https://www.bimfalbheritage.org,https://bimfalbheritage.org,https://www.bimfalbheritage.com,https://bimfalbheritage.com`
+      (entries may be full origins like `https://example.com` or bare hosts like `example.com`)
+    - `MONGODB_URI` and, when DNS SRV lookup is blocked, `MONGODB_URI_DIRECT`.
 5) Redeploy both services after saving env vars.
 
 TrueHost Web Hosting deployment (cPanel – Starter plan)

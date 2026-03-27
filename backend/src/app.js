@@ -22,7 +22,9 @@ const _corsOrigins = process.env.CORS_ORIGIN
   : [];
 
 const isAllowedOrigin = (origin) => {
-  if (!origin || _corsOrigins.length === 0) return true;
+  // Allow requests without an Origin header (e.g. server-to-server, curl, health checks).
+  if (!origin) return true;
+  if (_corsOrigins.length === 0) return true;
 
   let requestUrl;
   try {
@@ -32,8 +34,6 @@ const isAllowedOrigin = (origin) => {
   }
 
   return _corsOrigins.some((allowed) => {
-    if (!allowed) return false;
-
     if (allowed.includes('://')) {
       try {
         return new URL(allowed).origin === requestUrl.origin;
@@ -43,22 +43,25 @@ const isAllowedOrigin = (origin) => {
     }
 
     return (
+      // Match either hostname-only entries (example.com) or host entries with port (example.com:5173).
       allowed === requestUrl.hostname
       || allowed === requestUrl.host
-      || allowed === requestUrl.origin
     );
   });
 };
 
 app.use(
   cors({
-    origin: (origin, callback) => {
-      if (isAllowedOrigin(origin)) {
-        callback(null, true);
-      } else {
-        callback(new Error('Not allowed by CORS'));
-      }
-    },
+    origin:
+      _corsOrigins.length === 0
+        ? true
+        : (origin, callback) => {
+            if (isAllowedOrigin(origin)) {
+              callback(null, true);
+            } else {
+              callback(new Error('Not allowed by CORS'));
+            }
+          },
     credentials: true,
   })
 );
