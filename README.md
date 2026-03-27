@@ -50,6 +50,7 @@ Quick start (local)
    - `ADMIN_PASSWORD` (for admin login)
    - `SESSION_SECRET` (any random string)
    - `MONGODB_URI` (MongoDB Atlas connection string)
+   - `MONGODB_URI_DIRECT` (optional direct-node Atlas URI fallback if SRV DNS lookup is blocked on your host)
    - `CORS_ORIGIN` (e.g. `http://localhost:5173` when hitting the API from Vite dev)
    - `SERVE_FRONTEND=true` (lets the Express server also serve the React build)
 2) Install backend deps: `cd backend && npm install`.
