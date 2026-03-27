@@ -50,6 +50,7 @@ Quick start (local)
    - `ADMIN_PASSWORD` (for admin login)
    - `SESSION_SECRET` (any random string)
    - `MONGODB_URI` (MongoDB Atlas connection string)
+   - `MONGODB_URI_DIRECT` (optional direct-node Atlas URI fallback if SRV DNS lookup is blocked on your host)
    - `CORS_ORIGIN` (e.g. `http://localhost:5173` when hitting the API from Vite dev)
    - `SERVE_FRONTEND=true` (lets the Express server also serve the React build)
 2) Install backend deps: `cd backend && npm install`.
@@ -126,6 +127,18 @@ Render deployment (single Web Service)
    - `SERVE_FRONTEND=true`  ← tells Express to serve `public_html/` as the static root
 5) Express serves `public_html` and the API under `/api/*`; no separate frontend URL needed.
 6) Uploaded images are stored in `backend/uploads` on the Render disk and served at `/uploads/*`.
+
+Vercel frontend + Render backend (recommended split setup)
+1) Keep backend deployed on Render (`https://bimfalb-heritage.onrender.com`).
+2) Keep root `vercel.json` rewrite so `/api/*` is proxied to Render.
+3) In Vercel Project → Settings → Environment Variables, set:
+   - `VITE_API_URL=https://bimfalb-heritage.onrender.com`
+   - (optional) `VITE_PROD_API_FALLBACK_ORIGIN=https://bimfalb-heritage.onrender.com`
+   - (optional) `VITE_PROD_HOSTNAMES=www.bimfalbheritage.org,bimfalbheritage.org,www.bimfalbheritage.com,bimfalbheritage.com`
+4) In Render backend env vars, ensure:
+   - `CORS_ORIGIN=https://www.bimfalbheritage.org,https://bimfalbheritage.org,https://www.bimfalbheritage.com,https://bimfalbheritage.com`
+   - `MONGODB_URI` and, when DNS SRV lookup is blocked, `MONGODB_URI_DIRECT`.
+5) Redeploy both services after saving env vars.
 
 TrueHost Web Hosting deployment (cPanel – Starter plan)
 The strategy is a **two-folder split**: the React SPA lives in Apache's document root

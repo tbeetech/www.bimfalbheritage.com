@@ -1,7 +1,35 @@
 import axios from 'axios';
 import fallbackPosts from '../data/fallbackPosts';
 
-const baseURL = import.meta.env.VITE_API_URL || (typeof window !== 'undefined' ? window.location.origin : '');
+const DEFAULT_PROD_API_FALLBACK_ORIGIN = 'https://bimfalb-heritage.onrender.com';
+const DEFAULT_PROD_HOSTNAMES = [
+  'www.bimfalbheritage.org',
+  'bimfalbheritage.org',
+  'www.bimfalbheritage.com',
+  'bimfalbheritage.com',
+];
+
+const PROD_API_FALLBACK_ORIGIN =
+  import.meta.env.VITE_PROD_API_FALLBACK_ORIGIN?.trim() || DEFAULT_PROD_API_FALLBACK_ORIGIN;
+
+const configuredProdHostnamesRaw = import.meta.env.VITE_PROD_HOSTNAMES?.trim();
+const configuredProdHostnames = configuredProdHostnamesRaw
+  ? configuredProdHostnamesRaw.split(',').map((host) => host.trim()).filter(Boolean)
+  : [];
+
+const PROD_HOSTNAMES = new Set(
+  configuredProdHostnames.length ? configuredProdHostnames : DEFAULT_PROD_HOSTNAMES
+);
+
+const resolveBaseURL = () => {
+  const configured = import.meta.env.VITE_API_URL?.trim();
+  if (configured) return configured;
+  if (typeof window === 'undefined') return '';
+  if (PROD_HOSTNAMES.has(window.location.hostname)) return PROD_API_FALLBACK_ORIGIN;
+  return window.location.origin;
+};
+
+const baseURL = resolveBaseURL();
 
 const api = axios.create({ baseURL, withCredentials: true });
 
