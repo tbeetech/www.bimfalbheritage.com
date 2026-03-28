@@ -21,6 +21,11 @@ const DEFAULT_CORS_ORIGINS = [
   'https://bimfalbheritage.org',
   'https://www.bimfalbheritage.com',
   'https://bimfalbheritage.com',
+  'http://localhost:3000',
+  'http://localhost:4173',
+  'http://127.0.0.1:4173',
+  'http://localhost:5173',
+  'http://127.0.0.1:5173',
 ];
 
 const envOrigins = (process.env.CORS_ORIGIN || '')
@@ -30,19 +35,21 @@ const envOrigins = (process.env.CORS_ORIGIN || '')
 
 const allowedOrigins = new Set([...DEFAULT_CORS_ORIGINS, ...envOrigins]);
 
-app.use(
-  cors({
-    origin: (origin, callback) => {
-      // Allow requests with no Origin (e.g. curl, server-to-server, or same-origin)
-      if (!origin) return callback(null, true);
-      if (allowedOrigins.has(origin)) return callback(null, true);
-      callback(new Error('CORS: origin not allowed'));
-    },
-    credentials: true,
-    methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
-    allowedHeaders: ['Content-Type', 'Authorization', 'x-admin-token'],
-  })
-);
+const corsOptions = {
+  origin: (origin, callback) => {
+    // Allow requests with no Origin (e.g. curl, server-to-server, or same-origin)
+    if (!origin) return callback(null, true);
+    if (allowedOrigins.has(origin)) return callback(null, true);
+    return callback(new Error(`CORS: origin not allowed (${origin})`));
+  },
+  credentials: true,
+  methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization', 'x-admin-token'],
+  optionsSuccessStatus: 204,
+};
+
+app.use(cors(corsOptions));
+app.options(/.*/, cors(corsOptions));
 
 app.use(express.json({ limit: '2mb' }));
 app.use(express.urlencoded({ extended: true }));

@@ -1,17 +1,16 @@
 const jwt = require('jsonwebtoken');
-
-const JWT_SECRET = process.env.JWT_SECRET || 'bimfalb-heritage-jwt-secret';
+const { getJwtSecret } = require('../config/auth');
 
 const verifyToken = (req) => {
   // 1. Cookie
   const cookieToken = req.cookies?.bh_token;
-  if (cookieToken) return jwt.verify(cookieToken, JWT_SECRET);
+  if (cookieToken) return jwt.verify(cookieToken, getJwtSecret());
 
   // 2. Bearer header
   const authHeader = req.headers.authorization;
   if (authHeader && authHeader.startsWith('Bearer ')) {
     const token = authHeader.slice(7);
-    return jwt.verify(token, JWT_SECRET);
+    return jwt.verify(token, getJwtSecret());
   }
 
   return null;
@@ -42,4 +41,4 @@ const optionalUserAuth = (req, res, next) => {
   return next();
 };
 
-module.exports = { userGuard, optionalUserAuth, JWT_SECRET };
+module.exports = { userGuard, optionalUserAuth };

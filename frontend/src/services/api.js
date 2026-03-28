@@ -11,6 +11,8 @@ const DEFAULT_PROD_HOSTNAMES = [
 
 const PROD_API_FALLBACK_ORIGIN =
   import.meta.env.VITE_PROD_API_FALLBACK_ORIGIN?.trim() || DEFAULT_PROD_API_FALLBACK_ORIGIN;
+const PREFER_SAME_ORIGIN_ON_PROD =
+  import.meta.env.VITE_PREFER_SAME_ORIGIN_ON_PROD?.trim() !== 'false';
 
 const configuredProdHostnamesRaw = import.meta.env.VITE_PROD_HOSTNAMES?.trim();
 const configuredProdHostnames = configuredProdHostnamesRaw
@@ -23,9 +25,16 @@ const PROD_HOSTNAMES = new Set(
 
 const resolveBaseURL = () => {
   const configured = import.meta.env.VITE_API_URL?.trim();
+  if (typeof window === 'undefined') return configured || '';
+
+  const isProductionHostname = PROD_HOSTNAMES.has(window.location.hostname);
+
+  // The production site is served from Vercel and the API lives under the same
+  // origin. Prefer same-origin there so a stale external VITE_API_URL does not
+  // keep sending login/register requests to an old backend.
+  if (isProductionHostname && PREFER_SAME_ORIGIN_ON_PROD) return window.location.origin;
   if (configured) return configured;
-  if (typeof window === 'undefined') return '';
-  if (PROD_HOSTNAMES.has(window.location.hostname) && PROD_API_FALLBACK_ORIGIN) return PROD_API_FALLBACK_ORIGIN;
+  if (isProductionHostname && PROD_API_FALLBACK_ORIGIN) return PROD_API_FALLBACK_ORIGIN;
   return window.location.origin;
 };
 

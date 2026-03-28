@@ -3,7 +3,7 @@
 //
 // Environment variables (set in Vercel Project → Settings → Environment Variables):
 //   MONGODB_URI       – MongoDB Atlas connection string (required)
-//   JWT_SECRET        – JWT signing secret (required in production)
+//   JWT_SECRET        – JWT signing secret (required)
 //   ADMIN_PASSWORD    – Admin panel password (required)
 //   NODE_ENV          – Set to "production" by Vercel automatically
 //

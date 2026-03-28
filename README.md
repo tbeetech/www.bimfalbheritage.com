@@ -104,7 +104,7 @@ Uploads
 - Uploaded images are compressed to JPEG (max 1200 px wide, 80% quality) before saving.
 
 Frontend-only dev (optional)
-- `cd frontend && npm install && npm run dev` (set `VITE_API_URL` if you want to target a remote API; otherwise it uses window origin).
+- `cd frontend && npm install && npm run dev` (set `VITE_API_URL` only when you intentionally want to target a separate API origin; the production site now prefers same-origin `/api/*` on the official domains).
 
 Vercel deployment (full-stack – recommended)
 The repository root is connected to a Vercel project. Vercel serves the React SPA from
@@ -113,9 +113,10 @@ its CDN and runs the Express API as a Serverless Function under `/api/*`.
 1) Connect the GitHub repository to a Vercel project (one-time).
 2) In Vercel Project → Settings → Environment Variables, add:
    - `MONGODB_URI` – MongoDB Atlas connection string
-   - `JWT_SECRET` – random secret string (min 32 characters recommended)
+   - `JWT_SECRET` – random secret string (min 32 characters recommended, required for all auth flows)
    - `ADMIN_PASSWORD` – password for the admin panel
    - `NODE_ENV` = `production` (Vercel sets this automatically)
+   - Leave `VITE_API_URL` empty or remove it if it still points to an old backend such as Render
 3) Deploy by pushing to `master` (or merge a PR). Vercel runs:
    - Install: `npm ci --prefix backend && cd frontend && npm ci`
    - Build: `cd frontend && npm run build`

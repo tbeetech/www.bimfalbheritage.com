@@ -1,7 +1,9 @@
 const jwt = require('jsonwebtoken');
 const mongoose = require('mongoose');
 const User = require('../models/User');
-const { JWT_SECRET } = require('../middleware/userAuthMiddleware');
+const { getJwtSecret } = require('../config/auth');
+
+const IS_PRODUCTION = process.env.NODE_ENV === 'production';
 
 /** Return 503 when the database connection is not yet established. */
 const requireDb = (res) => {
@@ -14,13 +16,21 @@ const requireDb = (res) => {
 
 const COOKIE_OPTIONS = {
   httpOnly: true,
-  sameSite: 'lax',
-  secure: process.env.NODE_ENV === 'production',
+  sameSite: IS_PRODUCTION ? 'none' : 'lax',
+  secure: IS_PRODUCTION,
+  path: '/',
   maxAge: 1000 * 60 * 60 * 24 * 7, // 7 days
 };
 
+const COOKIE_CLEAR_OPTIONS = {
+  httpOnly: COOKIE_OPTIONS.httpOnly,
+  sameSite: COOKIE_OPTIONS.sameSite,
+  secure: COOKIE_OPTIONS.secure,
+  path: COOKIE_OPTIONS.path,
+};
+
 const signToken = (user) =>
-  jwt.sign({ id: user._id, name: user.name, email: user.email, role: user.role }, JWT_SECRET, {
+  jwt.sign({ id: user._id, name: user.name, email: user.email, role: user.role }, getJwtSecret(), {
     expiresIn: '7d',
   });
 
@@ -90,7 +100,7 @@ const userLogin = async (req, res, next) => {
 };
 
 const userLogout = (req, res) => {
-  res.clearCookie('bh_token');
+  res.clearCookie('bh_token', COOKIE_CLEAR_OPTIONS);
   return res.json({ message: 'Logged out' });
 };
 
