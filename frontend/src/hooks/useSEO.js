@@ -18,7 +18,7 @@ import { useEffect, useMemo } from 'react';
 
 const SITE_NAME = 'Bimfalb Heritage';
 const SITE_URL = 'https://www.bimfalbheritage.org';
-const DEFAULT_IMAGE = 'https://i.pinimg.com/736x/9c/50/73/9c5073e69ef82e9ef07ea68fa1a97b11.jpg';
+const DEFAULT_IMAGE = 'https://www.bimfalbheritage.org/logo.svg';
 const TWITTER_HANDLE = '@bimfalbheritage';
 
 /**
@@ -129,7 +129,7 @@ export function useSEO({
     const fullTitle = title ? `${title} | ${SITE_NAME}` : SITE_NAME;
     const desc =
       description ||
-      'Bimfalb Heritage preserves and promotes Nigerian cultural heritage, supports local artists, and documents historic traditions across Africa.';
+      'Bimfalb Heritage (BIMFALB) preserves and promotes Nigerian cultural heritage, supports local artists, and documents historic traditions across Africa and the Globe.';
     const img = image || DEFAULT_IMAGE;
     const canonical = url || window.location.href;
 

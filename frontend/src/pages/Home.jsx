@@ -23,26 +23,37 @@ const Home = () => {
   useSEO({
     title: 'Home',
     description:
-      'Bimfalb Heritage preserves and promotes Nigerian cultural heritage, supports local artists, and documents historic traditions across Africa.',
+      'Bimfalb Heritage (BIMFALB) preserves and promotes Nigerian cultural heritage, supports local artists, and documents historic traditions across Africa and the Globe.',
     url: 'https://www.bimfalbheritage.org/',
     jsonLd: {
       '@context': 'https://schema.org',
       '@type': 'Organization',
       name: 'Bimfalb Heritage',
+      alternateName: ['BIMFALB', 'Bimfalb', 'bimfalbheritage'],
       url: 'https://www.bimfalbheritage.org',
-      logo: 'https://i.pinimg.com/736x/9c/50/73/9c5073e69ef82e9ef07ea68fa1a97b11.jpg',
+      logo: 'https://www.bimfalbheritage.org/logo.svg',
+      image: 'https://www.bimfalbheritage.org/logo.svg',
+      description: 'Bimfalb Heritage preserves and promotes Nigerian cultural heritage, supports local artists, and documents historic traditions across Africa and the Globe.',
       sameAs: [
         'https://twitter.com/bimfalbheritage',
         'https://www.facebook.com/bimfalbheritage',
+        'https://www.instagram.com/bimfalbheritage',
+        'https://www.youtube.com/@bimfalbheritage',
         'https://wa.me/2348033842322',
       ],
       contactPoint: {
         '@type': 'ContactPoint',
         telephone: '+234-803-384-2322',
         contactType: 'customer service',
-        areaServed: 'NG',
-        availableLanguage: 'English',
+        availableLanguage: ['English', 'Yoruba', 'Hausa', 'Igbo'],
       },
+      foundingLocation: {
+        '@type': 'Place',
+        name: 'Nigeria',
+        addressCountry: 'NG',
+      },
+      areaServed: 'Worldwide',
+      keywords: 'bimfalb, bimfalbheritage, Nigerian cultural heritage, African heritage, cultural promotion',
     },
   });
 
