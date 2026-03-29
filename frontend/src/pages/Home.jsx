@@ -31,8 +31,8 @@ const Home = () => {
       name: 'Bimfalb Heritage',
       alternateName: ['BIMFALB', 'Bimfalb', 'bimfalbheritage'],
       url: 'https://www.bimfalbheritage.org',
-      logo: 'https://www.bimfalbheritage.org/logo.svg',
-      image: 'https://www.bimfalbheritage.org/logo.svg',
+      logo: 'https://www.bimfalbheritage.org/logo.png',
+      image: 'https://www.bimfalbheritage.org/og-image.png',
       description: 'Bimfalb Heritage preserves and promotes Nigerian cultural heritage, supports local artists, and documents historic traditions across Africa and the Globe.',
       sameAs: [
         'https://twitter.com/bimfalbheritage',

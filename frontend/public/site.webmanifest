@@ -1,0 +1,29 @@
+{
+  "name": "Bimfalb Heritage",
+  "short_name": "Bimfalb",
+  "description": "Bimfalb Heritage (BIMFALB) preserves and promotes Nigerian cultural heritage, supports local artists, and documents historic traditions across Africa and the Globe.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#2D1B8F",
+  "theme_color": "#2D1B8F",
+  "icons": [
+    {
+      "src": "/favicon-192x192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/favicon-512x512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/favicon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    }
+  ]
+}
