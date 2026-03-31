@@ -42,20 +42,50 @@ const baseURL = resolveBaseURL();
 
 const api = axios.create({ baseURL, withCredentials: true });
 
+const clearUserToken = () => {
+  if (typeof window !== 'undefined') {
+    localStorage.removeItem('bh_token');
+  }
+};
+
+const clearAdminToken = () => {
+  if (typeof window !== 'undefined') {
+    localStorage.removeItem('bh_admin_token');
+  }
+};
+
 // Attach stored JWT as Bearer token so auth works even when cookies are unavailable
 api.interceptors.request.use((config) => {
   if (typeof window !== 'undefined') {
+    const url = config.url || '';
+    const isUserAuthRequest = url === '/api/users/login' || url === '/api/users/register';
+    const isAdminLoginRequest = url === '/api/auth/login';
     const token = localStorage.getItem('bh_token');
-    if (token && !config.headers.Authorization) {
+    if (!isUserAuthRequest && token && !config.headers.Authorization) {
       config.headers.Authorization = `Bearer ${token}`;
     }
     const adminToken = localStorage.getItem('bh_admin_token');
-    if (adminToken && !config.headers['x-admin-token']) {
+    if (!isAdminLoginRequest && adminToken && !config.headers['x-admin-token']) {
       config.headers['x-admin-token'] = adminToken;
     }
   }
   return config;
 });
+
+api.interceptors.response.use(
+  (response) => response,
+  (error) => {
+    const status = error?.response?.status;
+    const url = error?.config?.url || '';
+
+    if (status === 401) {
+      if (url.startsWith('/api/users')) clearUserToken();
+      if (url.startsWith('/api/auth')) clearAdminToken();
+    }
+
+    return Promise.reject(error);
+  }
+);
 
 export const getPosts = async (page = 1, limit = 6, contentType = '') => {
   try {
@@ -79,20 +109,31 @@ export const getPost = async (id) => {
 };
 
 export const login = async (password) => {
-  const res = await api.post('/api/auth/login', { password });
-  if (res.data.token) {
-    localStorage.setItem('bh_admin_token', res.data.token);
+  try {
+    const res = await api.post('/api/auth/login', { password });
+    if (res.data.token) {
+      localStorage.setItem('bh_admin_token', res.data.token);
+    }
+    return res.data;
+  } catch (error) {
+    clearAdminToken();
+    throw error;
   }
-  return res.data;
 };
 
 export const logout = async () => {
-  await api.post('/api/auth/logout');
-  localStorage.removeItem('bh_admin_token');
+  try {
+    await api.post('/api/auth/logout');
+  } finally {
+    clearAdminToken();
+  }
 };
 
 export const getSessionStatus = async () => {
   const res = await api.get('/api/auth/status');
+  if (!res.data?.admin) {
+    clearAdminToken();
+  }
   return res.data;
 };
 
@@ -194,12 +235,23 @@ export const userLogin = async (email, password) => {
 };
 
 export const userLogout = async () => {
-  await api.post('/api/users/logout');
+  try {
+    await api.post('/api/users/logout');
+  } finally {
+    clearUserToken();
+  }
 };
 
 export const getUserMe = async () => {
-  const res = await api.get('/api/users/me');
-  return res.data;
+  try {
+    const res = await api.get('/api/users/me');
+    return res.data;
+  } catch (error) {
+    if (error?.response?.status === 401) {
+      clearUserToken();
+    }
+    throw error;
+  }
 };
 
 export const updateUserProfile = async (updates) => {
