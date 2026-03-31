@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { Link, NavLink, useNavigate } from 'react-router-dom';
 import { useTheme } from '../context/ThemeContext';
 import { useAuth } from '../context/AuthContext';
+import brandLogo from '../assets/logo.jpg';
 import './Navbar.css';
 
 const PhoneIcon = () => (
@@ -64,7 +65,7 @@ const Navbar = () => {
         <div className="nav">
           <Link to="/" className="nav-brand" onClick={() => setOpen(false)}>
             <div className="nav-brand-img-wrap">
-              <img src="/logo.png" alt="Bimfalb Heritage" />
+              <img src={brandLogo} alt="Bimfalb Heritage" />
               <div className="nav-brand-ring" aria-hidden="true" />
             </div>
             <div className="nav-brand-text">

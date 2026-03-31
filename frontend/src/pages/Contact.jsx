@@ -49,7 +49,7 @@ const Contact = () => {
         '@type': 'NGO',
         name: 'Bimfalb Heritage',
         url: 'https://www.bimfalbheritage.org',
-        logo: 'https://www.bimfalbheritage.org/logo.png',
+        logo: 'https://www.bimfalbheritage.org/logo.jpg',
         contactPoint: {
           '@type': 'ContactPoint',
           telephone: '+234-803-384-2322',

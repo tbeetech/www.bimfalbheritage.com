@@ -182,7 +182,7 @@ const PostDetail = () => {
             url: 'https://www.bimfalbheritage.org',
             logo: {
               '@type': 'ImageObject',
-              url: 'https://www.bimfalbheritage.org/logo.png',
+              url: 'https://www.bimfalbheritage.org/logo.jpg',
             },
           },
           mainEntityOfPage: {
