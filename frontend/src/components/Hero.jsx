@@ -4,7 +4,7 @@ const Hero = () => {
   return (
     <section className="hero card">
       <div className="hero-text">
-        <div className="pill">Cultural Platform</div>
+        <div className="pill">Cultural Heritage Platform</div>
         <h1>
           Bimfalb Heritage
           <span className="hero-accent"> stories, craft, and memory</span>

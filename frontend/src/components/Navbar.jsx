@@ -64,7 +64,7 @@ const Navbar = () => {
         <div className="nav">
           <Link to="/" className="nav-brand" onClick={() => setOpen(false)}>
             <div className="nav-brand-img-wrap">
-              <img src="/logo.jpg" alt="Bimfalb Heritage" />
+              <img src="/logo.png" alt="Bimfalb Heritage" />
               <div className="nav-brand-ring" aria-hidden="true" />
             </div>
             <div className="nav-brand-text">

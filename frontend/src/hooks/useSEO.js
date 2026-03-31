@@ -2,9 +2,9 @@ import { useEffect, useMemo } from 'react';
 
 const SITE_NAME = 'Bimfalb Heritage';
 const SITE_URL = 'https://www.bimfalbheritage.org';
-const LOGO_URL = `${SITE_URL}/logo.jpg`;
+const DEFAULT_IMAGE = `${SITE_URL}/og-image.png`;
 const DEFAULT_DESCRIPTION =
-  'Bimfalb Heritage preserves and promotes Nigerian cultural heritage, supports local artists, and documents historic traditions across Africa.';
+  'Bimfalb Heritage (BIMFALB) preserves and promotes Nigerian cultural heritage, supports local artists, and documents historic traditions across Africa and the Globe.';
 const DEFAULT_ROBOTS = 'index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1';
 const TWITTER_HANDLE = '@bimfalbheritage';
 
@@ -109,7 +109,7 @@ export function useSEO({
   useEffect(() => {
     const fullTitle = title ? `${title} | ${SITE_NAME}` : `${SITE_NAME} | Preserving Nigerian Cultural Identity`;
     const desc = description || DEFAULT_DESCRIPTION;
-    const socialImage = image || LOGO_URL;
+    const socialImage = image || DEFAULT_IMAGE;
     const canonical = toCanonicalUrl(url);
 
     const previousTitle = document.title;
