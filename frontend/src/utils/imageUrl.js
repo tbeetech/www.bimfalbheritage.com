@@ -8,6 +8,7 @@
  */
 export const resolveImageUrl = (url) => {
   if (!url) return '';
+  if (/bimfalbheritage\.com\/wp-content\/uploads\//i.test(url)) return '/logo.jpg';
   if (url.startsWith('data:') || url.startsWith('http://') || url.startsWith('https://')) return url;
   return `${import.meta.env.VITE_API_URL || ''}${url}`;
 };

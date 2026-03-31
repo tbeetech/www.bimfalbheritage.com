@@ -16,9 +16,9 @@ const Gallery = () => {
   const [sliderIndex, setSliderIndex] = useState(0);
   const startXRef = useRef(null);
   const [lightbox, setLightbox] = useState(null); // index or null
-  const trackRef = useRef(null);
   const [dragOffset, setDragOffset] = useState(0);
   const draggingRef = useRef(false);
+  const [isDragging, setIsDragging] = useState(false);
 
   useSEO({
     title: 'Gallery',
@@ -58,6 +58,7 @@ const Gallery = () => {
   const handleDragStart = (e) => {
     startXRef.current = e.type === 'touchstart' ? e.touches[0].clientX : e.clientX;
     draggingRef.current = true;
+    setIsDragging(true);
   };
 
   const handleDragMove = (e) => {
@@ -69,6 +70,7 @@ const Gallery = () => {
   const handleDragEnd = (e) => {
     if (!draggingRef.current) return;
     draggingRef.current = false;
+    setIsDragging(false);
     const clientX =
       e.type === 'touchend'
         ? (e.changedTouches[0]?.clientX ?? startXRef.current)
@@ -158,7 +160,6 @@ const Gallery = () => {
         <div className="gallery-slider-wrap">
           <div
             className="gallery-slider-track"
-            ref={trackRef}
             onMouseDown={handleDragStart}
             onMouseMove={handleDragMove}
             onMouseUp={handleDragEnd}
@@ -168,7 +169,7 @@ const Gallery = () => {
             onTouchEnd={handleDragEnd}
             style={{
               transform: `translateX(calc(-${sliderIndex * 100}% + ${dragOffset}px))`,
-              cursor: draggingRef.current ? 'grabbing' : 'grab',
+              cursor: isDragging ? 'grabbing' : 'grab',
             }}
           >
             {items.map((item, i) => (

@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import dayjs from 'dayjs';
 import {
@@ -117,32 +117,33 @@ const PostDetail = () => {
   const [liked, setLiked] = useState(false);
   const [likeCount, setLikeCount] = useState(0);
 
-  const loadPost = async () => {
-    const data = await getPost(id);
-    setPost(data);
-    if (data) {
-      setLikeCount(Array.isArray(data.likes) ? data.likes.length : (data.likes || 0));
-      if (user && Array.isArray(data.likes)) {
-        setLiked(data.likes.includes(user.id));
-      }
-    }
-  };
-
-  const loadComments = async () => {
+  const loadComments = useCallback(async () => {
     try {
       const data = await getComments(id);
       setComments(data);
     } catch {
       setComments(post?.comments || []);
     }
-  };
+  }, [id, post?.comments]);
 
   useEffect(() => {
-    const load = async () => {
-      await loadPost();
+    let cancelled = false;
+    const timerId = setTimeout(async () => {
+      const data = await getPost(id);
+      if (cancelled) return;
+      setPost(data);
+      if (data) {
+        setLikeCount(Array.isArray(data.likes) ? data.likes.length : (data.likes || 0));
+        if (user && Array.isArray(data.likes)) {
+          setLiked(data.likes.includes(user.id));
+        }
+      }
+    }, 0);
+    return () => {
+      cancelled = true;
+      clearTimeout(timerId);
     };
-    load();
-  }, [id]);
+  }, [id, user]);
 
   // Track view once per post load
   useEffect(() => {
@@ -150,8 +151,21 @@ const PostDetail = () => {
   }, [id]);
 
   useEffect(() => {
-    if (id) loadComments();
-  }, [id]);
+    if (!id) return;
+    let cancelled = false;
+    const fetchComments = async () => {
+      try {
+        const data = await getComments(id);
+        if (!cancelled) setComments(data);
+      } catch {
+        if (!cancelled) setComments(post?.comments || []);
+      }
+    };
+    void fetchComments();
+    return () => {
+      cancelled = true;
+    };
+  }, [id, post?.comments]);
 
   const postSlug = post?._id || post?.id || id;
   const postUrl = `https://www.bimfalbheritage.org/blog/${postSlug}`;
@@ -300,8 +314,6 @@ const PostDetail = () => {
   if (!post) {
     return <div className="page"><Spinner message="Loading post…" /></div>;
   }
-
-  const cover = resolveImageUrl(post.coverImage);
 
   const postImages = Array.isArray(post.images) && post.images.length > 0
     ? post.images

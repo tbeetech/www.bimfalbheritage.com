@@ -19,6 +19,7 @@ const statsData = [
 const Home = () => {
   const [posts, setPosts] = useState([]);
   const [postsLoading, setPostsLoading] = useState(true);
+  const logoPlaceholder = '/logo.jpg';
 
   useSEO({
     title: 'Home',
@@ -67,6 +68,12 @@ const Home = () => {
     load();
   }, []);
 
+  const handleCardImageError = (event) => {
+    if (event.currentTarget.dataset.fallbackApplied === 'true') return;
+    event.currentTarget.dataset.fallbackApplied = 'true';
+    event.currentTarget.src = logoPlaceholder;
+  };
+
   return (
     <div className="page">
       <HeroSlider />
@@ -89,7 +96,7 @@ const Home = () => {
           items={valueCards}
           renderItem={(item) => (
             <article className="feature-card">
-              <img src={item.image} alt={item.title} />
+              <img src={item.image} alt={item.title} onError={handleCardImageError} />
               <div className="feature-body">
                 <h3>{item.title}</h3>
                 <p>{item.text}</p>
@@ -107,7 +114,7 @@ const Home = () => {
           items={teamCards}
           renderItem={(item) => (
             <article className="team-card">
-              <img src={item.image} alt={item.name} />
+              <img src={item.image} alt={item.name} onError={handleCardImageError} />
               <div className="team-body">
                 <h3>{item.name}</h3>
                 <p>{item.role}</p>
@@ -151,7 +158,7 @@ const Home = () => {
           items={goalCards}
           renderItem={(item) => (
             <article className="goal-card">
-              <img src={item.image} alt={item.title} />
+              <img src={item.image} alt={item.title} onError={handleCardImageError} />
               <div className="goal-body">
                 <h3>{item.title}</h3>
                 <p>{item.text}</p>
@@ -169,7 +176,7 @@ const Home = () => {
           items={eventCards}
           renderItem={(item) => (
             <article className="event-card">
-              <img src={item.image} alt={item.title} />
+              <img src={item.image} alt={item.title} onError={handleCardImageError} />
               <div className="event-body">
                 <span className="event-date">{item.date}</span>
                 <h3>{item.title}</h3>
@@ -182,7 +189,7 @@ const Home = () => {
 
       <section className="home-section">
         <div className="section-title african-divider">
-          <h2>Latest News</h2>
+          <h2>Blogs and Articles</h2>
         </div>
         {postsLoading ? (
           <Spinner message="Loading latest posts…" />

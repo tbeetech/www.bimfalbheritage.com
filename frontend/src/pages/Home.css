@@ -197,7 +197,7 @@
   position: relative;
   background:
     linear-gradient(135deg, rgba(8, 28, 14, 0.97) 0%, rgba(6, 20, 10, 0.85) 60%, rgba(10, 32, 16, 0.78) 100%),
-    url('https://bimfalbheritage.com/wp-content/uploads/2025/04/pexels-photo-6193722-6193722.jpg') center/cover no-repeat;
+    url('/logo.jpg') center/cover no-repeat;
   color: #fff;
   padding: 52px 48px;
   border-radius: var(--radius-xl);

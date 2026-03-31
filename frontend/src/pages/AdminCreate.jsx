@@ -90,7 +90,7 @@ const AdminCreate = () => {
         setStatus('Post created!');
       }
       navigate(`/blog/${post._id || post.id}`);
-    } catch (err) {
+    } catch {
       setStatus(isEditing ? 'Failed to update post.' : 'Failed to create post. Check server.');
     }
   };

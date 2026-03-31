@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import ArticleCard from '../components/ArticleCard';
 import Pagination from '../components/Pagination';
 import Spinner from '../components/Spinner';
@@ -42,7 +42,7 @@ const Blog = () => {
     },
   });
 
-  const load = async (page = 1, contentType = activeTab) => {
+  const load = useCallback(async (page = 1, contentType = activeTab) => {
     setLoading(true);
     try {
       const res = await getPosts(page, 6, contentType);
@@ -51,11 +51,11 @@ const Blog = () => {
     } finally {
       setLoading(false);
     }
-  };
+  }, [activeTab]);
 
   useEffect(() => {
     load(1, activeTab);
-  }, [activeTab]);
+  }, [activeTab, load]);
 
   return (
     <div className="page">

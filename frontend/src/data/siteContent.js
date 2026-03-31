@@ -25,22 +25,22 @@ export const teamCards = [
   {
     name: 'Elano bimbo Falayi (Abolu)',
     role: 'CEO, Bimfalb Cultural Heritage Promotion and Initiative',
-    image: 'https://bimfalbheritage.com/wp-content/uploads/2025/04/elano.jpg',
+    image: '/logo.jpg',
   },
   {
     name: 'The Team',
     role: 'Bimfalb Cultural Heritage Promotion and Initiative',
-    image: 'https://bimfalbheritage.com/wp-content/uploads/2025/04/IMG-20240724-WA0068.jpg',
+    image: '/logo.jpg',
   },
   {
     name: 'The Team',
     role: 'Bimfalb Cultural Heritage Promotion and Initiative',
-    image: 'https://bimfalbheritage.com/wp-content/uploads/2025/04/team.jpg',
+    image: '/logo.jpg',
   },
   {
     name: 'Mike Halim',
     role: 'PRO, Bimfalb Cultural Heritage Promotion and Initiative',
-    image: 'https://bimfalbheritage.com/wp-content/uploads/2025/04/olumiko.jpg',
+    image: '/logo.jpg',
   },
 ];
 
@@ -79,7 +79,7 @@ export const eventCards = [
     title: 'Abolu Meet and Greet',
     date: 'May 2025',
     text: 'Leadership engagement session for artists, partners, and local communities.',
-    image: 'https://bimfalbheritage.com/wp-content/uploads/2025/04/IMG-20240724-WA0068.jpg',
+    image: '/logo.jpg',
   },
   {
     title: 'Support',

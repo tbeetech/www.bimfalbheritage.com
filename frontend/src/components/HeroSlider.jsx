@@ -3,6 +3,11 @@ import { Link } from 'react-router-dom';
 import './HeroSlider.css';
 
 const SWIPE_THRESHOLD = 40;
+const BASE_AUTO_SLIDE_INTERVAL_MS = 5000;
+const AUTO_SLIDE_SLOWDOWN_FACTOR = 1.3;
+const AUTO_SLIDE_INTERVAL_MS = Math.round(
+  BASE_AUTO_SLIDE_INTERVAL_MS * AUTO_SLIDE_SLOWDOWN_FACTOR
+);
 
 const SLIDES = [
   { url: 'https://i.pinimg.com/736x/38/3f/20/383f208ebe7ec9bbe705c0709f3d3217.jpg', alt: 'Bimfalb Heritage – cultural scene' },
@@ -23,7 +28,7 @@ const HeroSlider = () => {
     clearInterval(timerRef.current);
     timerRef.current = setInterval(() => {
       setCurrent((prev) => (prev + 1) % SLIDES.length);
-    }, 5000);
+    }, AUTO_SLIDE_INTERVAL_MS);
   };
 
   useEffect(() => {

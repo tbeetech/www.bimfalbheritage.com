@@ -1,6 +1,12 @@
 import { useState, useEffect, useRef } from 'react';
 import './Carousel.css';
 
+const BASE_AUTO_SLIDE_INTERVAL_MS = 4500;
+const AUTO_SLIDE_SLOWDOWN_FACTOR = 1.3;
+const DEFAULT_AUTO_SLIDE_INTERVAL_MS = Math.round(
+  BASE_AUTO_SLIDE_INTERVAL_MS * AUTO_SLIDE_SLOWDOWN_FACTOR
+);
+
 const ITEMS_PER_VIEW_BREAKPOINTS = [
   { maxWidth: 600, items: 1 },
   { maxWidth: 900, items: 2 },
@@ -15,7 +21,12 @@ const getItemsPerView = () => {
   return 3;
 };
 
-const Carousel = ({ items = [], renderItem, autoPlay = true, interval = 4500 }) => {
+const Carousel = ({
+  items = [],
+  renderItem,
+  autoPlay = true,
+  interval = DEFAULT_AUTO_SLIDE_INTERVAL_MS,
+}) => {
   const [current, setCurrent] = useState(0);
   const [perView, setPerView] = useState(getItemsPerView);
   const animating = useRef(false);
