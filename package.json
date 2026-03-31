@@ -10,5 +10,8 @@
     "start": "node backend/src/server.js",
     "dev:backend": "cd backend && npm run dev",
     "dev:frontend": "cd frontend && npm run dev"
+  },
+  "dependencies": {
+    "dotenv": "^17.3.1"
   }
 }
