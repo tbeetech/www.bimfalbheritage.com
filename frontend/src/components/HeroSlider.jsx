@@ -92,7 +92,7 @@ const HeroSlider = () => {
           We also promote young, talented local musicians.
         </p>
         <div className="hero-actions">
-          <Link className="btn" to="/about-us-3">Learn More</Link>
+          <Link className="btn" to="/about">Learn More</Link>
           <Link className="btn secondary" to="/news">Read News</Link>
         </div>
       </div>

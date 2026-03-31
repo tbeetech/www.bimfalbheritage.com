@@ -39,6 +39,38 @@ const Contact = () => {
     description:
       'Get in touch with Bimfalb Heritage for partnerships, cultural programs, donations, or media enquiries. Located in Akure, Ondo State, Nigeria.',
     url: 'https://www.bimfalbheritage.org/contact',
+    keywords: 'contact Bimfalb Heritage, Akure cultural organization, Nigerian heritage NGO',
+    jsonLd: {
+      '@context': 'https://schema.org',
+      '@type': 'ContactPage',
+      name: 'Contact Bimfalb Heritage',
+      url: 'https://www.bimfalbheritage.org/contact',
+      about: {
+        '@type': 'NGO',
+        name: 'Bimfalb Heritage',
+        url: 'https://www.bimfalbheritage.org',
+        logo: 'https://www.bimfalbheritage.org/logo.jpg',
+        contactPoint: {
+          '@type': 'ContactPoint',
+          telephone: '+234-803-384-2322',
+          contactType: 'customer service',
+          areaServed: 'NG',
+          availableLanguage: ['en'],
+        },
+        address: {
+          '@type': 'PostalAddress',
+          streetAddress: 'No. 127 (shop 7) Ebenezer shopping complex, Araromi street, beside Don Bosco',
+          addressLocality: 'Akure',
+          addressRegion: 'Ondo State',
+          addressCountry: 'NG',
+        },
+        geo: {
+          '@type': 'GeoCoordinates',
+          latitude: 7.2526,
+          longitude: 5.1931,
+        },
+      },
+    },
   });
   return (
     <div className="page">

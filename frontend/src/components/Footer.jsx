@@ -79,7 +79,7 @@ const Footer = () => {
           <h4 className="footer-title">Quick Links</h4>
           <nav className="footer-links">
             <a href="/">Home</a>
-            <a href="/about-us-3">About Us</a>
+            <a href="/about">About Us</a>
             <a href="/events">Events</a>
             <a href="/donations">Donations</a>
             <a href="/news">News</a>

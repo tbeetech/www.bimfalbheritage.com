@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
+import { useSEO } from '../hooks/useSEO';
 import './Auth.css';
 
 const Login = () => {
@@ -11,6 +12,13 @@ const Login = () => {
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
+
+  useSEO({
+    title: 'Login',
+    description: 'Secure login page for registered Bimfalb Heritage members.',
+    url: 'https://www.bimfalbheritage.org/login',
+    robots: 'noindex, nofollow, noarchive, nosnippet, noimageindex',
+  });
 
   // The page the user originally tried to access before being sent to login
   // Avoid redirecting back to /login to prevent a redirect loop

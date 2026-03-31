@@ -64,7 +64,7 @@ const Navbar = () => {
         <div className="nav">
           <Link to="/" className="nav-brand" onClick={() => setOpen(false)}>
             <div className="nav-brand-img-wrap">
-              <img src="https://i.pinimg.com/736x/9c/50/73/9c5073e69ef82e9ef07ea68fa1a97b11.jpg" alt="Bimfalb Heritage" referrerPolicy="no-referrer" />
+              <img src="/logo.jpg" alt="Bimfalb Heritage" />
               <div className="nav-brand-ring" aria-hidden="true" />
             </div>
             <div className="nav-brand-text">
@@ -75,7 +75,7 @@ const Navbar = () => {
 
           <nav className={`nav-links${open ? ' open' : ''}`} aria-label="Main navigation">
             <NavLink to="/" className={linkClass} onClick={() => setOpen(false)}>Home</NavLink>
-            <NavLink to="/about-us-3" className={linkClass} onClick={() => setOpen(false)}>About Us</NavLink>
+            <NavLink to="/about" className={linkClass} onClick={() => setOpen(false)}>About Us</NavLink>
             <NavLink to="/events" className={linkClass} onClick={() => setOpen(false)}>Events</NavLink>
             <NavLink to="/donations" className={linkClass} onClick={() => setOpen(false)}>Donations</NavLink>
             <NavLink to="/blog" className={linkClass} onClick={() => setOpen(false)}>Blog</NavLink>

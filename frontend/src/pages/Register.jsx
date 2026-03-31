@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
+import { useSEO } from '../hooks/useSEO';
 import './Auth.css';
 
 const Register = () => {
@@ -12,6 +13,13 @@ const Register = () => {
   const [confirm, setConfirm] = useState('');
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
+
+  useSEO({
+    title: 'Register',
+    description: 'Account registration page for Bimfalb Heritage members.',
+    url: 'https://www.bimfalbheritage.org/register',
+    robots: 'noindex, nofollow, noarchive, nosnippet, noimageindex',
+  });
 
   const handleSubmit = async (e) => {
     e.preventDefault();

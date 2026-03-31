@@ -5,6 +5,7 @@ import AdminDashboardPane from './admin/AdminDashboardPane';
 import AdminPostsPane from './admin/AdminPostsPane';
 import AdminEditorPane from './admin/AdminEditorPane';
 import AdminGalleryPane from './admin/AdminGalleryPane';
+import { useSEO } from '../hooks/useSEO';
 import './Admin.css';
 
 const Admin = () => {
@@ -14,6 +15,13 @@ const Admin = () => {
   const [password, setPassword] = useState('');
   const [loginError, setLoginError] = useState('');
   const [loginLoading, setLoginLoading] = useState(false);
+
+  useSEO({
+    title: 'Admin',
+    description: 'Private administration interface for Bimfalb Heritage.',
+    url: 'https://www.bimfalbheritage.org/admin',
+    robots: 'noindex, nofollow, noarchive, nosnippet, noimageindex',
+  });
 
   useEffect(() => {
     getSessionStatus()

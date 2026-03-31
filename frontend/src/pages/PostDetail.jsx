@@ -177,9 +177,13 @@ const PostDetail = () => {
             name: post.authorName || 'Bimfalb Heritage Editorial',
           },
           publisher: {
-            '@type': 'Organization',
+            '@type': 'NGO',
             name: 'Bimfalb Heritage',
             url: 'https://www.bimfalbheritage.org',
+            logo: {
+              '@type': 'ImageObject',
+              url: 'https://www.bimfalbheritage.org/logo.jpg',
+            },
           },
           mainEntityOfPage: {
             '@type': 'WebPage',

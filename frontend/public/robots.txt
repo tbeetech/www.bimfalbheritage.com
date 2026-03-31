@@ -7,4 +7,5 @@ Disallow: /login
 Disallow: /register
 Disallow: /profile
 
-Sitemap: https://www.bimfalbheritage.com/sitemap.xml
+Sitemap: https://www.bimfalbheritage.org/sitemap.xml
+Host: https://www.bimfalbheritage.org

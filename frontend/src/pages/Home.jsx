@@ -25,12 +25,14 @@ const Home = () => {
     description:
       'Bimfalb Heritage preserves and promotes Nigerian cultural heritage, supports local artists, and documents historic traditions across Africa.',
     url: 'https://www.bimfalbheritage.org/',
+    keywords: 'Nigerian cultural heritage, African traditions, cultural preservation, Bimfalb Heritage, local artists',
     jsonLd: {
       '@context': 'https://schema.org',
-      '@type': 'Organization',
+      '@type': 'NGO',
       name: 'Bimfalb Heritage',
       url: 'https://www.bimfalbheritage.org',
-      logo: 'https://i.pinimg.com/736x/9c/50/73/9c5073e69ef82e9ef07ea68fa1a97b11.jpg',
+      logo: 'https://www.bimfalbheritage.org/logo.jpg',
+      image: 'https://www.bimfalbheritage.org/logo.jpg',
       sameAs: [
         'https://twitter.com/bimfalbheritage',
         'https://www.facebook.com/bimfalbheritage',

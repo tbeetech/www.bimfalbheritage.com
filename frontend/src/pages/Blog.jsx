@@ -26,6 +26,20 @@ const Blog = () => {
     description:
       'Explore articles, vlogs, news, and events covering Nigerian festivals, cultural heritage, and African traditions from the Bimfalb Heritage editorial team.',
     url: 'https://www.bimfalbheritage.org/blog',
+    keywords: 'Nigerian festivals blog, African culture news, Bimfalb Heritage blog, heritage events',
+    jsonLd: {
+      '@context': 'https://schema.org',
+      '@type': 'Blog',
+      name: 'Bimfalb Heritage Blog & News',
+      url: 'https://www.bimfalbheritage.org/blog',
+      publisher: {
+        '@type': 'NGO',
+        name: 'Bimfalb Heritage',
+        url: 'https://www.bimfalbheritage.org',
+        logo: 'https://www.bimfalbheritage.org/logo.jpg',
+      },
+      inLanguage: 'en-NG',
+    },
   });
 
   const load = async (page = 1, contentType = activeTab) => {

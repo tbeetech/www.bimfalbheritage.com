@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { updateUserProfile, changePassword } from '../services/api';
+import { useSEO } from '../hooks/useSEO';
 import './Auth.css';
 import './UserProfile.css';
 
@@ -22,6 +23,13 @@ const UserProfile = () => {
   const [pwdMsg, setPwdMsg] = useState('');
   const [pwdError, setPwdError] = useState('');
   const [pwdLoading, setPwdLoading] = useState(false);
+
+  useSEO({
+    title: 'My Profile',
+    description: 'Private profile management page for signed-in members.',
+    url: 'https://www.bimfalbheritage.org/profile',
+    robots: 'noindex, nofollow, noarchive, nosnippet, noimageindex',
+  });
 
   useEffect(() => {
     if (!authLoading && !user) {
