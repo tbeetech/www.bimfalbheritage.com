@@ -9,6 +9,20 @@
       "includeFiles": "backend/src/**"
     }
   },
+  "headers": [
+    {
+      "source": "/login",
+      "headers": [
+        { "key": "X-Robots-Tag", "value": "noindex, nofollow, noarchive, nosnippet, noimageindex" }
+      ]
+    },
+    {
+      "source": "/register",
+      "headers": [
+        { "key": "X-Robots-Tag", "value": "noindex, nofollow, noarchive, nosnippet, noimageindex" }
+      ]
+    }
+  ],
   "redirects": [
     {
       "source": "/(.*)",
