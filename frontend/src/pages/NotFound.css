@@ -1,0 +1,21 @@
+.not-found-page {
+  text-align: center;
+}
+
+.not-found-body {
+  max-width: 600px;
+  margin: 0 auto;
+  padding: 40px 32px;
+}
+
+.not-found-body p {
+  margin-bottom: 28px;
+  line-height: 1.7;
+}
+
+.not-found-links {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 12px;
+}

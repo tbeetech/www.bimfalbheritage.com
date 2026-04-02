@@ -25,6 +25,23 @@ const Gallery = () => {
     description:
       'Browse photos and visual documentation of Nigerian cultural festivals, heritage sites, and community events curated by Bimfalb Heritage.',
     url: 'https://www.bimfalbheritage.org/gallery',
+    keywords: 'Bimfalb Heritage gallery, Nigerian cultural photos, heritage images, community events pictures',
+    breadcrumbs: [
+      { name: 'Home', url: 'https://www.bimfalbheritage.org/' },
+      { name: 'Gallery', url: 'https://www.bimfalbheritage.org/gallery' },
+    ],
+    jsonLd: {
+      '@context': 'https://schema.org',
+      '@type': 'CollectionPage',
+      name: 'Bimfalb Heritage Photo Gallery',
+      url: 'https://www.bimfalbheritage.org/gallery',
+      description: 'Photos and visual documentation of Nigerian cultural festivals, heritage sites, and community events curated by Bimfalb Heritage.',
+      provider: {
+        '@type': 'NGO',
+        '@id': 'https://www.bimfalbheritage.org/#organization',
+        name: 'Bimfalb Heritage',
+      },
+    },
   });
 
   useEffect(() => {

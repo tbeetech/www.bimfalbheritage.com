@@ -1,3 +1,4 @@
+import { Link } from 'react-router-dom';
 import './Footer.css';
 
 const socialLinks = [
@@ -77,14 +78,15 @@ const Footer = () => {
 
         <div className="footer-box">
           <h4 className="footer-title">Quick Links</h4>
-          <nav className="footer-links">
-            <a href="/">Home</a>
-            <a href="/about">About Us</a>
-            <a href="/events">Events</a>
-            <a href="/donations">Donations</a>
-            <a href="/news">News</a>
-            <a href="/contact">Contact</a>
-            <a href="/faq">FAQ</a>
+          <nav className="footer-links" aria-label="Footer navigation">
+            <Link to="/">Home</Link>
+            <Link to="/about">About Us</Link>
+            <Link to="/events">Events</Link>
+            <Link to="/donations">Donations</Link>
+            <Link to="/blog">News</Link>
+            <Link to="/contact">Contact</Link>
+            <Link to="/faq">FAQ</Link>
+            <Link to="/gallery">Gallery</Link>
           </nav>
         </div>
 

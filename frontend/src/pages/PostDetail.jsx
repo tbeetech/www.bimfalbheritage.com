@@ -163,6 +163,13 @@ const PostDetail = () => {
     image: postImage,
     url: post ? postUrl : undefined,
     type: 'article',
+    breadcrumbs: post
+      ? [
+          { name: 'Home', url: 'https://www.bimfalbheritage.org/' },
+          { name: 'Blog', url: 'https://www.bimfalbheritage.org/blog' },
+          { name: post.title, url: postUrl },
+        ]
+      : undefined,
     jsonLd: post
       ? {
           '@context': 'https://schema.org',
@@ -325,6 +332,7 @@ const PostDetail = () => {
                 src={resolveImageUrl(img)}
                 alt={i === 0 ? post.title : `Image ${i + 1}`}
                 className="post-gallery-img"
+                loading={i === 0 ? 'eager' : 'lazy'}
               />
             ))}
           </div>

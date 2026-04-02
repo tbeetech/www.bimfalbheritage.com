@@ -30,6 +30,38 @@ const About = () => {
     description:
       'Learn about Bimfalb Heritage — our mission to preserve Nigerian cultural identity, empower local artists, and document the traditions that define Africa.',
     url: 'https://www.bimfalbheritage.org/about',
+    keywords: 'about Bimfalb Heritage, Nigerian cultural identity, African heritage organization, Elano Abimbola Falayi',
+    breadcrumbs: [
+      { name: 'Home', url: 'https://www.bimfalbheritage.org/' },
+      { name: 'About Us', url: 'https://www.bimfalbheritage.org/about' },
+    ],
+    jsonLd: {
+      '@context': 'https://schema.org',
+      '@type': 'AboutPage',
+      name: 'About Bimfalb Heritage',
+      url: 'https://www.bimfalbheritage.org/about',
+      description: 'Learn about Bimfalb Heritage — our mission to preserve Nigerian cultural identity, empower local artists, and document the traditions that define Africa.',
+      mainEntity: {
+        '@type': 'NGO',
+        '@id': 'https://www.bimfalbheritage.org/#organization',
+        name: 'Bimfalb Heritage',
+        alternateName: ['BIMFALB', 'Bimfalb Cultural Heritage Promotion and Initiative'],
+        url: 'https://www.bimfalbheritage.org',
+        logo: 'https://www.bimfalbheritage.org/logo.jpg',
+        founder: {
+          '@type': 'Person',
+          name: 'Elano Abimbola Falayi',
+          jobTitle: 'Founder & Cultural Ambassador',
+        },
+        foundingLocation: {
+          '@type': 'Place',
+          name: 'Akure, Ondo State, Nigeria',
+        },
+        description: 'A non governmental community organization for the enhancement of culture, promotion of creativity and social welfare in Nigeria and abroad.',
+        areaServed: 'Worldwide',
+        knowsAbout: ['Nigerian cultural heritage', 'African traditions', 'Cultural preservation', 'Artist empowerment'],
+      },
+    },
   });
   return (
     <div className="page">
