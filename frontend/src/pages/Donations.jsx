@@ -125,6 +125,33 @@ const Donations = () => {
     description:
       'Support the preservation of Nigerian cultural heritage. Donate to Bimfalb Heritage to fund events, empower artists, and document historic traditions.',
     url: 'https://www.bimfalbheritage.org/donations',
+    keywords: 'donate Bimfalb Heritage, support Nigerian culture, heritage donation, cultural preservation fund',
+    breadcrumbs: [
+      { name: 'Home', url: 'https://www.bimfalbheritage.org/' },
+      { name: 'Donations', url: 'https://www.bimfalbheritage.org/donations' },
+    ],
+    jsonLd: {
+      '@context': 'https://schema.org',
+      '@type': 'WebPage',
+      name: 'Support Bimfalb Heritage — Donate',
+      url: 'https://www.bimfalbheritage.org/donations',
+      description: 'Support the preservation of Nigerian cultural heritage. Donate to Bimfalb Heritage to fund events, empower artists, and document historic traditions.',
+      mainEntity: {
+        '@type': 'NGO',
+        '@id': 'https://www.bimfalbheritage.org/#organization',
+        name: 'Bimfalb Heritage',
+        url: 'https://www.bimfalbheritage.org',
+      },
+      potentialAction: {
+        '@type': 'DonateAction',
+        name: 'Donate to Bimfalb Heritage',
+        recipient: {
+          '@type': 'NGO',
+          name: 'Bimfalb Heritage',
+          url: 'https://www.bimfalbheritage.org',
+        },
+      },
+    },
   });
 
   const openPanel = useCallback((context) => setPanelContext(context || 'General Donation'), []);

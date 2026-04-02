@@ -40,6 +40,10 @@ const Contact = () => {
       'Get in touch with Bimfalb Heritage for partnerships, cultural programs, donations, or media enquiries. Located in Akure, Ondo State, Nigeria.',
     url: 'https://www.bimfalbheritage.org/contact',
     keywords: 'contact Bimfalb Heritage, Akure cultural organization, Nigerian heritage NGO',
+    breadcrumbs: [
+      { name: 'Home', url: 'https://www.bimfalbheritage.org/' },
+      { name: 'Contact Us', url: 'https://www.bimfalbheritage.org/contact' },
+    ],
     jsonLd: {
       '@context': 'https://schema.org',
       '@type': 'ContactPage',

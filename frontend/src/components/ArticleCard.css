@@ -13,11 +13,17 @@
 }
 
 .article-cover {
-  background-size: cover;
-  background-position: center;
+  overflow: hidden;
   min-height: 200px;
-  transition: transform 550ms var(--ease-out), filter 300ms;
   position: relative;
+}
+
+.article-cover img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  transition: transform 550ms var(--ease-out), filter 300ms;
 }
 
 .article-cover::after {
@@ -28,9 +34,10 @@
   right: 0;
   height: 50%;
   background: linear-gradient(to top, rgba(0, 0, 0, 0.3), transparent);
+  pointer-events: none;
 }
 
-.article-card:hover .article-cover {
+.article-card:hover .article-cover img {
   transform: scale(1.07);
   filter: saturate(1.1);
 }

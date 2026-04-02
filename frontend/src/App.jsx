@@ -15,6 +15,7 @@ import Admin from './pages/Admin';
 import Login from './pages/Login';
 import Register from './pages/Register';
 import UserProfile from './pages/UserProfile';
+import NotFound from './pages/NotFound';
 
 const NewsRedirect = () => {
   const { id } = useParams();
@@ -44,6 +45,7 @@ const App = () => {
           <Route path="/register" element={<Register />} />
           <Route path="/profile" element={<UserProfile />} />
           <Route path="/admin/*" element={<Admin />} />
+          <Route path="*" element={<NotFound />} />
         </Routes>
       </Layout>
     </BrowserRouter>

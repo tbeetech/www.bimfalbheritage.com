@@ -100,11 +100,36 @@ export function useSEO({
   robots = DEFAULT_ROBOTS,
   keywords,
   jsonLd,
+  breadcrumbs,
 } = {}) {
   const jsonLdText = useMemo(() => {
+    if (!jsonLd && !breadcrumbs) return null;
+
+    // If breadcrumbs are provided, wrap both schemas in a @graph
+    if (breadcrumbs && breadcrumbs.length > 0) {
+      const breadcrumbSchema = {
+        '@context': 'https://schema.org',
+        '@type': 'BreadcrumbList',
+        itemListElement: breadcrumbs.map((crumb, i) => ({
+          '@type': 'ListItem',
+          position: i + 1,
+          name: crumb.name,
+          item: crumb.url,
+        })),
+      };
+
+      if (jsonLd) {
+        return JSON.stringify({
+          '@context': 'https://schema.org',
+          '@graph': [breadcrumbSchema, jsonLd],
+        });
+      }
+      return JSON.stringify(breadcrumbSchema);
+    }
+
     if (!jsonLd) return null;
     return JSON.stringify(jsonLd);
-  }, [jsonLd]);
+  }, [jsonLd, breadcrumbs]);
 
   useEffect(() => {
     const fullTitle = title ? `${title} | ${SITE_NAME}` : `${SITE_NAME} | Preserving Nigerian Cultural Identity`;

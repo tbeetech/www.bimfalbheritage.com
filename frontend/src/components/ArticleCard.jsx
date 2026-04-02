@@ -11,7 +11,11 @@ const ArticleCard = ({ post }) => {
 
   return (
     <article className="article-card card">
-      {post.coverImage && <div className="article-cover" style={{ backgroundImage: `url(${cover})` }} />}
+      {post.coverImage && (
+        <div className="article-cover">
+          <img src={cover} alt={post.title} loading="lazy" />
+        </div>
+      )}
       <div className="article-body">
         <span className="tag">{post.contentType || post.category || 'General'}</span>
         <h3>{post.title}</h3>

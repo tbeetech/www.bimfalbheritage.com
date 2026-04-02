@@ -34,6 +34,25 @@ const Faq = () => {
     description:
       'Find answers to common questions about Bimfalb Heritage — our programs, how to collaborate, nominate heritage sites, and support cultural preservation.',
     url: 'https://www.bimfalbheritage.org/faq',
+    keywords: 'Bimfalb Heritage FAQ, Nigerian heritage questions, cultural preservation help',
+    breadcrumbs: [
+      { name: 'Home', url: 'https://www.bimfalbheritage.org/' },
+      { name: 'FAQ', url: 'https://www.bimfalbheritage.org/faq' },
+    ],
+    jsonLd: {
+      '@context': 'https://schema.org',
+      '@type': 'FAQPage',
+      name: 'Bimfalb Heritage FAQ',
+      url: 'https://www.bimfalbheritage.org/faq',
+      mainEntity: faqItems.map((item) => ({
+        '@type': 'Question',
+        name: item.q,
+        acceptedAnswer: {
+          '@type': 'Answer',
+          text: item.a,
+        },
+      })),
+    },
   });
   return (
     <div className="page">
