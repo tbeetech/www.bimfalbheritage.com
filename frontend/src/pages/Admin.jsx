@@ -5,6 +5,7 @@ import AdminDashboardPane from './admin/AdminDashboardPane';
 import AdminPostsPane from './admin/AdminPostsPane';
 import AdminEditorPane from './admin/AdminEditorPane';
 import AdminGalleryPane from './admin/AdminGalleryPane';
+import PasswordInput from '../components/PasswordInput';
 import { useSEO } from '../hooks/useSEO';
 import './Admin.css';
 
@@ -71,8 +72,7 @@ const Admin = () => {
           <form onSubmit={handleLogin} className="admin-login-form">
             <h2 className="admin-login-title">Admin Login</h2>
             <p className="admin-login-hint">Enter the admin password to access the dashboard.</p>
-            <input
-              type="password"
+            <PasswordInput
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               placeholder="Admin password"

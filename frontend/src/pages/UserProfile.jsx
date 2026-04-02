@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { updateUserProfile, changePassword } from '../services/api';
+import PasswordInput from '../components/PasswordInput';
 import { useSEO } from '../hooks/useSEO';
 import './Auth.css';
 import './UserProfile.css';
@@ -173,9 +174,8 @@ const UserProfile = () => {
             <form className="auth-form" onSubmit={handlePasswordChange}>
               <div className="auth-field">
                 <label htmlFor="cur-pwd">Current Password</label>
-                <input
+                <PasswordInput
                   id="cur-pwd"
-                  type="password"
                   value={currentPwd}
                   onChange={(e) => setCurrentPwd(e.target.value)}
                   placeholder="Current password"
@@ -184,9 +184,8 @@ const UserProfile = () => {
               </div>
               <div className="auth-field">
                 <label htmlFor="new-pwd">New Password</label>
-                <input
+                <PasswordInput
                   id="new-pwd"
-                  type="password"
                   value={newPwd}
                   onChange={(e) => setNewPwd(e.target.value)}
                   placeholder="Min. 6 characters"
@@ -195,9 +194,8 @@ const UserProfile = () => {
               </div>
               <div className="auth-field">
                 <label htmlFor="confirm-pwd">Confirm New Password</label>
-                <input
+                <PasswordInput
                   id="confirm-pwd"
-                  type="password"
                   value={confirmPwd}
                   onChange={(e) => setConfirmPwd(e.target.value)}
                   placeholder="Repeat new password"

@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
+import PasswordInput from '../components/PasswordInput';
 import { useSEO } from '../hooks/useSEO';
 import './Auth.css';
 
@@ -81,9 +82,8 @@ const Register = () => {
           </div>
           <div className="auth-field">
             <label htmlFor="password">Password</label>
-            <input
+            <PasswordInput
               id="password"
-              type="password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               placeholder="Min. 6 characters"
@@ -93,9 +93,8 @@ const Register = () => {
           </div>
           <div className="auth-field">
             <label htmlFor="confirm">Confirm Password</label>
-            <input
+            <PasswordInput
               id="confirm"
-              type="password"
               value={confirm}
               onChange={(e) => setConfirm(e.target.value)}
               placeholder="Repeat password"
