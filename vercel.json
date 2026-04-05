@@ -32,6 +32,32 @@
       ]
     },
     {
+      "source": "/favicon.ico",
+      "headers": [
+        { "key": "Cache-Control", "value": "public, max-age=2592000, stale-while-revalidate=86400" },
+        { "key": "Content-Type", "value": "image/x-icon" }
+      ]
+    },
+    {
+      "source": "/favicon-:size.png",
+      "headers": [
+        { "key": "Cache-Control", "value": "public, max-age=2592000, stale-while-revalidate=86400" }
+      ]
+    },
+    {
+      "source": "/favicon.svg",
+      "headers": [
+        { "key": "Cache-Control", "value": "public, max-age=2592000, stale-while-revalidate=86400" },
+        { "key": "Content-Type", "value": "image/svg+xml" }
+      ]
+    },
+    {
+      "source": "/apple-touch-icon.png",
+      "headers": [
+        { "key": "Cache-Control", "value": "public, max-age=2592000, stale-while-revalidate=86400" }
+      ]
+    },
+    {
       "source": "/site.webmanifest",
       "headers": [
         { "key": "Cache-Control", "value": "public, max-age=86400" },
