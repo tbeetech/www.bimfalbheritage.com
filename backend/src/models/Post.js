@@ -27,6 +27,17 @@ const eventMetaSchema = new mongoose.Schema(
   { _id: false }
 );
 
+const socialLinksSchema = new mongoose.Schema(
+  {
+    youtube: { type: String, default: '' },
+    facebook: { type: String, default: '' },
+    twitter: { type: String, default: '' },
+    instagram: { type: String, default: '' },
+    tiktok: { type: String, default: '' },
+  },
+  { _id: false }
+);
+
 const postSchema = new mongoose.Schema(
   {
     _id: { type: String, default: () => randomUUID() },
@@ -42,6 +53,7 @@ const postSchema = new mongoose.Schema(
     collaborationPartner: { type: String, default: '' },
     collaborationType: { type: String, default: '' },
     sharePlatforms: { type: String, default: '' },
+    socialLinks: { type: socialLinksSchema, default: () => ({}) },
     tags: { type: String, default: '' },
     eventMeta: { type: eventMetaSchema, default: () => ({}) },
     upvotes: { type: Number, default: 0 },

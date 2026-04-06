@@ -410,6 +410,40 @@ const PostDetail = () => {
             <p className="meta-platforms">Cross platform publication: {platformList.join(', ')}</p>
           )}
 
+          {/* ── Social Media Links ── */}
+          {post.socialLinks && (post.socialLinks.youtube || post.socialLinks.facebook || post.socialLinks.twitter || post.socialLinks.instagram || post.socialLinks.tiktok) && (
+            <div className="social-links-box">
+              <strong>Related Social Media</strong>
+              <div className="social-links-list">
+                {post.socialLinks.youtube && (
+                  <a href={post.socialLinks.youtube} target="_blank" rel="noreferrer" className="social-link-pill youtube">
+                    ▶ YouTube
+                  </a>
+                )}
+                {post.socialLinks.facebook && (
+                  <a href={post.socialLinks.facebook} target="_blank" rel="noreferrer" className="social-link-pill facebook">
+                    f Facebook
+                  </a>
+                )}
+                {post.socialLinks.twitter && (
+                  <a href={post.socialLinks.twitter} target="_blank" rel="noreferrer" className="social-link-pill twitter">
+                    𝕏 Twitter / X
+                  </a>
+                )}
+                {post.socialLinks.instagram && (
+                  <a href={post.socialLinks.instagram} target="_blank" rel="noreferrer" className="social-link-pill instagram">
+                    📷 Instagram
+                  </a>
+                )}
+                {post.socialLinks.tiktok && (
+                  <a href={post.socialLinks.tiktok} target="_blank" rel="noreferrer" className="social-link-pill tiktok">
+                    ♪ TikTok
+                  </a>
+                )}
+              </div>
+            </div>
+          )}
+
           <div className="share-strip">
             <strong>Share:</strong>
             {shareLinks && (

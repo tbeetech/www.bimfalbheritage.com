@@ -59,6 +59,14 @@ const getPost = async (req, res, next) => {
   }
 };
 
+const parseSocialLinks = (body) => ({
+  youtube: body.socialLinksYoutube || '',
+  facebook: body.socialLinksFacebook || '',
+  twitter: body.socialLinksTwitter || '',
+  instagram: body.socialLinksInstagram || '',
+  tiktok: body.socialLinksTiktok || '',
+});
+
 const createPost = async (req, res, next) => {
   if (mongoose.connection.readyState !== 1) {
     return res.status(503).json({ message: 'Service temporarily unavailable, please try again later' });
@@ -67,21 +75,34 @@ const createPost = async (req, res, next) => {
     const uploadedImages = Array.isArray(req.files) && req.files.length > 0
       ? req.files.map((f) => bufferToDataUrl(f))
       : [];
-    const images = uploadedImages.length > 0 ? uploadedImages : (req.body.coverImage ? [req.body.coverImage] : []);
-    const coverImage = images[0] || '';
+
+    // Accept existing base64 data-URL images sent as text fields (preserves images
+    // that were previously uploaded and are being re-submitted on edit/duplicate).
+    const existingImages = req.body.existingImages
+      ? (typeof req.body.existingImages === 'string' ? [req.body.existingImages] : req.body.existingImages)
+      : [];
+
+    const allImages = uploadedImages.length > 0
+      ? uploadedImages
+      : existingImages.length > 0
+        ? existingImages
+        : (req.body.coverImage ? [req.body.coverImage] : []);
+    const coverImage = allImages[0] || '';
+
     const post = await store.add({
       title: req.body.title,
       excerpt: req.body.excerpt || '',
       authorName: req.body.authorName || '',
       body: req.body.body,
       coverImage,
-      images,
+      images: allImages,
       videoUrl: req.body.videoUrl || '',
       category: req.body.category || 'Culture',
       contentType: req.body.contentType || 'blog',
       collaborationPartner: req.body.collaborationPartner || '',
       collaborationType: req.body.collaborationType || '',
       sharePlatforms: req.body.sharePlatforms || '',
+      socialLinks: parseSocialLinks(req.body),
       tags: req.body.tags || '',
       eventMeta: {
         title: req.body.eventTitle || '',
@@ -119,11 +140,65 @@ const updatePost = async (req, res, next) => {
   try {
     const updates = { ...req.body };
     let uploadedImages = [];
+
     if (Array.isArray(req.files) && req.files.length > 0) {
+      // New images uploaded — replace existing
       uploadedImages = req.files.map((f) => bufferToDataUrl(f));
       updates.images = uploadedImages;
       updates.coverImage = uploadedImages[0];
+    } else {
+      // No new files — preserve existing images already in the database.
+      // The frontend may send existing data-URL strings via `existingImages`
+      // to explicitly keep them.  Otherwise, simply remove image keys from
+      // the update payload so the $set does not overwrite stored values.
+      const existingImages = req.body.existingImages
+        ? (typeof req.body.existingImages === 'string' ? [req.body.existingImages] : req.body.existingImages)
+        : null;
+
+      if (existingImages && existingImages.length > 0) {
+        updates.images = existingImages;
+        updates.coverImage = existingImages[0];
+      } else {
+        delete updates.images;
+        delete updates.coverImage;
+      }
     }
+
+    // Remove helper field so it does not persist on the document
+    delete updates.existingImages;
+
+    // Build socialLinks from flat form fields
+    if (updates.socialLinksYoutube !== undefined || updates.socialLinksFacebook !== undefined ||
+        updates.socialLinksTwitter !== undefined || updates.socialLinksInstagram !== undefined ||
+        updates.socialLinksTiktok !== undefined) {
+      updates.socialLinks = parseSocialLinks(updates);
+    }
+    // Clean up flat social-link fields
+    delete updates.socialLinksYoutube;
+    delete updates.socialLinksFacebook;
+    delete updates.socialLinksTwitter;
+    delete updates.socialLinksInstagram;
+    delete updates.socialLinksTiktok;
+
+    // Reconstruct eventMeta from flat fields when present
+    if (updates.eventTitle !== undefined) {
+      updates.eventMeta = {
+        title: updates.eventTitle || '',
+        startDate: updates.eventStartDate || '',
+        endDate: updates.eventEndDate || '',
+        location: updates.eventLocation || '',
+        externalUrl: updates.eventExternalUrl || '',
+        platform: updates.eventPlatform || 'Facebook Events',
+      };
+    }
+    // Clean up flat event fields
+    delete updates.eventTitle;
+    delete updates.eventStartDate;
+    delete updates.eventEndDate;
+    delete updates.eventLocation;
+    delete updates.eventExternalUrl;
+    delete updates.eventPlatform;
+
     const post = await store.update(req.params.id, updates);
     if (!post) {
       res.status(404);
