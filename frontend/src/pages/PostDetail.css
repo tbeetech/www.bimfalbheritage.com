@@ -558,3 +558,58 @@ button.btn.danger:hover {
   opacity: 1;
   color: #c00;
 }
+
+/* ── Social Media Links Box ──────────────────────────────────────── */
+.social-links-box {
+  margin: 18px 0;
+  padding: 14px 16px;
+  border-left: 4px solid var(--green);
+  background: rgba(9, 36, 21, 0.04);
+  border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
+}
+
+.social-links-box strong {
+  color: var(--green);
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  display: block;
+  margin-bottom: 10px;
+}
+
+[data-theme='dark'] .social-links-box strong { color: var(--gold); }
+[data-theme='dark'] .social-links-box { background: rgba(197, 157, 85, 0.06); border-left-color: var(--gold); }
+
+.social-links-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.social-link-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 6px 14px;
+  border-radius: 30px;
+  font-size: 0.72rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.6px;
+  text-decoration: none;
+  border: 1.5px solid var(--line);
+  background: var(--card);
+  color: var(--text);
+  transition: background var(--transition), color var(--transition), border-color var(--transition), transform var(--transition);
+}
+
+.social-link-pill:hover {
+  transform: translateY(-2px);
+  color: #fff;
+}
+
+.social-link-pill.youtube:hover { background: #ff0000; border-color: #ff0000; }
+.social-link-pill.facebook:hover { background: #1877f2; border-color: #1877f2; }
+.social-link-pill.twitter:hover { background: #000; border-color: #000; }
+.social-link-pill.instagram:hover { background: linear-gradient(45deg, #f09433, #e6683c, #dc2743, #cc2366, #bc1888); border-color: #dc2743; }
+.social-link-pill.tiktok:hover { background: #010101; border-color: #010101; }

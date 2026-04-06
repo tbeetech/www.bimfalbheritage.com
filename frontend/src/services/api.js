@@ -98,12 +98,16 @@ export const getSessionStatus = async () => {
 
 export const createPost = async (payload) => {
   const formData = new FormData();
-  const { images, ...rest } = payload;
+  const { images, existingImages, ...rest } = payload;
   Object.entries(rest).forEach(([key, value]) => {
     if (value !== undefined && value !== null) formData.append(key, value);
   });
   if (Array.isArray(images)) {
     images.forEach((img) => { if (img) formData.append('images', img); });
+  }
+  // Send existing base64 data-URL strings so the backend can preserve them
+  if (Array.isArray(existingImages)) {
+    existingImages.forEach((img) => { if (img) formData.append('existingImages', img); });
   }
   const res = await api.post('/api/posts', formData);
   return res.data;
@@ -111,12 +115,16 @@ export const createPost = async (payload) => {
 
 export const updatePost = async (id, payload) => {
   const formData = new FormData();
-  const { images, ...rest } = payload;
+  const { images, existingImages, ...rest } = payload;
   Object.entries(rest).forEach(([key, value]) => {
     if (value !== undefined && value !== null) formData.append(key, value);
   });
   if (Array.isArray(images)) {
     images.forEach((img) => { if (img) formData.append('images', img); });
+  }
+  // Send existing base64 data-URL strings so the backend can preserve them
+  if (Array.isArray(existingImages)) {
+    existingImages.forEach((img) => { if (img) formData.append('existingImages', img); });
   }
   const res = await api.put(`/api/posts/${id}`, formData);
   return res.data;

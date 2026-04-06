@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useMemo } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import RichTextEditor from '../../components/RichTextEditor';
 import { createPost, updatePost, getPost } from '../../services/api';
@@ -22,6 +22,11 @@ const AdminEditorPane = () => {
     collaborationPartner: '',
     collaborationType: '',
     sharePlatforms: '',
+    socialLinksYoutube: '',
+    socialLinksFacebook: '',
+    socialLinksTwitter: '',
+    socialLinksInstagram: '',
+    socialLinksTiktok: '',
     eventTitle: '',
     eventStartDate: '',
     eventEndDate: '',
@@ -30,6 +35,7 @@ const AdminEditorPane = () => {
     eventPlatform: 'Facebook Events',
   });
   const [metaOpen, setMetaOpen] = useState(false);
+  const [socialOpen, setSocialOpen] = useState(false);
   const [body, setBody] = useState('');
   const [images, setImages] = useState([]);
   const [existingImages, setExistingImages] = useState([]);
@@ -53,6 +59,11 @@ const AdminEditorPane = () => {
           collaborationPartner: post.collaborationPartner || '',
           collaborationType: post.collaborationType || '',
           sharePlatforms: post.sharePlatforms || '',
+          socialLinksYoutube: post.socialLinks?.youtube || '',
+          socialLinksFacebook: post.socialLinks?.facebook || '',
+          socialLinksTwitter: post.socialLinks?.twitter || '',
+          socialLinksInstagram: post.socialLinks?.instagram || '',
+          socialLinksTiktok: post.socialLinks?.tiktok || '',
           eventTitle: post.eventMeta?.title || '',
           eventStartDate: post.eventMeta?.startDate || '',
           eventEndDate: post.eventMeta?.endDate || '',
@@ -85,6 +96,23 @@ const AdminEditorPane = () => {
     setImages(Array.from(e.target.files).slice(0, 3));
   };
 
+  /* ── Content Health Indicator ────────────────────────────────────── */
+  const healthChecks = useMemo(() => {
+    const checks = [
+      { label: 'Title', ok: form.title.trim().length > 0 },
+      { label: 'Excerpt', ok: form.excerpt.trim().length > 0 },
+      { label: 'Body content', ok: body.length > 0 && new DOMParser().parseFromString(body, 'text/html').body.textContent.trim().length > 10 },
+      { label: 'Images', ok: images.length > 0 || existingImages.length > 0 },
+      { label: 'Tags', ok: form.tags.trim().length > 0 },
+    ];
+    return checks;
+  }, [form.title, form.excerpt, form.tags, body, images, existingImages]);
+
+  const healthScore = useMemo(
+    () => Math.round((healthChecks.filter((c) => c.ok).length / healthChecks.length) * 100),
+    [healthChecks]
+  );
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     setSaving(true);
@@ -92,7 +120,13 @@ const AdminEditorPane = () => {
     try {
       let post;
       if (isEditing) {
-        post = await updatePost(editId, { ...form, body, images });
+        // When no new images are selected, send existing data-URL images
+        // so the backend can preserve them instead of clearing the field.
+        const payload = { ...form, body, images };
+        if (images.length === 0 && existingImages.length > 0) {
+          payload.existingImages = existingImages;
+        }
+        post = await updatePost(editId, payload);
         setStatus('Post updated!');
         setStatusOk(true);
       } else {
@@ -115,6 +149,29 @@ const AdminEditorPane = () => {
         <div className="pill">Content Editor</div>
         <h1>{isEditing ? 'Edit Post' : 'Create New Post'}</h1>
         <p>Compose cultural content with rich media, collaboration metadata, and event details.</p>
+      </div>
+
+      {/* ── Content Health Indicator ── */}
+      <div className="admin-health-indicator">
+        <div className="admin-health-header">
+          <span className="admin-health-title">📋 Content Health</span>
+          <span className={`admin-health-score${healthScore === 100 ? ' perfect' : healthScore >= 60 ? ' good' : ''}`}>
+            {healthScore}%
+          </span>
+        </div>
+        <div className="admin-health-bar">
+          <div
+            className={`admin-health-fill${healthScore === 100 ? ' perfect' : healthScore >= 60 ? ' good' : ''}`}
+            style={{ width: `${healthScore}%` }}
+          />
+        </div>
+        <div className="admin-health-checks">
+          {healthChecks.map((c) => (
+            <span key={c.label} className={`admin-health-check${c.ok ? ' ok' : ''}`}>
+              {c.ok ? '✓' : '○'} {c.label}
+            </span>
+          ))}
+        </div>
       </div>
 
       <form onSubmit={handleSubmit}>
@@ -219,6 +276,86 @@ const AdminEditorPane = () => {
           <div className="admin-form-section">
             <div className="admin-form-section-title">Article Body</div>
             <RichTextEditor value={body} onChange={setBody} placeholder="Compose with bold, lists, quotes…" />
+          </div>
+
+          {/* ── Social Media Links ── */}
+          <div className="admin-form-section">
+            <button
+              type="button"
+              className="admin-form-section-toggle"
+              onClick={() => setSocialOpen((o) => !o)}
+              aria-expanded={socialOpen}
+            >
+              <span className="admin-form-section-title">🔗 Social Media Links</span>
+              <span className="admin-toggle-icon">{socialOpen ? '▲' : '▼'}</span>
+            </button>
+            {socialOpen && (
+            <div className="admin-social-links-panel">
+              <p className="admin-social-hint">Attach social media links to buttress this post. These will be displayed alongside the article.</p>
+              <div className="admin-form-grid">
+                <div className="admin-field">
+                  <label htmlFor="ef-sl-youtube">
+                    <span className="admin-social-icon">▶</span> YouTube
+                  </label>
+                  <input
+                    id="ef-sl-youtube"
+                    name="socialLinksYoutube"
+                    value={form.socialLinksYoutube}
+                    onChange={handleChange}
+                    placeholder="https://youtube.com/watch?v=..."
+                  />
+                </div>
+                <div className="admin-field">
+                  <label htmlFor="ef-sl-facebook">
+                    <span className="admin-social-icon">f</span> Facebook
+                  </label>
+                  <input
+                    id="ef-sl-facebook"
+                    name="socialLinksFacebook"
+                    value={form.socialLinksFacebook}
+                    onChange={handleChange}
+                    placeholder="https://facebook.com/..."
+                  />
+                </div>
+                <div className="admin-field">
+                  <label htmlFor="ef-sl-twitter">
+                    <span className="admin-social-icon">𝕏</span> Twitter / X
+                  </label>
+                  <input
+                    id="ef-sl-twitter"
+                    name="socialLinksTwitter"
+                    value={form.socialLinksTwitter}
+                    onChange={handleChange}
+                    placeholder="https://x.com/..."
+                  />
+                </div>
+                <div className="admin-field">
+                  <label htmlFor="ef-sl-instagram">
+                    <span className="admin-social-icon">📷</span> Instagram
+                  </label>
+                  <input
+                    id="ef-sl-instagram"
+                    name="socialLinksInstagram"
+                    value={form.socialLinksInstagram}
+                    onChange={handleChange}
+                    placeholder="https://instagram.com/..."
+                  />
+                </div>
+                <div className="admin-field">
+                  <label htmlFor="ef-sl-tiktok">
+                    <span className="admin-social-icon">♪</span> TikTok
+                  </label>
+                  <input
+                    id="ef-sl-tiktok"
+                    name="socialLinksTiktok"
+                    value={form.socialLinksTiktok}
+                    onChange={handleChange}
+                    placeholder="https://tiktok.com/@..."
+                  />
+                </div>
+              </div>
+            </div>
+            )}
           </div>
 
           {/* ── Metadata ── */}
