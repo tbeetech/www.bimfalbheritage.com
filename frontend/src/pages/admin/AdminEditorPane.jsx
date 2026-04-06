@@ -101,7 +101,7 @@ const AdminEditorPane = () => {
     const checks = [
       { label: 'Title', ok: form.title.trim().length > 0 },
       { label: 'Excerpt', ok: form.excerpt.trim().length > 0 },
-      { label: 'Body content', ok: body.replace(/<[^>]*>/g, '').trim().length > 10 },
+      { label: 'Body content', ok: body.length > 0 && new DOMParser().parseFromString(body, 'text/html').body.textContent.trim().length > 10 },
       { label: 'Images', ok: images.length > 0 || existingImages.length > 0 },
       { label: 'Tags', ok: form.tags.trim().length > 0 },
     ];

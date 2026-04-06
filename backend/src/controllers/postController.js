@@ -67,6 +67,15 @@ const parseSocialLinks = (body) => ({
   tiktok: body.socialLinksTiktok || '',
 });
 
+const parseEventMeta = (body) => ({
+  title: body.eventTitle || '',
+  startDate: body.eventStartDate || '',
+  endDate: body.eventEndDate || '',
+  location: body.eventLocation || '',
+  externalUrl: body.eventExternalUrl || '',
+  platform: body.eventPlatform || 'Facebook Events',
+});
+
 const createPost = async (req, res, next) => {
   if (mongoose.connection.readyState !== 1) {
     return res.status(503).json({ message: 'Service temporarily unavailable, please try again later' });
@@ -104,14 +113,7 @@ const createPost = async (req, res, next) => {
       sharePlatforms: req.body.sharePlatforms || '',
       socialLinks: parseSocialLinks(req.body),
       tags: req.body.tags || '',
-      eventMeta: {
-        title: req.body.eventTitle || '',
-        startDate: req.body.eventStartDate || '',
-        endDate: req.body.eventEndDate || '',
-        location: req.body.eventLocation || '',
-        externalUrl: req.body.eventExternalUrl || '',
-        platform: req.body.eventPlatform || 'Facebook Events',
-      },
+      eventMeta: parseEventMeta(req.body),
       publishDate: req.body.publishDate || new Date().toISOString(),
     });
 
@@ -182,14 +184,7 @@ const updatePost = async (req, res, next) => {
 
     // Reconstruct eventMeta from flat fields when present
     if (updates.eventTitle !== undefined) {
-      updates.eventMeta = {
-        title: updates.eventTitle || '',
-        startDate: updates.eventStartDate || '',
-        endDate: updates.eventEndDate || '',
-        location: updates.eventLocation || '',
-        externalUrl: updates.eventExternalUrl || '',
-        platform: updates.eventPlatform || 'Facebook Events',
-      };
+      updates.eventMeta = parseEventMeta(updates);
     }
     // Clean up flat event fields
     delete updates.eventTitle;
