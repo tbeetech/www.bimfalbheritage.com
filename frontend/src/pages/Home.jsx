@@ -35,8 +35,18 @@ const Home = () => {
       name: 'Bimfalb Heritage',
       alternateName: ['BIMFALB', 'Bimfalb', 'bimfalbheritage'],
       url: 'https://www.bimfalbheritage.org',
-      logo: 'https://www.bimfalbheritage.org/logo.jpg',
-      image: 'https://www.bimfalbheritage.org/logo.jpg',
+      logo: {
+        '@type': 'ImageObject',
+        url: 'https://www.bimfalbheritage.org/logo.png',
+        width: 848,
+        height: 851,
+      },
+      image: {
+        '@type': 'ImageObject',
+        url: 'https://www.bimfalbheritage.org/logo.png',
+        width: 848,
+        height: 851,
+      },
       description: 'Bimfalb Heritage preserves and promotes Nigerian cultural heritage, supports local artists, and documents historic traditions across Africa and the Globe.',
       sameAs: [
         'https://twitter.com/bimfalbheritage',

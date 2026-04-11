@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { Link, NavLink, useNavigate } from 'react-router-dom';
 import { useTheme } from '../context/ThemeContext';
 import { useAuth } from '../context/AuthContext';
-import brandLogo from '../assets/logo.jpg';
+import brandLogo from '../assets/logo.png';
 import './Navbar.css';
 
 const PhoneIcon = () => (
