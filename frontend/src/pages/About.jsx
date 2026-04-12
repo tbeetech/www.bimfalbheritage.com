@@ -47,7 +47,7 @@ const About = () => {
         name: 'Bimfalb Heritage',
         alternateName: ['BIMFALB', 'Bimfalb Cultural Heritage Promotion and Initiative'],
         url: 'https://www.bimfalbheritage.org',
-        logo: 'https://www.bimfalbheritage.org/logo.jpg',
+        logo: 'https://www.bimfalbheritage.org/logo.png',
         founder: {
           '@type': 'Person',
           name: 'Elano Abimbola Falayi',
