@@ -40,7 +40,7 @@ const Blog = () => {
         '@type': 'NGO',
         name: 'Bimfalb Heritage',
         url: 'https://www.bimfalbheritage.org',
-        logo: 'https://www.bimfalbheritage.org/logo.png',
+        logo: 'https://www.bimfalbheritage.org/final.png',
       },
       inLanguage: 'en-NG',
     },
