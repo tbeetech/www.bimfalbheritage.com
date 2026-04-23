@@ -1,3 +1,16 @@
+/**
+ * server.js — Application entry point.
+ *
+ * This is the file that Node.js executes to start the server (see "main" and
+ * "start"/"dev" scripts in package.json).  It is responsible for:
+ *   1. Loading environment variables (.env).
+ *   2. Connecting to MongoDB.
+ *   3. Creating the HTTP server around the Express app defined in app.js.
+ *   4. Binding the server to the configured PORT.
+ *
+ * app.js is NOT the entry point — it only configures and exports the Express
+ * application object so that it can be imported here and in tests.
+ */
 require('dotenv').config();
 const http = require('http');
 const app = require('./app');
