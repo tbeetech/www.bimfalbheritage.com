@@ -26,10 +26,19 @@ const toEmbedUrl = (url) => {
   return url;
 };
 
+const FACEBOOK_HOSTS = new Set(['www.facebook.com', 'facebook.com', 'fb.watch', 'www.fb.watch', 'm.facebook.com']);
+
 const toFacebookEmbedUrl = (url) => {
   if (!url) return '';
+  let parsed;
+  try {
+    parsed = new URL(url);
+  } catch {
+    return '';
+  }
+  if (!FACEBOOK_HOSTS.has(parsed.hostname)) return '';
   const encoded = encodeURIComponent(url);
-  if (url.includes('/videos/') || url.includes('fb.watch')) {
+  if (parsed.pathname.includes('/videos/') || parsed.hostname === 'fb.watch' || parsed.hostname === 'www.fb.watch') {
     return `https://www.facebook.com/plugins/video.php?href=${encoded}&width=500&show_text=false`;
   }
   return `https://www.facebook.com/plugins/post.php?href=${encoded}&width=500&show_text=true`;
@@ -486,7 +495,7 @@ const PostDetail = () => {
             </div>
           )}
 
-          {post.facebookPostUrl && (
+          {post.facebookPostUrl && toFacebookEmbedUrl(post.facebookPostUrl) && (
             <div className="fb-embed-block">
               <div className="fb-embed-label">
                 <span className="fb-embed-icon">f</span> Facebook
@@ -494,7 +503,7 @@ const PostDetail = () => {
               <iframe
                 src={toFacebookEmbedUrl(post.facebookPostUrl)}
                 title="Embedded Facebook post"
-                allow="autoplay; clipboard-write; encrypted-media; picture-in-picture; web-share"
+                allow="autoplay"
                 allowFullScreen
                 scrolling="no"
                 className="fb-embed-frame"
