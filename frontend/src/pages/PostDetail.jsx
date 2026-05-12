@@ -26,6 +26,24 @@ const toEmbedUrl = (url) => {
   return url;
 };
 
+const FACEBOOK_HOSTS = new Set(['www.facebook.com', 'facebook.com', 'fb.watch', 'www.fb.watch', 'm.facebook.com']);
+
+const toFacebookEmbedUrl = (url) => {
+  if (!url) return '';
+  let parsed;
+  try {
+    parsed = new URL(url);
+  } catch {
+    return '';
+  }
+  if (!FACEBOOK_HOSTS.has(parsed.hostname)) return '';
+  const encoded = encodeURIComponent(url);
+  if (parsed.pathname.includes('/videos/') || parsed.hostname === 'fb.watch' || parsed.hostname === 'www.fb.watch') {
+    return `https://www.facebook.com/plugins/video.php?href=${encoded}&width=500&show_text=false`;
+  }
+  return `https://www.facebook.com/plugins/post.php?href=${encoded}&width=500&show_text=true`;
+};
+
 const buildCommentTree = (comments) => {
   const byId = new Map();
   comments.forEach((comment) => byId.set(comment.id, { ...comment, replies: [] }));
@@ -473,6 +491,22 @@ const PostDetail = () => {
                 title="Embedded video"
                 allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
                 allowFullScreen
+              />
+            </div>
+          )}
+
+          {post.facebookPostUrl && toFacebookEmbedUrl(post.facebookPostUrl) && (
+            <div className="fb-embed-block">
+              <div className="fb-embed-label">
+                <span className="fb-embed-icon">f</span> Facebook
+              </div>
+              <iframe
+                src={toFacebookEmbedUrl(post.facebookPostUrl)}
+                title="Embedded Facebook post"
+                allow="autoplay"
+                allowFullScreen
+                scrolling="no"
+                className="fb-embed-frame"
               />
             </div>
           )}
