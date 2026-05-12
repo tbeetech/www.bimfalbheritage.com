@@ -48,6 +48,7 @@ const postSchema = new mongoose.Schema(
     coverImage: { type: String, default: '' },
     images: { type: [String], default: [] },
     videoUrl: { type: String, default: '' },
+    facebookPostUrl: { type: String, default: '' },
     category: { type: String, default: 'Culture' },
     contentType: { type: String, default: 'blog' },
     collaborationPartner: { type: String, default: '' },

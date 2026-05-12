@@ -26,6 +26,15 @@ const toEmbedUrl = (url) => {
   return url;
 };
 
+const toFacebookEmbedUrl = (url) => {
+  if (!url) return '';
+  const encoded = encodeURIComponent(url);
+  if (url.includes('/videos/') || url.includes('fb.watch')) {
+    return `https://www.facebook.com/plugins/video.php?href=${encoded}&width=500&show_text=false`;
+  }
+  return `https://www.facebook.com/plugins/post.php?href=${encoded}&width=500&show_text=true`;
+};
+
 const buildCommentTree = (comments) => {
   const byId = new Map();
   comments.forEach((comment) => byId.set(comment.id, { ...comment, replies: [] }));
@@ -473,6 +482,22 @@ const PostDetail = () => {
                 title="Embedded video"
                 allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
                 allowFullScreen
+              />
+            </div>
+          )}
+
+          {post.facebookPostUrl && (
+            <div className="fb-embed-block">
+              <div className="fb-embed-label">
+                <span className="fb-embed-icon">f</span> Facebook
+              </div>
+              <iframe
+                src={toFacebookEmbedUrl(post.facebookPostUrl)}
+                title="Embedded Facebook post"
+                allow="autoplay; clipboard-write; encrypted-media; picture-in-picture; web-share"
+                allowFullScreen
+                scrolling="no"
+                className="fb-embed-frame"
               />
             </div>
           )}

@@ -19,6 +19,7 @@ const AdminEditorPane = () => {
     contentType: 'blog',
     tags: '',
     videoUrl: '',
+    facebookPostUrl: '',
     collaborationPartner: '',
     collaborationType: '',
     sharePlatforms: '',
@@ -56,6 +57,7 @@ const AdminEditorPane = () => {
           contentType: post.contentType || 'blog',
           tags: post.tags || '',
           videoUrl: post.videoUrl || '',
+          facebookPostUrl: post.facebookPostUrl || '',
           collaborationPartner: post.collaborationPartner || '',
           collaborationType: post.collaborationType || '',
           sharePlatforms: post.sharePlatforms || '',
@@ -231,6 +233,19 @@ const AdminEditorPane = () => {
                   onChange={handleChange}
                   placeholder="https://youtube.com/watch?v=..."
                 />
+              </div>
+              <div className="admin-field">
+                <label htmlFor="ef-fbpost">Facebook Post / Video URL</label>
+                <input
+                  id="ef-fbpost"
+                  name="facebookPostUrl"
+                  value={form.facebookPostUrl}
+                  onChange={handleChange}
+                  placeholder="https://www.facebook.com/..."
+                />
+                <span style={{ fontSize: '0.72rem', color: 'var(--muted)', marginTop: '4px', display: 'block' }}>
+                  Paste any Facebook post or video link — it will be embedded at the end of the post.
+                </span>
               </div>
             </div>
             <div>

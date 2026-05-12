@@ -106,6 +106,7 @@ const createPost = async (req, res, next) => {
       coverImage,
       images: allImages,
       videoUrl: req.body.videoUrl || '',
+      facebookPostUrl: req.body.facebookPostUrl || '',
       category: req.body.category || 'Culture',
       contentType: req.body.contentType || 'blog',
       collaborationPartner: req.body.collaborationPartner || '',

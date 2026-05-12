@@ -200,6 +200,49 @@
   border-radius: var(--radius-sm);
 }
 
+/* ── Facebook post embed ─────────────────────────────────────────── */
+.fb-embed-block {
+  margin-top: 28px;
+  border: 1.5px solid var(--line);
+  border-radius: var(--radius-sm);
+  overflow: hidden;
+  background: var(--bg-soft);
+}
+
+.fb-embed-label {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  padding: 10px 14px;
+  background: #1877f2;
+  color: #fff;
+  font-size: 0.75rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.8px;
+}
+
+.fb-embed-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  background: #fff;
+  color: #1877f2;
+  font-weight: 900;
+  font-size: 0.9rem;
+  line-height: 1;
+}
+
+.fb-embed-frame {
+  display: block;
+  width: 100%;
+  min-height: 500px;
+  border: none;
+}
+
 /* ── Comments ────────────────────────────────────────────────────── */
 .comments-panel {
   margin-top: 32px;
