@@ -1,11 +1,8 @@
 import { useEffect, useMemo } from 'react';
 
 const SITE_NAME = 'Bimfalb Heritage';
-const SITE_URL =
-  typeof window !== 'undefined' && window.location?.origin
-    ? window.location.origin
-    : 'https://www.bimfalbheritage.org';
-const DEFAULT_IMAGE = `${SITE_URL}/logo.png`;
+const SITE_URL = 'https://www.bimfalbheritage.org';
+const DEFAULT_IMAGE = '/logo.png';
 const DEFAULT_DESCRIPTION =
   'Bimfalb Heritage (BIMFALB) preserves and promotes Nigerian cultural heritage, supports local artists, and documents historic traditions across Africa and the Globe.';
 const DEFAULT_ROBOTS = 'index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1';
