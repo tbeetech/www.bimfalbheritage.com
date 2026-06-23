@@ -1,3 +1,13 @@
+/**
+ * app.js — Express application configuration (NOT the entry point).
+ *
+ * This module creates and configures the Express app — middleware, routes, and
+ * error handlers — then exports it so it can be consumed by:
+ *   • server.js  (the actual entry point that starts the HTTP server), and
+ *   • test suites (which can import the app without binding a port).
+ *
+ * Do NOT add server-start logic (connectDB, server.listen, etc.) here.
+ */
 const express = require('express');
 const cors = require('cors');
 const morgan = require('morgan');
